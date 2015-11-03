@@ -1,7 +1,7 @@
   <div flex layout="column">
     <md-toolbar layout-align="center end">
       <div class="md-toolbar-tools">
-        <h2>Actions</h2>
+        <h2>Protractor Recorder</h2>
       </div>
     </md-toolbar>
 
@@ -21,9 +21,9 @@
 
       <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
 
-      <div layout="row" layout-align="center center" flex="50">
+      <div layout="row" layout-align="center start" flex>
 
-        <md-whiteframe class="md-whiteframe-1dp">
+        <md-whiteframe layout="column" flex="80" class="md-whiteframe-1dp">
           <table class="table table-hover table-mc-light-blue ng-scope">
             <thead>
             <tr>
@@ -41,16 +41,18 @@
             <tbody>
             <tr ng-repeat="action in main.actions">
               <td>
-                <md-checkbox ng-model="action.$index" aria-label="Checkbox 1">
-                  {{ $index + 1 }}
-                </md-checkbox>
+                <md-checkbox ng-model="action.$index" aria-label="Checkbox $index"></md-checkbox>
               </td>
               <td><b>{{ action.action }}</b></td>
               <td>{{ action.type }}</td>
               <td>
-              <span ng-repeat="locator in action.locators">
-                {{ locator.type }} - {{ locator.value }}
-              </span>
+                <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+                  <md-select aria-label="Locator {{ locator.value }}" ng-model="action.locator">
+                    <md-option ng-repeat="locator in action.locators" value="{{locator.type}}">
+                      {{ locator.type }} - {{ locator.value }}
+                    </md-option>
+                  </md-select>
+                </md-input-container>
               </td>
               <td>{{ action.value }}</td>
               <td><md-button ng-click="main.removeAction($index)">X</md-button></td>

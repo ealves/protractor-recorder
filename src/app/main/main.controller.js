@@ -20,7 +20,7 @@
     var actions = localStorage.getItem('actions');
 
     if(actions) {
-      vm.actions = JSON.parse(actions);
+      vm.actions = angular.fromJson(actions);
     }
 
     socket.on('click', function(data){
@@ -67,19 +67,23 @@
 
     });
 
-    vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="http://localhost:9000/snippet.js",head.appendChild(e)},script.src="https://cdn.socket.io/socket.io-1.3.7.js",head.appendChild(script);';
+    vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="http://localhost:9000/snippet.js",head.appendChild(e)},script.src="http://localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
 
     vm.setElement = function(element) {
 
       var target = angular.element(element.outerHTML);
       var parent  = angular.element(element.offsetParent.outerHTML);
 
-      if(element.offsetParent.outerHTML.match(/button/) && !element.outerHTML.match(/input/)){
+      if(element.offsetParent.outerHTML.match(/^<button/) && !element.outerHTML.match(/^<input/)){
 
         vm.addElement(parent, 'button', 'click', target.text());
 
-      } else if(element.outerHTML.match(/input/)){
+      } else if(element.outerHTML.match(/^<input/)){
         vm.addElement(target, 'input', 'click', false);
+      } else if(element.outerHTML.match(/^<a/)) {
+        vm.addElement(target, 'a', 'click', false);
+      } else {
+        vm.addElement(target, '', 'click', false);
       }
     };
 
@@ -87,22 +91,34 @@
 
       var locators = [];
 
+      if(type == '') {
+        type = element.match(/<(\.*)\s/);
+      }
+
       if(type == 'input')
         locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
 
-      locators.push({type: 'id', value: '#' + vm.getAttr('id', element)});
+      if(type == 'a')
+        locators.push({type: ''})
+
+      if(vm.getAttr('id', element))
+        locators.push({type: 'id', value: '#' + vm.getAttr('id', element)});
+
+      if(vm.getAttr('class', element))
+        locators.push({type: 'class', value: '.' + vm.getAttr('class', element)});
 
       var action = {
         element: element,
         type: type,
         value: value,
         action: actionType,
-        locators: locators
+        locators: locators,
+        locator: locators[0].type
       };
 
       vm.actions.push(action);
 
-      localStorage.setItem('actions', JSON.stringify(vm.actions));
+      localStorage.setItem('actions', angular.toJson(vm.actions));
 
       vm.getSessionUrl();
 
@@ -111,7 +127,7 @@
     vm.removeAction = function(index) {
       vm.actions.splice(index, 1);
 
-      localStorage.setItem('actions', JSON.stringify(vm.actions));
+      localStorage.setItem('actions', angular.toJson(vm.actions));
 
     };
 
