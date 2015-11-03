@@ -1,0 +1,24 @@
+{
+  "name": "protractorRec",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular-animate": "~1.4.2",
+    "angular-cookies": "~1.4.2",
+    "angular-touch": "~1.4.2",
+    "angular-sanitize": "~1.4.2",
+    "angular-messages": "~1.4.2",
+    "angular-aria": "~1.4.2",
+    "angular-route": "~1.4.2",
+    "angular-material": "~0.11.2",
+    "material-design-iconfont": "~0.0.2",
+    "angular-toastr": "~1.5.0",
+    "animate.css": "~3.4.0",
+    "angular": "~1.4.2"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.4.2"
+  },
+  "resolutions": {
+    "angular": "~1.4.2"
+  }
+}
