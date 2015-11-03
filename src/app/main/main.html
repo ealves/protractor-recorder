@@ -1,5 +1,4 @@
-<div layout="row" flex layout-fill layout-wrap>
-  <div flex>
+  <div flex layout="column">
     <md-toolbar layout-align="center end">
       <div class="md-toolbar-tools">
         <h2>Actions</h2>
@@ -8,7 +7,11 @@
 
     <md-content class="flex layout-column">
 
-      <input ng-model="main.url" type="text">
+      <md-input-container md-no-float class="md-block">
+        <input ng-model="main.url" type="text" placeholder="Url">
+      </md-input-container>
+
+
 
       <md-button ng-click="main.createSession()">Create Session</md-button>
 
@@ -18,32 +21,44 @@
 
       <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
 
-      <table>
-        <thead>
-        <tr>
-          <th>#</th>
-          <th>Type</th>
-          <th>Action</th>
-          <th>Locators</th>
-          <th>Value</th>
-          <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="action in main.actions">
-          <td>{{ $index + 1 }}</td>
-          <td>{{ action.type }}</td>
-          <td>{{ action.action }}</td>
-          <td>
-          <span ng-repeat="locator in action.locators">
-            {{ locator.type }} - {{ locator.value }}
-          </span>
-          </td>
-          <td>{{ action.value }}</td>
-          <td><md-button ng-click="main.removeAction($index)">X</md-button></td>
-        </tr>
-        </tbody>
-      </table>
+      <div layout="row" layout-align="center center" flex="50">
+
+        <md-whiteframe class="md-whiteframe-1dp">
+          <table class="table table-hover table-mc-light-blue ng-scope">
+            <thead>
+            <tr>
+              <th>
+                <md-checkbox ng-model="all" aria-label="Checkbox 1">
+                </md-checkbox>
+              </th>
+              <th>Action</th>
+              <th>Type</th>
+              <th>Locators</th>
+              <th>Value</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="action in main.actions">
+              <td>
+                <md-checkbox ng-model="action.$index" aria-label="Checkbox 1">
+                  {{ $index + 1 }}
+                </md-checkbox>
+              </td>
+              <td><b>{{ action.action }}</b></td>
+              <td>{{ action.type }}</td>
+              <td>
+              <span ng-repeat="locator in action.locators">
+                {{ locator.type }} - {{ locator.value }}
+              </span>
+              </td>
+              <td>{{ action.value }}</td>
+              <td><md-button ng-click="main.removeAction($index)">X</md-button></td>
+            </tr>
+            </tbody>
+          </table>
+        </md-whiteframe>
+      </div>
 
       <span ng-repeat="line in main.lines">
         {{ line }}
@@ -51,4 +66,3 @@
 
     </md-content>
   </div>
-</div>

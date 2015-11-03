@@ -16,6 +16,13 @@
     vm.actions = [];
     vm.lines = [];
 
+
+    var actions = localStorage.getItem('actions');
+
+    if(actions) {
+      vm.actions = JSON.parse(actions);
+    }
+
     socket.on('click', function(data){
       $log.debug('onclick');
       $log.debug(data);
@@ -95,12 +102,17 @@
 
       vm.actions.push(action);
 
+      localStorage.setItem('actions', JSON.stringify(vm.actions));
+
       vm.getSessionUrl();
 
     };
 
     vm.removeAction = function(index) {
       vm.actions.splice(index, 1);
+
+      localStorage.setItem('actions', JSON.stringify(vm.actions));
+
     };
 
     vm.getAttr = function(attr, elem) {
