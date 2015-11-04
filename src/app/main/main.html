@@ -48,7 +48,7 @@
               <td>
                 <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
                   <md-select aria-label="Locator {{ locator.value }}" ng-model="action.locator">
-                    <md-option ng-repeat="locator in action.locators" value="{{locator.type}}">
+                    <md-option ng-repeat="locator in action.locators" value="{{locator.value}}">
                       {{ locator.type }} - {{ locator.value }}
                     </md-option>
                   </md-select>

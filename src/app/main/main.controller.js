@@ -16,6 +16,8 @@
     vm.actions = [];
     vm.lines = [];
 
+    $scope.actions = vm.actions;
+
 
     var actions = localStorage.getItem('actions');
 
@@ -74,7 +76,7 @@
       var target = angular.element(element.outerHTML);
       var parent  = angular.element(element.offsetParent.outerHTML);
 
-      if(element.offsetParent.outerHTML.match(/^<button/) && !element.outerHTML.match(/^<input/)){
+      if(element.outerHTML.match(/^<button/) || element.offsetParent.outerHTML.match(/^<button/) && !element.outerHTML.match(/^<input/)){
 
         vm.addElement(parent, 'button', 'click', target.text());
 
@@ -95,11 +97,13 @@
         type = element.match(/<(\.*)\s/);
       }
 
-      if(type == 'input')
+      if(type == 'input' && vm.getAttr('ng-model', element))
         locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
 
-      if(type == 'a')
-        locators.push({type: ''})
+      if(vm.getAttr('href', element)) {
+        locators.push({type: 'href', value: vm.getAttr('href', element)});
+        //value = vm.getAttr('href', element);
+      }
 
       if(vm.getAttr('id', element))
         locators.push({type: 'id', value: '#' + vm.getAttr('id', element)});
@@ -113,12 +117,12 @@
         value: value,
         action: actionType,
         locators: locators,
-        locator: locators[0].type
+        locator: locators ? locators[0].value : null
       };
 
       vm.actions.push(action);
 
-      localStorage.setItem('actions', angular.toJson(vm.actions));
+      //localStorage.setItem('actions', angular.toJson(vm.actions));
 
       vm.getSessionUrl();
 
@@ -127,7 +131,7 @@
     vm.removeAction = function(index) {
       vm.actions.splice(index, 1);
 
-      localStorage.setItem('actions', angular.toJson(vm.actions));
+      //localStorage.setItem('actions', angular.toJson(vm.actions));
 
     };
 
@@ -203,11 +207,20 @@
 
     };
 
-    /*$scope.$watch('main.url', function(newValue, oldValue){
+    $scope.$watchCollection(angular.bind(vm.actions, function () {
+
+      $log.debug('watch actions');
+      localStorage.setItem('actions', angular.toJson(vm.actions));
+
+    }), function(newValue, oldValue){
+
+    });
+
+    $scope.$watch('main.url', function(newValue, oldValue){
       $log.debug('watch Url');
       if(newValue != oldValue)
         vm.setSessionUrl();
-    });*/
+    });
 
     vm.sessionExecute = function(){
 
@@ -219,7 +232,6 @@
 
         $log.debug('Session Executed');
 
-        localStorage.setItem('executed', 'true');
       });
 
     };
@@ -261,6 +273,10 @@
 
         if(action.action == 'click' && action.type == 'button') {
           lines.push("element(by.buttonText('" + action.value + "')).click()");
+        }
+
+        if(action.action == 'click' && action.type == 'a') {
+          lines.push("browser.get('" + action.locator[0].value + "')");
         }
 
       });
