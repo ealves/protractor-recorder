@@ -85,17 +85,17 @@
       } else if(element.outerHTML.match(/^<a/)) {
         vm.addElement(target, 'a', 'click', false);
       } else {
-        vm.addElement(target, '', 'click', false);
+
+        var html  = element.outerHTML.trim().match(/^<([a-z]+)\b/)[1];
+        var value = target.text() ? target.text() : false;
+
+        vm.addElement(target, html, 'click', value);
       }
     };
 
     vm.addElement = function(element, type, actionType, value) {
 
       var locators = [];
-
-      if(type == '') {
-        type = element.match(/<(\.*)\s/);
-      }
 
       if(type == 'input' && vm.getAttr('ng-model', element))
         locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
