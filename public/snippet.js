@@ -1,6 +1,8 @@
 var socket = io('http://localhost:9000');
 document.body.addEventListener('click', function (event) {
-	socket.emit('onclick', {'outerHTML': event.target.outerHTML, 'offsetParent': {'outerHTML': event.target.offsetParent.outerHTML}});
+	var xPath = getPathTo(event.target);
+	var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : null;
+	socket.emit('onclick', {'xPath': xPath, 'outerHTML': event.target.outerHTML, 'offsetParent': {'outerHTML': offsetParent}});
 });
 document.body.addEventListener('keyup', function (event) {
 	socket.emit('onkeyup', event.target.value);
@@ -12,9 +14,22 @@ document.body.addEventListener('mouseup', function (event) {
   	socket.emit('onassertion', document.selection.createRange().text);
   }
 });
-document.body.addEventListener('focus', function (event) {
-	socket.emit('onfocus', event);
-});
-document.body.addEventListener('unload', function (event) {
-	socket.emit('onunload', event);
-});
+function getPathTo(element) {
+	if (element.id!=='')
+		return "//*[@id='"+element.id+"']";
+
+	if (element===document.body)
+		return element.tagName.toLowerCase();
+
+	var ix= 0;
+	var siblings= element.parentNode.childNodes;
+	for (var i= 0; i<siblings.length; i++) {
+		var sibling= siblings[i];
+
+		if (sibling===element) return getPathTo(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix + 1) + ']';
+
+		if (sibling.nodeType===1 && sibling.tagName === element.tagName) {
+			ix++;
+		}
+	}
+}

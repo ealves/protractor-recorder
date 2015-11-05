@@ -76,20 +76,19 @@
       var target = angular.element(element.outerHTML);
       var parent  = angular.element(element.offsetParent.outerHTML);
 
-      if(element.outerHTML.match(/^<button/) || element.offsetParent.outerHTML.match(/^<button/) && !element.outerHTML.match(/^<input/)){
+      if(target[0].tagName.match(/^button/i) || parent[0].tagName.match(/^button/i) && !target[0].tagName.match(/^input/i)){
 
         vm.addElement(parent, 'button', 'click', target.text());
 
-      } else if(element.outerHTML.match(/^<input/)){
+      } else if(target[0].tagName.match(/^input/i)){
         vm.addElement(target, 'input', 'click', false);
-      } else if(element.outerHTML.match(/^<a/)) {
+      } else if(target[0].tagName.match(/^a/i)) {
         vm.addElement(target, 'a', 'click', false);
       } else {
 
-        var html  = element.outerHTML.trim().match(/^<([a-z]+)\b/)[1];
         var value = target.text() ? target.text() : false;
 
-        vm.addElement(target, html, 'click', value);
+        vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value);
       }
     };
 
@@ -108,8 +107,9 @@
       if(vm.getAttr('id', element))
         locators.push({type: 'id', value: '#' + vm.getAttr('id', element)});
 
-      if(vm.getAttr('class', element))
+      if(vm.getAttr('class', element)) {
         locators.push({type: 'class', value: '.' + vm.getAttr('class', element)});
+      }
 
       var action = {
         element: element,
@@ -244,6 +244,9 @@
       }).then(function successCallback(response) {
 
         vm.session.source = response.data.value;
+
+        var sourceHtml = angular.element(document.querySelector('#source'));
+        sourceHtml.html(response.data.value);
 
         vm.verifySnippet();
       });
