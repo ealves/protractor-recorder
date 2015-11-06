@@ -88,11 +88,11 @@
 
         var value = target.text() ? target.text() : false;
 
-        vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value);
+        vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
       }
     };
 
-    vm.addElement = function(element, type, actionType, value) {
+    vm.addElement = function(element, type, actionType, value, xPath) {
 
       var locators = [];
 
@@ -118,8 +118,12 @@
       if(vm.getAttr('id', element))
         locators.push({type: 'id', value: '#' + vm.getAttr('id', element)});
 
-      if(vm.getAttr('class', element) && value) {
-        locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});
+      if(vm.getAttr('class', element)) {
+        
+        if(value)
+          locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});
+        else
+          locators.push({type: 'xpath', value: xPath});
       }
 
       var action = {
