@@ -102,6 +102,14 @@
       if(type == 'input' && vm.getAttr('ng-model', element))
         locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
 
+      if(type == 'input' && vm.getAttr('type', element) == 'button') {
+        locators.push({type: 'id', value: vm.getAttr('id', element)});
+      }
+
+      if(type == 'input' && vm.getAttr('type', element) == 'submit') {
+        locators.push({type: 'css', value: 'input[type=submit][value=' + element.val() + ']'});
+      }
+
       if(vm.getAttr('href', element)) {
         locators.push({type: 'href', value: vm.getAttr('href', element)});
         value = vm.getAttr('href', element);
@@ -220,11 +228,11 @@
 
     });
 
-    $scope.$watch('main.url', function(newValue, oldValue){
+    /*$scope.$watch('main.url', function(newValue, oldValue){
       $log.debug('watch Url');
       if(newValue != oldValue)
         vm.setSessionUrl();
-    });
+    });*/
 
     vm.sessionExecute = function(){
 
@@ -280,7 +288,7 @@
           lines.push("element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')");
         }
 
-        if(action.action == 'click' && action.type == 'button') {
+        if(action.action == 'click' && action.type == 'button' && action.value) {
           lines.push("element(by.buttonText('" + action.value + "')).click()");
           return true;
         }
@@ -291,6 +299,14 @@
 
         if(action.action == 'click' && action.locators[0].type == 'xpath') {
           lines.push("element(by.xpath('" + action.locators[0].value + "')).click()");
+        }
+
+        if(action.action == 'click' && action.locators[0].type == 'id') {
+          lines.push("element(by.id('" + action.locators[0].value + "')).click()");
+        }
+
+        if(action.action == 'click' && action.type == 'input' && action.locators[0].type == 'css') {
+          lines.push("element(by.css('" + action.locators[0].value + "')).click()");
         }
 
       });
