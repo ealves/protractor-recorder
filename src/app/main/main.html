@@ -11,13 +11,13 @@
         <input ng-model="main.url" type="text" placeholder="Url">
       </md-input-container>
 
-
-
       <md-button ng-click="main.createSession()">Create Session</md-button>
 
       <md-button ng-click="main.setSessionUrl()">Start Session</md-button>
 
-      <md-button ng-click="main.getSessionUrl()">Session Url</md-button>
+      <md-button ng-click="main.deleteSession()">Delete Session</md-button>
+
+      <!--<md-button ng-click="main.getSessionUrl()">Session Url</md-button>-->
 
       <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
 
@@ -62,7 +62,7 @@
         </md-whiteframe>
       </div>
 
-      <div style="display: none" id="source">teste</div>
+      <!--<div style="display: none" id="source">teste</div>-->
 
       <span ng-repeat="line in main.lines">
         {{ line }}
