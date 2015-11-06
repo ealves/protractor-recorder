@@ -78,7 +78,7 @@
 
       if(target[0].tagName.match(/^button/i) || parent[0].tagName.match(/^button/i) && !target[0].tagName.match(/^input/i)){
 
-        vm.addElement(parent, 'button', 'click', target.text());
+        vm.addElement(parent, 'button', 'click', target.text().trim());
 
       } else if(target[0].tagName.match(/^input/i)){
         vm.addElement(target, 'input', 'click', false);
@@ -95,6 +95,9 @@
     vm.addElement = function(element, type, actionType, value) {
 
       var locators = [];
+
+      if(type == 'button' && value)
+        locators.push({type: 'buttonText', value: value});
 
       if(type == 'input' && vm.getAttr('ng-model', element))
         locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
@@ -279,6 +282,7 @@
 
         if(action.action == 'click' && action.type == 'button') {
           lines.push("element(by.buttonText('" + action.value + "')).click()");
+          return true;
         }
 
         if(action.action == 'click' && action.type == 'a') {
@@ -286,7 +290,7 @@
         }
 
         if(action.action == 'click' && action.locators[0].type == 'xpath') {
-          lines.push("element(by.xpath('" + action.locators[0].value + '")).click()');
+          lines.push("element(by.xpath('" + action.locators[0].value + "')).click()");
         }
 
       });
