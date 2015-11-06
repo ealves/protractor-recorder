@@ -1,7 +1,7 @@
 var socket = io('http://localhost:9000');
-document.body.addEventListener('click', function (event) {
+document.body.addEventListener('mousedown', function (event) {
 	var xPath = getPathTo(event.target);
-	var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : null;
+	var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : event.target.parentNode;
 	socket.emit('onclick', {'xPath': xPath, 'outerHTML': event.target.outerHTML, 'offsetParent': {'outerHTML': offsetParent}});
 });
 document.body.addEventListener('keyup', function (event) {

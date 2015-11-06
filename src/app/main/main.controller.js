@@ -74,7 +74,7 @@
     vm.setElement = function(element) {
 
       var target = angular.element(element.outerHTML);
-      var parent  = angular.element(element.offsetParent.outerHTML);
+      var parent  = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
 
       if(target[0].tagName.match(/^button/i) || parent[0].tagName.match(/^button/i) && !target[0].tagName.match(/^input/i)){
 
@@ -101,14 +101,14 @@
 
       if(vm.getAttr('href', element)) {
         locators.push({type: 'href', value: vm.getAttr('href', element)});
-        //value = vm.getAttr('href', element);
+        value = vm.getAttr('href', element);
       }
 
       if(vm.getAttr('id', element))
         locators.push({type: 'id', value: '#' + vm.getAttr('id', element)});
 
-      if(vm.getAttr('class', element)) {
-        locators.push({type: 'class', value: '.' + vm.getAttr('class', element)});
+      if(vm.getAttr('class', element) && value) {
+        locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});
       }
 
       var action = {
@@ -187,6 +187,7 @@
         $log.debug('setSessionUrl');
 
         vm.getSessionUrl();
+        vm.getSessionSource();
 
       });
 
@@ -238,18 +239,20 @@
 
     vm.getSessionSource = function(){
 
-      $http({
-        method: 'GET',
-        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/source'
-      }).then(function successCallback(response) {
+      if(vm.session.id){
+        $http({
+          method: 'GET',
+          url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/source'
+        }).then(function successCallback(response) {
 
-        vm.session.source = response.data.value;
+          vm.session.source = response.data.value;
 
-        var sourceHtml = angular.element(document.querySelector('#source'));
-        sourceHtml.html(response.data.value);
+          /*var sourceHtml = angular.element(document.querySelector('#source'));
+           sourceHtml.html(response.data.value);*/
 
-        vm.verifySnippet();
-      });
+          vm.verifySnippet();
+        });
+      }
 
     };
 
@@ -257,7 +260,7 @@
 
     vm.verifySnippet = function(){
 
-      if(!vm.session.source.match(/snippet\.js/)) {
+      if(vm.session.source && !vm.session.source.match(/snippet\.js/)) {
         vm.sessionExecute();
       }
 
@@ -279,7 +282,11 @@
         }
 
         if(action.action == 'click' && action.type == 'a') {
-          lines.push("browser.get('" + action.locator[0].value + "')");
+          lines.push("browser.get('" + action.value + "')");
+        }
+
+        if(action.action == 'click' && action.locators[0].type == 'xpath') {
+          lines.push("element(by.xpath('" + action.locators[0].value + '")).click()');
         }
 
       });
@@ -287,6 +294,20 @@
       vm.lines = lines;
 
       $log.debug(lines);
+
+    };
+
+    vm.deleteSession = function(){
+
+      $http({
+        method: 'DELETE',
+        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id
+      }).then(function successCallback(response) {
+
+        $log.debug('Session Deleted');
+
+        vm.session = {};
+      });
 
     };
 
