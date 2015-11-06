@@ -46,13 +46,14 @@
               <td><b>{{ action.action }}</b></td>
               <td>{{ action.type }}</td>
               <td>
-                <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+                <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float class="md-block">
                   <md-select aria-label="Locator {{ locator.value }}" ng-model="action.locator">
                     <md-option ng-repeat="locator in action.locators" value="{{locator.value}}">
                       {{ locator.type }} - {{ locator.value }}
                     </md-option>
                   </md-select>
                 </md-input-container>
+                <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
               </td>
               <td>{{ action.value }}</td>
               <td><md-button ng-click="main.removeAction($index)">X</md-button></td>
