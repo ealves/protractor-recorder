@@ -67,9 +67,9 @@
               </tr>
               </thead>
               <tbody>
-              <tr ng-repeat="action in main.spec.actions">
+              <tr ng-repeat="action in main.spec.actions track by $index">
                 <td>
-                  <md-checkbox ng-model="action.$index" aria-label="Checkbox $index"></md-checkbox>
+                  <md-checkbox ng-model="action.status" aria-label="Checkbox $index"></md-checkbox>
                 </td>
                 <td><b>{{ action.action }}</b></td>
                 <td>{{ action.type }}</td>
