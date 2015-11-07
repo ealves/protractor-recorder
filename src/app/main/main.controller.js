@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $location, $http, $log, socket) {
+  function MainController($scope, $http, $log, socket) {
 
     var vm = this;
 
@@ -15,6 +15,7 @@
     vm.session = {};
 
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
+
     //vm.actions = [];
     vm.lines = [];
 
@@ -311,16 +312,14 @@
 
     };
 
-    //Todo Fixes this
-    $scope.$watchCollection(angular.bind(vm.spec.actions, function () {
-
-      $log.debug('watch actions');
-
-      //localStorage.setItem('actions', angular.toJson(vm.actions));
+    $scope.$watch('main.describe', function () {
+      $log.debug('watch describe');
       localStorage.setItem('describes', angular.toJson(vm.describes));
+    }, true);
 
-    }), function(newValue, oldValue){
-
+    $scope.$watchCollection('main.describes', function () {
+      $log.debug('watch describes');
+      localStorage.setItem('describes', angular.toJson(vm.describes));
     });
 
     $scope.$watch('main.url', function(newValue, oldValue){
