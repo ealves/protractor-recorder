@@ -194,6 +194,16 @@
 
     vm.exportProtractor = function(){
 
+      $http({
+        method: 'POST',
+        url: 'http://localhost:9000/export',
+        data: {describe: angular.toJson(vm.describe), id: 1}
+      }).then(function successCallback(response) {
+
+        $log.debug('Exported');
+
+      });
+
       $log.debug('Export Protractor');
       var lines = [];
 
