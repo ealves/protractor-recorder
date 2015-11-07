@@ -10,14 +10,13 @@
 
     var vm = this;
 
-    vm.url = 'http://pmi.sbox.me/';
+    vm.url = localStorage.getItem('url') ? localStorage.getItem('url') : '';
 
     vm.session = {};
     vm.actions = [];
     vm.lines = [];
 
     $scope.actions = vm.actions;
-
 
     var actions = localStorage.getItem('actions');
 
@@ -44,20 +43,8 @@
 
     });
 
-    socket.on('focus', function(data){
-      $log.debug('onfocus');
-      $log.debug(data);
-
-    });
-
     socket.on('assertion', function(data){
       $log.debug('onassertion');
-      $log.debug(data);
-
-    });
-
-    socket.on('unload', function(data){
-      $log.debug('onunload');
       $log.debug(data);
 
     });
@@ -107,7 +94,7 @@
       }
 
       if(type == 'input' && vm.getAttr('type', element) == 'submit') {
-        locators.push({type: 'css', value: 'input[type=submit][value=' + element.val() + ']'});
+        locators.push({type: 'css', value: '[value="' + element.val() + '"]'});
       }
 
       if(vm.getAttr('href', element)) {
@@ -140,6 +127,46 @@
       //localStorage.setItem('actions', angular.toJson(vm.actions));
 
       vm.getSessionUrl();
+
+    };
+
+    vm.exportProtractor = function(){
+
+      $log.debug('Export Protractor');
+      var lines = [];
+
+      angular.forEach(vm.actions, function(action){
+
+        if(action.action == 'sendKeys') {
+          lines.push("element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')");
+        }
+
+        if(action.action == 'click' && action.type == 'button' && action.value) {
+          lines.push("element(by.buttonText('" + action.value + "')).click()");
+          return true;
+        }
+
+        if(action.action == 'click' && action.type == 'a') {
+          lines.push("browser.get('" + action.value + "')");
+        }
+
+        if(action.action == 'click' && action.locators[0].type == 'xpath') {
+          lines.push("element(by.xpath('" + action.locators[0].value + "')).click()");
+        }
+
+        if(action.action == 'click' && action.locators[0].type == 'id') {
+          lines.push("element(by.id('" + action.locators[0].value + "')).click()");
+        }
+
+        if(action.action == 'click' && action.type == 'input' && action.locators[0].type == 'css') {
+          lines.push("element(by.css('" + action.locators[0].value + "')).click()");
+        }
+
+      });
+
+      vm.lines = lines;
+
+      $log.debug(lines);
 
     };
 
@@ -232,11 +259,14 @@
 
     });
 
-    /*$scope.$watch('main.url', function(newValue, oldValue){
+    $scope.$watch('main.url', function(newValue, oldValue){
       $log.debug('watch Url');
-      if(newValue != oldValue)
-        vm.setSessionUrl();
-    });*/
+
+      localStorage.setItem('url', vm.url);
+      
+      /*if(newValue != oldValue)
+        vm.setSessionUrl();*/
+    });
 
     vm.sessionExecute = function(){
 
@@ -278,46 +308,6 @@
       if(vm.session.source && !vm.session.source.match(/snippet\.js/)) {
         vm.sessionExecute();
       }
-
-    };
-
-    vm.exportProtractor = function(){
-
-      $log.debug('Export Protractor');
-      var lines = [];
-
-      angular.forEach(vm.actions, function(action){
-
-        if(action.action == 'sendKeys') {
-          lines.push("element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')");
-        }
-
-        if(action.action == 'click' && action.type == 'button' && action.value) {
-          lines.push("element(by.buttonText('" + action.value + "')).click()");
-          return true;
-        }
-
-        if(action.action == 'click' && action.type == 'a') {
-          lines.push("browser.get('" + action.value + "')");
-        }
-
-        if(action.action == 'click' && action.locators[0].type == 'xpath') {
-          lines.push("element(by.xpath('" + action.locators[0].value + "')).click()");
-        }
-
-        if(action.action == 'click' && action.locators[0].type == 'id') {
-          lines.push("element(by.id('" + action.locators[0].value + "')).click()");
-        }
-
-        if(action.action == 'click' && action.type == 'input' && action.locators[0].type == 'css') {
-          lines.push("element(by.css('" + action.locators[0].value + "')).click()");
-        }
-
-      });
-
-      vm.lines = lines;
-
-      $log.debug(lines);
 
     };
 
