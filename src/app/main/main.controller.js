@@ -192,15 +192,35 @@
 
     };
 
+    vm.runTest = function(){
+
+      $log.debug('runTest');
+
+      $http({
+        method: 'GET',
+        url: 'http://localhost:9000/run'
+      }).then(function successCallback(response) {
+
+        $log.debug('Test finished');
+        $log.debug(response);
+
+      });
+    };
+
+    vm.removeSpec = function(index){
+      vm.describe.specs.splice(index, 1);
+    };
+
     vm.exportProtractor = function(){
 
       $http({
         method: 'POST',
         url: 'http://localhost:9000/export',
-        data: {describe: angular.toJson(vm.describe), id: 1}
+        data: {describe: angular.toJson(vm.describe)}
       }).then(function successCallback(response) {
 
         $log.debug('Exported');
+        $log.debug(response);
 
       });
 
@@ -215,7 +235,6 @@
 
         if(action.action == 'click' && action.type == 'button' && action.value) {
           lines.push("element(by.buttonText('" + action.value + "')).click()");
-          return true;
         }
 
         if(action.action == 'click' && action.type == 'a') {
@@ -332,7 +351,7 @@
       localStorage.setItem('describes', angular.toJson(vm.describes));
     });
 
-    $scope.$watch('main.url', function(newValue, oldValue){
+    $scope.$watch('main.url', function(){
       $log.debug('watch Url');
 
       localStorage.setItem('url', vm.url);
@@ -390,6 +409,7 @@
       }).then(function successCallback(response) {
 
         $log.debug('Session Deleted');
+        $log.debug(response);
 
         vm.session = {};
       });

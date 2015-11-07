@@ -5,7 +5,8 @@ var express = require('express'),
  bodyParser = require('body-parser'),
  app     = express(),
  http    = require('http').Server(app),
- io      = require('socket.io')(http);
+ io      = require('socket.io')(http),
+ fs      = require('fs');
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -77,13 +78,78 @@ app.get('/teste', function(req, res){
 	res.send('teste');
 });
 
+app.get('/run', function(req, res){
+
+
+  var exec = require('child_process').exec;
+  exec('protractor /home/ealves/Documents/protractor-recorder/conf.js', function(error, stdout, stderr) {
+
+    console.log(stdout);
+
+  });
+
+  res.send('run');
+});
+
 app.post('/export', function(req, res){
 
   var describe = req.body.describe;
   var id = req.body.id;
 
-  console.log(describe);
-  console.log(id);
+  describe = JSON.parse(describe);
+
+  //console.log(describe);
+  //console.log(id);
+
+  var output = "describe('" + describe.string + "', function(){\r\n\r\n";
+
+  describe.specs.forEach(function(spec){
+    output += "  it('" + spec.string + "', function(){\r\n\r\n";
+
+    spec.actions.forEach(function(action){
+
+      var line = '';
+
+      if(action.action == 'sendKeys') {
+        line = "element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')";
+      }
+
+      if(action.action == 'click' && action.type == 'button' && action.value) {
+        line = "element(by.buttonText('" + action.value + "')).click()";
+      }
+
+      if(action.action == 'click' && action.type == 'a') {
+        line = "browser.get('" + action.value + "')";
+      }
+
+      if(action.action == 'click' && action.locators[0].type == 'xpath') {
+        line = "element(by.xpath('" + action.locators[0].value + "')).click()";
+      }
+
+      if(action.action == 'click' && action.locators[0].type == 'id') {
+        line = "element(by.id('" + action.locators[0].value + "')).click()";
+      }
+
+      if(action.action == 'click' && action.type == 'input' && action.locators[0].type == 'css') {
+        line = "element(by.css('" + action.locators[0].value + "')).click()";
+      }
+
+      output += '    ' + line + ';\r\n';
+
+      console.log(line);
+    });
+
+    output += '\r\n  });\r\n\r\n';
+  });
+
+  output += '});\r\n';
+
+  fs.writeFile('test.js', output, function(err) {
+    if(err) {
+      return console.log(err);
+    }
+    console.log("The file was saved!");
+  });
 
   res.send('ok');
 });
