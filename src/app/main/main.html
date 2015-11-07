@@ -1,73 +1,103 @@
-  <div flex layout="column">
-    <md-toolbar layout-align="center end">
-      <div class="md-toolbar-tools">
-        <h2>Protractor Recorder</h2>
-      </div>
-    </md-toolbar>
+<div flex layout="column">
 
-    <md-content class="flex layout-column">
+  <md-toolbar layout-align="center end">
+    <div class="md-toolbar-tools">
+      <h2>Protractor Recorder</h2>
+    </div>
+  </md-toolbar>
 
-      <md-input-container md-no-float class="md-block">
-        <input ng-model="main.url" type="text" placeholder="Url">
-      </md-input-container>
+  <div flex layout="row">
+    <div flex="30" layout="column">
 
-      <md-button ng-click="main.createSession()">Create Session</md-button>
+      <md-content class="flex layout-column">
+        <ul ng-repeat="describe in main.describes">
+          <li ng-click="main.setDescribe(describe)">{{ describe.string }}</li>
+          <ul ng-repeat="spec in describe.specs">
+            <li ng-click="main.setSpec(spec)">{{ spec.string }}</li>
+          </ul>
+        </ul>
+      </md-content>
+    </div>
+    <div flex="70" layout="column">
+      <md-content class="flex layout-column">
 
-      <!--<md-button ng-click="main.setSessionUrl()">Start Session</md-button>-->
+        <md-button ng-click="main.newDescribe()">New Describe</md-button>
 
-      <md-button ng-click="main.deleteSession()">Delete Session</md-button>
+        <md-button ng-click="main.addSpec()">Add Spec</md-button>
 
-      <!--<md-button ng-click="main.getSessionUrl()">Session Url</md-button>-->
+        <md-button ng-click="main.createSession()">Create Session</md-button>
 
-      <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
+        <!--<md-button ng-click="main.setSessionUrl()">Start Session</md-button>-->
 
-      <div layout="row" layout-align="center start" flex>
+        <md-button ng-click="main.deleteSession()">Delete Session</md-button>
 
-        <md-whiteframe layout="column" flex="80" class="md-whiteframe-1dp">
-          <table class="table table-hover table-mc-light-blue ng-scope">
-            <thead>
-            <tr>
-              <th>
-                <md-checkbox ng-model="all" aria-label="Checkbox 1">
-                </md-checkbox>
-              </th>
-              <th>Action</th>
-              <th>Type</th>
-              <th>Locators</th>
-              <th>Value</th>
-              <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="action in main.actions">
-              <td>
-                <md-checkbox ng-model="action.$index" aria-label="Checkbox $index"></md-checkbox>
-              </td>
-              <td><b>{{ action.action }}</b></td>
-              <td>{{ action.type }}</td>
-              <td>
-                <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float class="md-block">
-                  <md-select aria-label="Locator {{ locator.value }}" ng-model="action.locator">
-                    <md-option ng-repeat="locator in action.locators" value="{{locator.value}}">
-                      {{ locator.type }} - {{ locator.value }}
-                    </md-option>
-                  </md-select>
-                </md-input-container>
-                <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
-              </td>
-              <td>{{ action.value }}</td>
-              <td><md-button ng-click="main.removeAction($index)">X</md-button></td>
-            </tr>
-            </tbody>
-          </table>
-        </md-whiteframe>
-      </div>
+        <!--<md-button ng-click="main.getSessionUrl()">Session Url</md-button>-->
 
-      <!--<div style="display: none" id="source">teste</div>-->
+        <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
+
+        <md-input-container md-no-float class="md-block">
+          <input ng-model="main.url" type="text" placeholder="Url">
+        </md-input-container>
+
+        <md-input-container class="md-block">
+          <label>Describe</label>
+          <input type="text" ng-model="main.describe.string">
+        </md-input-container>
+
+        <md-input-container class="md-block">
+          <label>Spec</label>
+          <input type="text" ng-model="main.spec.string">
+        </md-input-container>
+
+        <div layout="row" layout-align="center start" flex>
+
+          <md-whiteframe layout="column" flex="80" class="md-whiteframe-1dp">
+            <table class="table table-hover table-mc-light-blue ng-scope">
+              <thead>
+              <tr>
+                <th>
+                  <md-checkbox ng-model="all" aria-label="Checkbox 1">
+                  </md-checkbox>
+                </th>
+                <th>Action</th>
+                <th>Type</th>
+                <th>Locators</th>
+                <th>Value</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="action in main.spec.actions">
+                <td>
+                  <md-checkbox ng-model="action.$index" aria-label="Checkbox $index"></md-checkbox>
+                </td>
+                <td><b>{{ action.action }}</b></td>
+                <td>{{ action.type }}</td>
+                <td>
+                  <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float class="md-block">
+                    <md-select aria-label="Locator {{ locator.value }}" ng-model="action.locator">
+                      <md-option ng-repeat="locator in action.locators" value="{{locator.value}}">
+                        {{ locator.type }} - {{ locator.value }}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                  <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
+                </td>
+                <td>{{ action.value }}</td>
+                <td><md-button ng-click="main.removeAction($index)">X</md-button></td>
+              </tr>
+              </tbody>
+            </table>
+          </md-whiteframe>
+        </div>
+
+        <!--<div style="display: none" id="source">teste</div>-->
 
       <span ng-repeat="line in main.lines">
         {{ line }};
       </span>
 
-    </md-content>
+      </md-content>
+    </div>
   </div>
+</div>
