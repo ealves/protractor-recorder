@@ -13,7 +13,7 @@
         <ul ng-repeat="describe in main.describes">
           <li ng-click="main.setDescribe(describe)">{{ describe.string }}</li>
           <ul ng-repeat="spec in describe.specs">
-            <li ng-click="main.setSpec(spec)">{{ spec.string }}</li>
+            <li ng-click="main.setSpec(spec)">{{ spec.string }}<md-button ng-click="main.removeSpec($index)">X</md-button></li>
           </ul>
         </ul>
       </md-content>
@@ -34,6 +34,8 @@
         <!--<md-button ng-click="main.getSessionUrl()">Session Url</md-button>-->
 
         <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
+
+        <md-button ng-click="main.runTest()">Run Test</md-button>
 
         <md-input-container md-no-float class="md-block">
           <input ng-model="main.url" type="text" placeholder="Url">
@@ -93,9 +95,9 @@
 
         <!--<div style="display: none" id="source">teste</div>-->
 
-      <span ng-repeat="line in main.lines">
+      <!--<span ng-repeat="line in main.lines">
         {{ line }};
-      </span>
+      </span>-->
 
       </md-content>
     </div>
