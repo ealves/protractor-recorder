@@ -95,11 +95,14 @@ app.get('/run', function(req, res){
 app.post('/html', function(req, res){
 
   var url = req.body.url;
+  var include = req.body.include;
+
+  console.log(url + '/' + include);
 
   request({
-    uri: url,
+    uri: url + '/' + include,
   }, function(error, response, body) {
-    console.log(body);
+    //console.log(body);
     res.send(body);
   });
 
