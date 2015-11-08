@@ -188,7 +188,15 @@
 
       //localStorage.setItem('actions', angular.toJson(vm.actions));
 
-      vm.getSessionUrl();
+      //vm.getSessionUrl();
+
+    };
+
+    vm.getAllDataBind = function(){
+
+      var matches = vm.session.source.match(/\{{2}(.*?)\}{2}|ng-bind=["|'](.*?)["|']/igm);
+
+      $log.debug(matches);
 
     };
 
@@ -387,10 +395,40 @@
           /*var sourceHtml = angular.element(document.querySelector('#source'));
            sourceHtml.html(response.data.value);*/
 
+          vm.getNgIncludes();
           vm.verifySnippet();
         });
       }
 
+    };
+
+    vm.getNgIncludes = function(){
+
+      var ngIncludes = vm.session.source.match(/ngInclude:\s?["|'](.*?)["|']/igm);
+
+      $log.debug(ngIncludes);
+
+      var includes = [];
+
+      angular.forEach(ngIncludes, function(include){
+
+        include = include.replace(/\//g, '');
+        include = include.replace(/\//g, '');
+        include = include.replace('ngInclude:', '');
+        include = include.trim();
+
+      });
+
+      $http({
+        method: 'POST',
+        url: 'http://localhost:9000/html',
+        data: {url: vm.url, includes: includes}
+      }).then(function successCallback(response) {
+
+        vm.session.source += response;
+        vm.getAllDataBind();
+
+      });
     };
 
     vm.verifySnippet = function(){

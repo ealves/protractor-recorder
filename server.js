@@ -6,7 +6,8 @@ var express = require('express'),
  app     = express(),
  http    = require('http').Server(app),
  io      = require('socket.io')(http),
- fs      = require('fs');
+ fs      = require('fs'),
+ request = require("request");
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -89,6 +90,19 @@ app.get('/run', function(req, res){
   });
 
   res.send('run');
+});
+
+app.post('/html', function(req, res){
+
+  var url = req.body.url;
+
+  request({
+    uri: url,
+  }, function(error, response, body) {
+    console.log(body);
+    res.send(body);
+  });
+
 });
 
 app.post('/export', function(req, res){
