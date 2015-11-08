@@ -22,6 +22,8 @@
     vm.describe = {};
     vm.spec = [];
 
+    vm.dataBind = [];
+
     //$scope.actions = vm.actions;
 
     /*var actions = localStorage.getItem('actions');
@@ -194,9 +196,24 @@
 
     vm.getAllDataBind = function(){
 
-      var matches = vm.session.source.match(/\{{2}(.*?)\}{2}|ng-bind=["|'](.*?)["|']/igm);
+      $log.debug('getAllDataBind');
 
-      $log.debug(matches);
+      var dataBind = vm.session.source.match(/\{{2}(.*?)\}{2}|ng-bind=["|'](.*?)["|']/igm);
+
+      angular.forEach(dataBind, function(data){
+
+        data = data.replace(/\"|\'|ng-bind=|{{|}}/g, '').trim();
+
+        if(!$filter('filter')(vm.dataBind, data).length){
+
+          vm.dataBind.push(data);
+
+        }
+
+      });
+
+      $log.debug(dataBind);
+      $log.debug(vm.dataBind);
 
     };
 
@@ -404,6 +421,8 @@
 
     vm.getNgIncludes = function(){
 
+      $log.debug('getNgIncludes');
+
       var ngIncludes = vm.session.source.match(/ngInclude:\s?["|'](.*?)["|']/igm);
 
       $log.debug(ngIncludes);
@@ -412,10 +431,7 @@
 
       angular.forEach(ngIncludes, function(include){
 
-        include = include.replace(/\'/g, '');
-        include = include.replace(/\"/g, '');
-        include = include.replace('ngInclude:', '');
-        include = include.trim();
+        include = include.replace(/\"|\'|ngInclude|{{|}}/g, '').trim();
 
         if(!$filter('filter')(includes, include).length){
 
@@ -429,9 +445,10 @@
             vm.getAllDataBind();
 
           });
+
         }
 
-        //includes.push(include);
+        includes.push(include);
 
       });
 
