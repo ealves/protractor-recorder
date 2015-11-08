@@ -73,6 +73,17 @@
       $log.debug('onassertion');
       $log.debug(data);
 
+      var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
+
+      lastAction.action = 'assertion';
+      lastAction.value = data;
+
+      vm.dataBind.forEach(function(data){
+
+        lastAction.locators.push(data);
+
+      });
+
     });
 
     socket.on('session-disconnect', function(data){
@@ -183,7 +194,7 @@
         value: value,
         action: actionType,
         locators: locators,
-        locator: locators ? locators[0].value : null
+        locator: locators ? {type: locators[0].type, value: locators[0].value} : null
       };
 
       vm.spec.actions.push(action);
@@ -206,7 +217,7 @@
 
         if(!$filter('filter')(vm.dataBind, data).length){
 
-          vm.dataBind.push(data);
+          vm.dataBind.push({type: 'bind', value: data});
 
         }
 
@@ -431,7 +442,7 @@
 
       angular.forEach(ngIncludes, function(include){
 
-        include = include.replace(/\"|\'|ngInclude|{{|}}/g, '').trim();
+        include = include.replace(/:\s|\"|\'|ngInclude|{{|}}/g, '').trim();
 
         if(!$filter('filter')(includes, include).length){
 

@@ -151,6 +151,9 @@ app.post('/export', function(req, res){
         line = "element(by.css('" + action.locators[0].value + "')).click()";
       }
 
+      if(action.action == 'assertion')
+        line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
       output += '    ' + line + ';\r\n';
 
       console.log(line);
