@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $http, $log, socket) {
+  function MainController($scope, $http, $log, $filter, socket) {
 
     var vm = this;
 
@@ -412,23 +412,30 @@
 
       angular.forEach(ngIncludes, function(include){
 
-        include = include.replace(/\//g, '');
-        include = include.replace(/\//g, '');
+        include = include.replace(/\'/g, '');
+        include = include.replace(/\"/g, '');
         include = include.replace('ngInclude:', '');
         include = include.trim();
 
+        if(!$filter('filter')(includes, include).length){
+
+          $http({
+            method: 'POST',
+            url: 'http://localhost:9000/html',
+            data: {url: vm.url, include: include}
+          }).then(function successCallback(response) {
+
+            vm.session.source += response.data;
+            vm.getAllDataBind();
+
+          });
+        }
+
+        //includes.push(include);
+
       });
 
-      $http({
-        method: 'POST',
-        url: 'http://localhost:9000/html',
-        data: {url: vm.url, includes: includes}
-      }).then(function successCallback(response) {
 
-        vm.session.source += response;
-        vm.getAllDataBind();
-
-      });
     };
 
     vm.verifySnippet = function(){
