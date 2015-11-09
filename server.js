@@ -83,6 +83,7 @@ app.get('/run', function(req, res){
 
 
   var exec = require('child_process').exec;
+
   exec('protractor /home/ealves/Documents/protractor-recorder/exports/conf.js', function(error, stdout, stderr) {
 
     console.log(stdout);
@@ -164,7 +165,7 @@ app.post('/export', function(req, res){
 
   output += '});\r\n';
 
-  fs.writeFile('/home/ealves/Documents/protractor-recorder/test.js', output, function(err) {
+  fs.writeFile('/home/ealves/Documents/protractor-recorder/export/test.js', output, function(err) {
     if(err) {
       return console.log(err);
     }
