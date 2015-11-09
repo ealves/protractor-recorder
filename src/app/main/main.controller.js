@@ -140,12 +140,12 @@
 
       if(target[0].tagName.match(/^button/i) || parent[0].tagName.match(/^button/i) && !target[0].tagName.match(/^input/i)){
 
-        vm.addElement(parent, 'button', 'click', target.text().trim());
+        vm.addElement(parent, 'button', 'click', target.text().trim(), element.xPath);
 
       } else if(target[0].tagName.match(/^input/i)){
-        vm.addElement(target, 'input', 'click', false);
+        vm.addElement(target, 'input', 'click', false, element.xPath);
       } else if(target[0].tagName.match(/^a/i)) {
-        vm.addElement(target, 'a', 'click', false);
+        vm.addElement(target, 'a', 'click', false, element.xPath);
       } else {
 
         var value = target.text() ? target.text() : false;
@@ -184,12 +184,17 @@
         
         if(value)
           locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});
-        else
+        else if(xPath && !vm.getAttr('ng-click', element))
           locators.push({type: 'xpath', value: xPath});
+        else if(vm.getAttr('ng-click', element)){
+          //element(by.css("[ng-click='changeToRemove(row.entity)']")).click();
+          locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]'})
+        }
+
       }
 
       var action = {
-        element: element.html(),
+        //element: element.html(),
         type: type,
         value: value,
         action: actionType,

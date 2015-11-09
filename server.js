@@ -83,7 +83,7 @@ app.get('/run', function(req, res){
 
 
   var exec = require('child_process').exec;
-  exec('protractor /home/ealves/Documents/protractor-recorder/conf.js', function(error, stdout, stderr) {
+  exec('protractor /home/ealves/Documents/protractor-recorder/exports/conf.js', function(error, stdout, stderr) {
 
     console.log(stdout);
 
@@ -147,7 +147,7 @@ app.post('/export', function(req, res){
         line = "element(by.id('" + action.locators[0].value + "')).click()";
       }
 
-      if(action.action == 'click' && action.type == 'input' && action.locators[0].type == 'css') {
+      if(action.action == 'click' && action.locators[0].type == 'css') {
         line = "element(by.css('" + action.locators[0].value + "')).click()";
       }
 
@@ -164,7 +164,7 @@ app.post('/export', function(req, res){
 
   output += '});\r\n';
 
-  fs.writeFile('test.js', output, function(err) {
+  fs.writeFile('/home/ealves/Documents/protractor-recorder/test.js', output, function(err) {
     if(err) {
       return console.log(err);
     }
