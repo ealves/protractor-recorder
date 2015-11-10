@@ -4,5 +4,4 @@ coverage/
 .sass-cache/
 .idea/
 .tmp/
-exports/
 dist/

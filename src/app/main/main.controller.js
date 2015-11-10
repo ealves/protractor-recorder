@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $http, $log, $filter, $timeout, socket) {
+  function MainController($scope, $http, $log, $filter, $timeout, $mdToast, socket) {
 
     var vm = this;
 
@@ -57,10 +57,10 @@
     $scope.$watch('main.isOpen', function (isOpen) {
       if (isOpen) {
         $timeout(function () {
-          $scope.tooltipVisible = self.isOpen;
+          vm.tooltipVisible = vm.isOpen;
         }, 600);
       } else {
-        $scope.tooltipVisible = self.isOpen;
+        vm.tooltipVisible = vm.isOpen;
       }
     });
 
@@ -270,6 +270,8 @@
 
     vm.exportProtractor = function () {
 
+      $log.debug('exportProtractor');
+
       $http({
         method: 'POST',
         url: 'http://localhost:9000/export',
@@ -278,6 +280,13 @@
 
         $log.debug('Exported');
         $log.debug(response);
+
+        $mdToast.show(
+            $mdToast.simple()
+                .content('File exported!')
+                .position('bottom left')
+                .hideDelay(3000)
+        );
 
       });
 
@@ -426,6 +435,13 @@
       }).then(function successCallback() {
 
         $log.debug('Session Executed');
+
+        $mdToast.show(
+            $mdToast.simple()
+                .content('Session started!')
+                .position('bottom left')
+                .hideDelay(3000)
+        );
 
       });
 
