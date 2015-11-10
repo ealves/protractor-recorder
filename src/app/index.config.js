@@ -48,6 +48,7 @@
         .icon('delete', 'assets/svg/ic_delete_24px.svg', 24)
         .icon('edit', 'assets/svg/ic_edit_24px.svg', 24)
         .icon('email', 'assets/svg/ic_email_24px.svg'        , 24)
+        .icon('list', 'assets/svg/ic_list_24px.svg'        , 24)
         .icon('home', 'assets/svg/ic_home_24px.svg', 24)
         .icon('more_horiz', 'assets/svg/ic_more_horiz_24px.svg'        , 24)
         .icon('more_vert', 'assets/svg/ic_more_vert_24px.svg'        , 24)
@@ -57,6 +58,7 @@
         .icon('person', 'assets/svg/ic_person_24px.svg', 24)
         .icon('play_circle', 'assets/svg/ic_play_circle_outline_24px.svg', 24)
         .icon('settings', 'assets/svg/ic_settings_24px.svg', 24)
+        .icon('stop', 'assets/svg/ic_stop_24px.svg', 24)
         .icon('save', 'assets/svg/ic_save_24px.svg', 24);
 
 

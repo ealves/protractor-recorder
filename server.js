@@ -165,7 +165,7 @@ app.post('/export', function(req, res){
 
   output += '});\r\n';
 
-  fs.writeFile('/home/ealves/Documents/protractor-recorder/export/test.js', output, function(err) {
+  fs.writeFile('/home/ealves/Documents/protractor-recorder/exports/test.js', output, function(err) {
     if(err) {
       return console.log(err);
     }

@@ -3,6 +3,20 @@
   <md-toolbar layout-align="center end">
     <div class="md-toolbar-tools">
       <h2>Protractor Recorder</h2>
+
+      <span class="flex"></span>
+
+      <md-button style="color: #000" class="md-raised" ng-click="main.createSession()">
+        <md-icon style="color: #000" md-svg-icon="play_circle"></md-icon>
+        Record
+      </md-button>
+
+      <!--<md-button class="md-raised md-warn" ng-click="main.stopRecording()">-->
+      <md-button class="md-raised md-warn" ng-click="main.deleteSession()">
+        <md-icon style="color: #FFF" md-svg-icon="stop"></md-icon>
+        Stop
+      </md-button>
+
     </div>
   </md-toolbar>
 
@@ -10,8 +24,16 @@
 
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 
+      <div layout="column" layout-padding>
+        <md-input-container class="md-block">
+          <label>Url base</label>
+          <input ng-model="main.url" type="text" placeholder="Url">
+        </md-input-container>
+      </div>
       <div ng-repeat="describe in main.describes">
-        <md-subheader class="md-no-sticky">{{ describe.string }}</md-subheader>
+        <md-subheader class="md-no-sticky">
+          {{ describe.string }}
+        </md-subheader>
         <md-divider></md-divider>
         <md-list>
           <md-list-item ng-click="main.setSpec(spec)" ng-repeat="spec in describe.specs">
@@ -36,13 +58,8 @@
     </md-sidenav>
 
     <div flex layout-padding layout="column">
-      <md-content class="flex layout-column">
+      <md-content md-scroll-y class="flex layout-column">
 
-
-
-        <md-input-container md-no-float class="md-block">
-          <input ng-model="main.url" type="text" placeholder="Url">
-        </md-input-container>
 
         <md-input-container class="md-block">
           <label>Describe</label>
@@ -79,7 +96,8 @@
                 <td><b>{{ action.action }}</b></td>
                 <td>{{ action.type }}</td>
                 <td>
-                  <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float class="md-block">
+                  <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
+                                      class="md-block">
                     <md-select aria-label="Locator {{ locator.value }}" ng-model="action.locator.value">
                       <md-option ng-repeat="locator in action.locators" value="{{locator.value}}">
                         {{ locator.type }} - {{ locator.value }}
@@ -104,13 +122,13 @@
 
         <!--<md-button ng-click="main.addSpec()">Add Spec</md-button>-->
 
-        <md-button ng-click="main.createSession()">Create Session</md-button>
+        <!--<md-button ng-click="main.createSession()">Create Session</md-button>-->
 
         <!--<md-button ng-click="main.setSessionUrl()">Start Session</md-button>-->
 
-        <md-button ng-click="main.deleteSession()">Delete Session</md-button>
-
         <!--<md-button ng-click="main.getSessionUrl()">Session Url</md-button>-->
+
+        <!--<md-button ng-click="main.deleteSession()">Delete Session</md-button>-->
 
         <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
 
@@ -118,9 +136,9 @@
 
         <!--<div style="display: none" id="source">teste</div>-->
 
-      <!--<span ng-repeat="line in main.lines">
-        {{ line }};
-      </span>-->
+        <!--<span ng-repeat="line in main.lines">
+          {{ line }};
+        </span>-->
 
       </md-content>
       <md-fab-speed-dial ng-hide="main.hidden" md-direction="up" md-open="main.isOpen"
@@ -128,7 +146,7 @@
                          ng-mouseenter="main.isOpen=true" ng-mouseleave="main.isOpen=false">
         <md-fab-trigger>
           <md-button aria-label="menu" ng-click="main.addSpec()" class="md-fab md-warn">
-            <md-tooltip md-direction="top" md-visible="tooltipVisible">Add Spec</md-tooltip>
+            <md-tooltip md-direction="left" md-visible="tooltipVisible">Add Spec</md-tooltip>
             <md-icon md-svg-icon="add" aria-label="menu"></md-icon>
           </md-button>
         </md-fab-trigger>
@@ -139,7 +157,7 @@
                         md-autohide="false">
               New Describe
             </md-tooltip>
-            <md-icon md-svg-src="add" aria-label="Describe"></md-icon>
+            <md-icon style="color: #000" md-svg-icon="list" aria-label="Describe"></md-icon>
           </md-button>
           <md-button aria-label="Add Config" class="md-fab md-raised md-mini"
                      ng-click="main.addConfig()">
@@ -147,18 +165,9 @@
                         md-autohide="false">
               Add Config
             </md-tooltip>
-            <md-icon md-svg-src="add" aria-label="Config"></md-icon>
+            <md-icon style="color: #000" md-svg-icon="settings" aria-label="Config"></md-icon>
           </md-button>
-          <!--<div ng-repeat="item in demo.items">
-            <md-button aria-label="{{item.name}}" class="md-fab md-raised md-mini"
-                       ng-click="demo.openDialog($event, item)">
-              <md-tooltip md-direction="{{item.direction}}" md-visible="tooltipVisible"
-                          md-autohide="false">
-                {{item.name}}
-              </md-tooltip>
-              <md-icon md-svg-src="{{item.icon}}" aria-label="{{item.name}}"></md-icon>
-            </md-button>
-          </div>-->
+
         </md-fab-actions>
       </md-fab-speed-dial>
     </div>

@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -28,19 +28,18 @@
 
     /*var actions = localStorage.getItem('actions');
 
-    if(actions) {
-      vm.actions = angular.fromJson(actions);
-    }*/
+     if(actions) {
+     vm.actions = angular.fromJson(actions);
+     }*/
 
     vm.sample = {
       string: 'Describe Google Search Example',
       specs: [
         {
           string: 'Should do a search',
-          actions:
-            [
-              {"type":"link","value":"http://google.com","action":"get"}
-            ]
+          actions: [
+            {"type": "link", "value": "http://google.com", "action": "get"}
+          ]
         }
       ]
     };
@@ -55,22 +54,17 @@
     vm.hover = false;
     // On opening, add a delayed property which shows tooltips after the speed dial has opened
     // so that they have the proper position; if closing, immediately hide the tooltips
-    $scope.$watch('main.isOpen', function(isOpen) {
+    $scope.$watch('main.isOpen', function (isOpen) {
       if (isOpen) {
-        $timeout(function() {
+        $timeout(function () {
           $scope.tooltipVisible = self.isOpen;
         }, 600);
       } else {
         $scope.tooltipVisible = self.isOpen;
       }
     });
-    /*vm.items = [
-      { name: "Twitter", icon: "img/icons/twitter.svg", direction: "bottom" },
-      { name: "Facebook", icon: "img/icons/facebook.svg", direction: "top" },
-      { name: "Google Hangout", icon: "img/icons/hangout.svg", direction: "bottom" }
-    ];*/
 
-    socket.on('click', function(data){
+    socket.on('click', function (data) {
       $log.debug('onclick');
       $log.debug(data);
 
@@ -78,7 +72,7 @@
 
     });
 
-    socket.on('keyup', function(data){
+    socket.on('keyup', function (data) {
       $log.debug('onkeyup');
       $log.debug(data);
 
@@ -89,7 +83,7 @@
 
     });
 
-    socket.on('assertion', function(data){
+    socket.on('assertion', function (data) {
       $log.debug('onassertion');
       $log.debug(data);
 
@@ -98,7 +92,7 @@
       lastAction.action = 'assertion';
       lastAction.value = data;
 
-      vm.dataBind.forEach(function(data){
+      vm.dataBind.forEach(function (data) {
 
         lastAction.locators.push(data);
 
@@ -106,16 +100,16 @@
 
     });
 
-    socket.on('session-disconnect', function(data){
+    socket.on('session-disconnect', function (data) {
       $log.debug('on-session-disconnect');
       $log.debug(data);
       vm.getSessionSource();
 
     });
 
-    vm.setExample = function() {
+    vm.setExample = function () {
 
-      if(!vm.describes.length) {
+      if (!vm.describes.length) {
 
         vm.describes.push(angular.copy(vm.sample));
 
@@ -130,12 +124,12 @@
 
     };
 
-    vm.newDescribe = function(){
+    vm.newDescribe = function () {
       $log.debug('newDescribe');
 
     };
 
-    vm.addSpec = function(){
+    vm.addSpec = function () {
       $log.debug('addSpec');
 
       vm.describe.specs.push(angular.copy(vm.blankSpec));
@@ -143,28 +137,28 @@
 
     };
 
-    vm.setDescribe = function(describe){
+    vm.setDescribe = function (describe) {
       vm.describe = describe;
     };
 
-    vm.setSpec = function(spec){
+    vm.setSpec = function (spec) {
       vm.spec = spec;
     };
 
     vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="http://localhost:9000/snippet.js",head.appendChild(e)},script.src="http://localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
 
-    vm.setElement = function(element) {
+    vm.setElement = function (element) {
 
       var target = angular.element(element.outerHTML);
-      var parent  = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
+      var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
 
-      if(target[0].tagName.match(/^button/i) || parent[0].tagName.match(/^button/i) && !target[0].tagName.match(/^input/i)){
+      if (target[0].tagName.match(/^button/i) || parent[0].tagName.match(/^button/i) && !target[0].tagName.match(/^input/i)) {
 
         vm.addElement(parent, 'button', 'click', target.text().trim(), element.xPath);
 
-      } else if(target[0].tagName.match(/^input/i)){
+      } else if (target[0].tagName.match(/^input/i)) {
         vm.addElement(target, 'input', 'click', false, element.xPath);
-      } else if(target[0].tagName.match(/^a/i)) {
+      } else if (target[0].tagName.match(/^a/i)) {
         vm.addElement(target, 'a', 'click', false, element.xPath);
       } else {
 
@@ -174,39 +168,39 @@
       }
     };
 
-    vm.addElement = function(element, type, actionType, value, xPath) {
+    vm.addElement = function (element, type, actionType, value, xPath) {
 
       var locators = [];
 
-      if(type == 'button' && value)
+      if (type == 'button' && value)
         locators.push({type: 'buttonText', value: value});
 
-      if(type == 'input' && vm.getAttr('ng-model', element))
+      if (type == 'input' && vm.getAttr('ng-model', element))
         locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
 
-      if(type == 'input' && vm.getAttr('type', element) == 'button') {
+      if (type == 'input' && vm.getAttr('type', element) == 'button') {
         locators.push({type: 'id', value: vm.getAttr('id', element)});
       }
 
-      if(type == 'input' && vm.getAttr('type', element) == 'submit') {
+      if (type == 'input' && vm.getAttr('type', element) == 'submit') {
         locators.push({type: 'css', value: '[value="' + element.val() + '"]'});
       }
 
-      if(vm.getAttr('href', element)) {
+      if (vm.getAttr('href', element)) {
         locators.push({type: 'href', value: vm.getAttr('href', element)});
         value = vm.getAttr('href', element);
       }
 
-      if(vm.getAttr('id', element))
+      if (vm.getAttr('id', element))
         locators.push({type: 'id', value: '#' + vm.getAttr('id', element)});
 
-      if(vm.getAttr('class', element)) {
-        
-        if(value)
+      if (vm.getAttr('class', element)) {
+
+        if (value)
           locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});
-        else if(xPath && !vm.getAttr('ng-click', element))
+        else if (xPath && !vm.getAttr('ng-click', element))
           locators.push({type: 'xpath', value: xPath});
-        else if(vm.getAttr('ng-click', element)){
+        else if (vm.getAttr('ng-click', element)) {
           //element(by.css("[ng-click='changeToRemove(row.entity)']")).click();
           locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]'})
         }
@@ -224,23 +218,25 @@
 
       vm.spec.actions.push(action);
 
+      var mainContent = angular.element( document.querySelector('#main') );
+      mainContent[0].scrollTop = mainContent[0].scrollHeight;
       //localStorage.setItem('actions', angular.toJson(vm.actions));
 
       //vm.getSessionUrl();
 
     };
 
-    vm.getAllDataBind = function(){
+    vm.getAllDataBind = function () {
 
       $log.debug('getAllDataBind');
 
       var dataBind = vm.session.source.match(/\{{2}(.*?)\}{2}|ng-bind=["|'](.*?)["|']/igm);
 
-      angular.forEach(dataBind, function(data){
+      angular.forEach(dataBind, function (data) {
 
         data = data.replace(/\"|\'|ng-bind=|{{|}}/g, '').trim();
 
-        if(!$filter('filter')(vm.dataBind, data).length){
+        if (!$filter('filter')(vm.dataBind, data).length) {
 
           vm.dataBind.push({type: 'bind', value: data});
 
@@ -253,7 +249,7 @@
 
     };
 
-    vm.runTest = function(){
+    vm.runTest = function () {
 
       $log.debug('runTest');
 
@@ -268,11 +264,11 @@
       });
     };
 
-    vm.removeSpec = function(index){
+    vm.removeSpec = function (index) {
       vm.describe.specs.splice(index, 1);
     };
 
-    vm.exportProtractor = function(){
+    vm.exportProtractor = function () {
 
       $http({
         method: 'POST',
@@ -288,29 +284,29 @@
       $log.debug('Export Protractor');
       var lines = [];
 
-      angular.forEach(vm.spec.actions, function(action){
+      angular.forEach(vm.spec.actions, function (action) {
 
-        if(action.action == 'sendKeys') {
+        if (action.action == 'sendKeys') {
           lines.push("element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')");
         }
 
-        if(action.action == 'click' && action.type == 'button' && action.value) {
+        if (action.action == 'click' && action.type == 'button' && action.value) {
           lines.push("element(by.buttonText('" + action.value + "')).click()");
         }
 
-        if(action.action == 'click' && action.type == 'a') {
+        if (action.action == 'click' && action.type == 'a') {
           lines.push("browser.get('" + action.value + "')");
         }
 
-        if(action.action == 'click' && action.locators[0].type == 'xpath') {
+        if (action.action == 'click' && action.locators[0].type == 'xpath') {
           lines.push("element(by.xpath('" + action.locators[0].value + "')).click()");
         }
 
-        if(action.action == 'click' && action.locators[0].type == 'id') {
+        if (action.action == 'click' && action.locators[0].type == 'id') {
           lines.push("element(by.id('" + action.locators[0].value + "')).click()");
         }
 
-        if(action.action == 'click' && action.type == 'input' && action.locators[0].type == 'css') {
+        if (action.action == 'click' && action.type == 'input' && action.locators[0].type == 'css') {
           lines.push("element(by.css('" + action.locators[0].value + "')).click()");
         }
 
@@ -322,20 +318,20 @@
 
     };
 
-    vm.removeAction = function(index) {
+    vm.removeAction = function (index) {
       vm.spec.actions.splice(index, 1);
 
       //localStorage.setItem('actions', angular.toJson(vm.actions));
 
     };
 
-    vm.getAttr = function(attr, elem) {
-      if(elem.attr(attr))
+    vm.getAttr = function (attr, elem) {
+      if (elem.attr(attr))
         return elem.attr(attr);
       return false;
     };
 
-    vm.createSession = function() {
+    vm.createSession = function () {
       $http({
         method: 'POST',
         url: 'http://localhost:4444/wd/hub/session',
@@ -351,7 +347,7 @@
       });
     };
 
-    vm.getSession = function(){
+    vm.getSession = function () {
 
       $http({
         method: 'GET',
@@ -360,7 +356,7 @@
 
         $log.debug('Get Session');
 
-        if(response.data.value.length) {
+        if (response.data.value.length) {
           vm.session = response.data.value[0];
 
           vm.getSessionSource();
@@ -370,7 +366,7 @@
 
     };
 
-    vm.setSessionUrl = function(){
+    vm.setSessionUrl = function () {
 
       $http({
         method: 'POST',
@@ -387,7 +383,7 @@
 
     };
 
-    vm.getSessionUrl = function(){
+    vm.getSessionUrl = function () {
 
       $http({
         method: 'GET',
@@ -412,16 +408,16 @@
       localStorage.setItem('describes', angular.toJson(vm.describes));
     });
 
-    $scope.$watch('main.url', function(){
+    $scope.$watch('main.url', function () {
       $log.debug('watch Url');
 
       localStorage.setItem('url', vm.url);
 
       /*if(newValue != oldValue)
-        vm.setSessionUrl();*/
+       vm.setSessionUrl();*/
     });
 
-    vm.sessionExecute = function(){
+    vm.sessionExecute = function () {
 
       $http({
         method: 'POST',
@@ -435,9 +431,9 @@
 
     };
 
-    vm.getSessionSource = function(){
+    vm.getSessionSource = function () {
 
-      if(vm.session.id){
+      if (vm.session.id) {
         $http({
           method: 'GET',
           url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/source'
@@ -455,7 +451,7 @@
 
     };
 
-    vm.getNgIncludes = function(){
+    vm.getNgIncludes = function () {
 
       $log.debug('getNgIncludes');
 
@@ -465,11 +461,11 @@
 
       var includes = [];
 
-      angular.forEach(ngIncludes, function(include){
+      angular.forEach(ngIncludes, function (include) {
 
         include = include.replace(/:\s|\"|\'|ngInclude|{{|}}/g, '').trim();
 
-        if(!$filter('filter')(includes, include).length){
+        if (!$filter('filter')(includes, include).length) {
 
           $http({
             method: 'POST',
@@ -491,15 +487,15 @@
 
     };
 
-    vm.verifySnippet = function(){
+    vm.verifySnippet = function () {
 
-      if(vm.session.source && !vm.session.source.match(/snippet\.js/)) {
+      if (vm.session.source && !vm.session.source.match(/snippet\.js/)) {
         vm.sessionExecute();
       }
 
     };
 
-    vm.deleteSession = function(){
+    vm.deleteSession = function () {
 
       $http({
         method: 'DELETE',
