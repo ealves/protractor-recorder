@@ -1,8 +1,12 @@
-describe('Fonte de Dados', function(){
+describe('Describe Google Search Example', function(){
 
-  it('Deve cadastrar fonte de dados', function(){
+  it('Should do a search', function(){
 
-    element(by.buttonText('ENTRAR')).click();
+    browser.get('administrativo#/fonte-dados');
+    element(by.buttonText('Nova Fonte de Dados')).click();
+    element(by.xpath('//label[.="WFS"]')).click();
+    element(by.model('currentEntity.nome')).sendKeys('Teste WFS');
+    element(by.model('currentEntity.endereco')).sendKeys('http://testewfs2.com.br');
 
   });
 

@@ -84,10 +84,11 @@ app.get('/run', function(req, res){
 
   var exec = require('child_process').exec;
 
-  exec('protractor ' + __dirname + '/public/exports/conf.js', function(error, stdout, stderr) {
+  var runProcess = exec('protractor ' + __dirname + '/public/exports/conf.js');
 
-    console.log(stdout);
-
+  runProcess.stdout.on('data', function(data){
+    console.log(data);
+    io.emit('protractor-log', data);
   });
 
   res.send('run');

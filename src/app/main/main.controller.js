@@ -10,6 +10,43 @@
 
     var vm = this;
 
+    /*vm.bag = [{
+      label: 'Glasses',
+      value: 'glasses',
+      children: [{
+        label: 'Top Hat',
+        value: 'top_hat'
+      },
+        {
+          label: 'Top Hat 2',
+          value: 'top_hat'
+        },
+        {
+        label: 'Curly Mustache',
+        value: 'mustachio',
+        children: [{
+          label: 'Top Hat',
+          value: 'top_hat'
+        },{
+          label: 'Curly Mustache',
+          value: 'mustachio'
+        }]
+      }]
+    },
+
+      {
+        label: 'Glasses',
+        value: 'glasses',
+        children: [{
+          label: 'Top Hat',
+          value: 'top_hat'
+        }, {
+          label: 'Curly Mustache',
+          value: 'mustachio'
+        }]
+      }
+    ];*/
+
     vm.url = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://google.com';
 
     vm.session = {};
@@ -105,6 +142,11 @@
       $log.debug(data);
       vm.getSessionSource();
 
+    });
+
+    socket.on('protractor-log', function (data) {
+      $log.debug('protractor-log');
+      $log.debug(data);
     });
 
     vm.setExample = function () {
