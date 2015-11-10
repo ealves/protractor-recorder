@@ -1,4 +1,4 @@
-# Protractor Recorder
+# Protractor Recorder (Under Development)
 A web interface to record users actions and export to Protractor.
 
 ## Getting Started
@@ -40,5 +40,5 @@ $ webdriver-manager start
 ## Usage
 
 - Access http://localhost:3000;
-- Enter a url and click on 'Create Session' to start recording
-- After end up your test flow click on 'Export Protractor' to export each step. 
+- Enter a url base and click on 'Record' to start recording
+- After end up your test flow click on 'Export Protractor' to export each spec. 
