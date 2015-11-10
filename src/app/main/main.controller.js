@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $http, $log, $filter, socket) {
+  function MainController($scope, $http, $log, $filter, $timeout, socket) {
 
     var vm = this;
 
@@ -49,6 +49,26 @@
       string: '',
       actions: []
     };
+
+    vm.hidden = false;
+    vm.isOpen = false;
+    vm.hover = false;
+    // On opening, add a delayed property which shows tooltips after the speed dial has opened
+    // so that they have the proper position; if closing, immediately hide the tooltips
+    $scope.$watch('main.isOpen', function(isOpen) {
+      if (isOpen) {
+        $timeout(function() {
+          $scope.tooltipVisible = self.isOpen;
+        }, 600);
+      } else {
+        $scope.tooltipVisible = self.isOpen;
+      }
+    });
+    /*vm.items = [
+      { name: "Twitter", icon: "img/icons/twitter.svg", direction: "bottom" },
+      { name: "Facebook", icon: "img/icons/facebook.svg", direction: "top" },
+      { name: "Google Hangout", icon: "img/icons/hangout.svg", direction: "bottom" }
+    ];*/
 
     socket.on('click', function(data){
       $log.debug('onclick');
