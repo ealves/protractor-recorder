@@ -132,49 +132,47 @@ app.post('/html', function(req, res){
 
 app.post('/export', function(req, res){
 
-  var describe = req.body.describe;
-  var id = req.body.id;
+  var describe = JSON.parse(req.body.describe);
+  var baseUrl  = req.body.baseUrl;
+  //var onPrepare = JSON.parse(req.body.onPrepare);
 
-  describe = JSON.parse(describe);
+  var conf = "exports.config = {\r\n" +
+             "  framework: 'jasmine2',\r\n" +
+             "  seleniumAddress: 'http://localhost:4444/wd/hub',\r\n" +
+             "  baseUrl: '" + baseUrl + "',\r\n" +
+             "  specs: ['spec.js'],\r\n" +
+             "  onPrepare: function(){\r\n" +
+             "    browser.driver.get('" + baseUrl +"');\r\n";
 
-  //console.log(describe);
-  //console.log(id);
+  describe[0].spec.actions.forEach(function(action){
+
+    var line = getLine(action);
+
+    console.log(action);
+    conf += '    ' + line + ';\r\n';
+
+  });
+
+  conf += "return browser.driver.wait(function() {return browser.driver.getCurrentUrl().then(function(url) {console.log(url);return url === baseUrl;});}, 10000, 'Error');";
+
+  conf += "\r\n}";
+
+  // Update conf.js to run with protractor
+  fs.writeFile(__dirname + '/public/exports/conf.js', conf, function(err) {
+    if(err) {
+      return console.log(err);
+    }
+    console.log("The file conf.js was saved!");
+  });
 
   var output = "describe('" + describe.string + "', function(){\r\n\r\n";
 
-  describe.specs.forEach(function(spec){
+  describe[1].specs.forEach(function(spec){
     output += "  it('" + spec.string + "', function(){\r\n\r\n";
 
     spec.actions.forEach(function(action){
 
-      var line = '';
-
-      if(action.action == 'sendKeys') {
-        line = "element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')";
-      }
-
-      if(action.action == 'click' && action.type == 'button' && action.value) {
-        line = "element(by.buttonText('" + action.value + "')).click()";
-      }
-
-      if(action.action == 'click' && action.type == 'a') {
-        line = "browser.get('" + action.value + "')";
-      }
-
-      if(action.action == 'click' && action.locators[0].type == 'xpath') {
-        line = "element(by.xpath('" + action.locators[0].value + "')).click()";
-      }
-
-      if(action.action == 'click' && action.locators[0].type == 'id') {
-        line = "element(by.id('" + action.locators[0].value + "')).click()";
-      }
-
-      if(action.action == 'click' && action.locators[0].type == 'css') {
-        line = "element(by.css('" + action.locators[0].value + "')).click()";
-      }
-
-      if(action.action == 'assertion')
-        line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+      var line = getLine(action);
 
       output += '    ' + line + ';\r\n';
 
@@ -186,16 +184,50 @@ app.post('/export', function(req, res){
 
   output += '});\r\n';
 
-  fs.writeFile(__dirname + '/public/exports/test.js', output, function(err) {
+  // Update spec to run with protractor
+  fs.writeFile(__dirname + '/public/exports/spec.js', output, function(err) {
     if(err) {
       return console.log(err);
     }
-    console.log("The file was saved!");
+    console.log("The file spec.js was saved!");
   });
 
   res.send('ok');
 });
 
+function getLine(action){
+
+  var line = null;
+
+  if(action.action == 'sendKeys') {
+    line = "element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')";
+  }
+
+  if(action.action == 'click' && action.type == 'button' && action.value) {
+    line = "element(by.buttonText('" + action.value + "')).click()";
+  }
+
+  if(action.action == 'click' && action.type == 'a') {
+    line = "browser.get('" + action.value + "')";
+  }
+
+  if(action.action == 'click' && action.locators[0].type == 'xpath') {
+    line = "element(by.xpath('" + action.locators[0].value + "')).click()";
+  }
+
+  if(action.action == 'click' && action.locators[0].type == 'id') {
+    line = "element(by.id('" + action.locators[0].value + "')).click()";
+  }
+
+  if(action.action == 'click' && action.locators[0].type == 'css') {
+    line = "element(by.css('" + action.locators[0].value + "')).click()";
+  }
+
+  if(action.action == 'assertion')
+    line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
+  return line;
+}
 
 http.listen(9000, function () {
  console.log('Server listening on *:9000');

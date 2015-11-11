@@ -30,13 +30,18 @@
           <input ng-model="main.url" type="text" placeholder="Url">
         </md-input-container>
       </div>
+      <md-list>
+        <md-list-item ng-click="main.openConf()" aria-label="Conf">
+          <p>Conf.js</p>
+        </md-list-item>
+      </md-list>
       <div ng-repeat="describe in main.describes">
         <md-subheader class="md-no-sticky">
           {{ describe.string }}
         </md-subheader>
         <md-divider></md-divider>
         <md-list>
-          <md-list-item ng-click="main.setSpec(spec)" ng-repeat="spec in describe.specs">
+          <md-list-item ng-click="main.setSpec(spec, false)" ng-repeat="spec in describe.specs">
             <p>{{ spec.string ? spec.string : 'Untitled Spec' }}</p>
             <md-icon ng-click="main.removeSpec($index)" md-svg-icon="delete"></md-icon>
           </md-list-item>
@@ -69,63 +74,68 @@
     <div flex layout-padding layout="column">
       <md-content md-scroll-y class="flex layout-column">
 
+        <div ng-if="!main.showConf">
+          <md-input-container class="md-block">
+            <label>Describe</label>
+            <input type="text" ng-model="main.describe.string">
+          </md-input-container>
 
-        <md-input-container class="md-block">
-          <label>Describe</label>
-          <input type="text" ng-model="main.describe.string">
-        </md-input-container>
-
-        <md-input-container class="md-block">
-          <label>Spec</label>
-          <input type="text" ng-model="main.spec.string" placeholder="Untitled spec">
-        </md-input-container>
-
-        <div layout="row" layout-align="center start" flex>
-
-          <md-whiteframe layout-margin layout="column" flex class="md-whiteframe-1dp">
-            <table class="table table-hover table-mc-light-blue ng-scope">
-              <thead>
-              <tr>
-                <th>
-                  <md-checkbox ng-model="all" aria-label="Checkbox 1">
-                  </md-checkbox>
-                </th>
-                <th>Action</th>
-                <th>Type</th>
-                <th>Locators</th>
-                <th>Value</th>
-                <th></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="action in main.spec.actions track by $index">
-                <td>
-                  <md-checkbox ng-model="action.status" aria-label="Checkbox $index"></md-checkbox>
-                </td>
-                <td><b>{{ action.action }}</b></td>
-                <td>{{ action.type }}</td>
-                <td>
-                  <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
-                                      class="md-block">
-                    <md-select aria-label="Locator {{ locator.value }}" ng-model="action.locator.value">
-                      <md-option ng-repeat="locator in action.locators" value="{{locator.value}}">
-                        {{ locator.type }} - {{ locator.value }}
-                      </md-option>
-                    </md-select>
-                  </md-input-container>
-                  <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
-                </td>
-                <td>{{ action.value }}</td>
-                <td>
-                  <md-button aria-label="Delete action" ng-click="main.removeAction($index)">
-                    <md-icon md-svg-icon="close"></md-icon>
-                  </md-button>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </md-whiteframe>
+          <md-input-container class="md-block">
+            <label>Spec</label>
+            <input type="text" ng-model="main.spec.string" placeholder="Untitled spec">
+          </md-input-container>
         </div>
+        <div ng-if="main.showConf">
+          conf
+        </div>
+          <div layout="row" layout-align="center start" flex>
+
+            <md-whiteframe layout-margin layout="column" flex class="md-whiteframe-1dp">
+              <table class="table table-hover table-mc-light-blue ng-scope">
+                <thead>
+                <tr>
+                  <th>
+                    <md-checkbox ng-model="all" aria-label="Checkbox 1">
+                    </md-checkbox>
+                  </th>
+                  <th>Action</th>
+                  <th>Type</th>
+                  <th>Locators</th>
+                  <th>Value</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="action in main.spec.actions track by $index">
+                  <td>
+                    <md-checkbox ng-model="action.status" aria-label="Checkbox $index"></md-checkbox>
+                  </td>
+                  <td><b>{{ action.action }}</b></td>
+                  <td>{{ action.type }}</td>
+                  <td>
+                    <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
+                                        class="md-block">
+                      <md-select aria-label="Locator {{ locator.value }}" ng-model="action.locator.value">
+                        <md-option ng-repeat="locator in action.locators" value="{{locator.value}}">
+                          {{ locator.type }} - {{ locator.value }}
+                        </md-option>
+                      </md-select>
+                    </md-input-container>
+                    <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
+                  </td>
+                  <td>{{ action.value }}</td>
+                  <td>
+                    <md-button aria-label="Delete action" ng-click="main.removeAction($index)">
+                      <md-icon md-svg-icon="close"></md-icon>
+                    </md-button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </md-whiteframe>
+          </div>
+
+
 
         <!--<md-button ng-click="main.newDescribe()">New Describe</md-button>-->
 

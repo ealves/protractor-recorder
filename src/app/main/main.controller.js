@@ -47,6 +47,9 @@
       }
     ];*/
 
+    vm.showConf = false;
+
+
     vm.url = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://google.com';
 
     vm.session = {};
@@ -69,6 +72,16 @@
      if(actions) {
      vm.actions = angular.fromJson(actions);
      }*/
+
+    vm.conf = {
+      string: 'Conf.js',
+      spec: {
+        actions: [
+          {"type": "link", "value": vm.url, "action": "get"}
+        ]
+      }
+
+    };
 
     vm.sample = {
       string: 'Describe Google Search Example',
@@ -150,18 +163,25 @@
       $log.debug(data);
     });
 
+    vm.openConf = function(){
+      vm.showConf = true;
+
+      vm.setSpec(vm.conf.spec, vm.showConf);
+
+    };
     vm.setExample = function () {
 
       if (!vm.describes.length) {
 
+        vm.describes.push(angular.copy(vm.conf));
         vm.describes.push(angular.copy(vm.sample));
 
-        vm.setDescribe(vm.describes[0]);
+        vm.setDescribe(vm.describes[1]);
         vm.setSpec(vm.describe.specs[0]);
 
         vm.createSession();
       } else {
-        vm.setDescribe(vm.describes[0]);
+        vm.setDescribe(vm.describes[1]);
         vm.setSpec(vm.describe.specs[0]);
       }
 
@@ -178,13 +198,17 @@
       vm.describe.specs.push(angular.copy(vm.blankSpec));
       vm.setSpec(vm.describe.specs[vm.describe.specs.length - 1]);
 
+
     };
 
     vm.setDescribe = function (describe) {
       vm.describe = describe;
     };
 
-    vm.setSpec = function (spec) {
+    vm.setSpec = function (spec, conf) {
+
+      $log.debug(conf);
+      vm.showConf = conf;
       vm.spec = spec;
     };
 
@@ -314,11 +338,11 @@
     vm.exportProtractor = function () {
 
       $log.debug('exportProtractor');
-
+      $log.debug(vm.describes);
       $http({
         method: 'POST',
         url: 'http://localhost:9000/export',
-        data: {describe: angular.toJson(vm.describe)}
+        data: {baseUrl: vm.url, describe: angular.toJson(vm.describes)}
       }).then(function successCallback(response) {
 
         $log.debug('Exported');
