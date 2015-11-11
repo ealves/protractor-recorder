@@ -52,7 +52,7 @@
       <md-subheader class="md-no-sticky">Drivers</md-subheader>
       <md-divider></md-divider>
       <md-list>
-        <md-list-item ng-click="main.setSpec(spec)" ng-repeat="capability in main.capabilities">
+        <md-list-item ng-click="main.setSpec(spec)" ng-repeat="capability in main.capabilities | orderBy: 'driver'">
           <img ng-src="/assets/images/{{ capability.driver }}.png" style="width:30px;margin-right: 10px">
           <p>{{ capability.driver }}</p>
           <md-checkbox class="md-secondary" ng-model="capability.checked"></md-checkbox>
