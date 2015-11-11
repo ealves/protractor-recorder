@@ -1,6 +1,12 @@
 # Protractor Recorder (Under Development)
 A web interface to record users actions and export to Protractor.
 
+## Dependencies
+
+- NodeJs;
+- NPM;
+- Protractor.
+
 ## Getting Started
 
 After clone this repository and installed Protractor, execute the following commands to install npm and bower dependencies.
@@ -29,16 +35,8 @@ $ node server.js
 $ gulp serve
 ```
 
-#### Webdriver Manager
-
-- The Protractor Recorder use Selenium with webdriver manager, execute:
-
-``` shell
-$ webdriver-manager start
-```
-
 ## Usage
 
 - Access http://localhost:3000;
 - Enter a url base and click on 'Record' to start recording
-- After end up your test flow click on 'Export Protractor' to export each spec. 
+- After end up your test flow click on 'Export Protractor' to export conf.js and spec.js.

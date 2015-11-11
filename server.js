@@ -8,8 +8,7 @@ var express = require('express'),
  io         = require('socket.io')(http),
  fs         = require('fs'),
  request    = require("request"),
- exec       = require('child_process').exec,
- grid       = require('selenium-grid-status');
+ exec       = require('child_process').exec;
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
