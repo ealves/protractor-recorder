@@ -3,11 +3,13 @@
 */
 var express = require('express'),
  bodyParser = require('body-parser'),
- app     = express(),
- http    = require('http').Server(app),
- io      = require('socket.io')(http),
- fs      = require('fs'),
- request = require("request");
+ app        = express(),
+ http       = require('http').Server(app),
+ io         = require('socket.io')(http),
+ fs         = require('fs'),
+ request    = require("request"),
+ exec       = require('child_process').exec,
+ grid       = require('selenium-grid-status');
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -62,11 +64,11 @@ console.log('a user connected');
 
   });
 
-	socket.on('disconnect', function(){
-	  console.log('user disconnected');
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
 
-	  io.emit('session-disconnect', 'session');
-	});
+    io.emit('session-disconnect', 'session');
+  });
 });
 
 app.get('/', function (req, res) {
@@ -81,9 +83,6 @@ app.get('/teste', function(req, res){
 
 app.get('/run', function(req, res){
 
-
-  var exec = require('child_process').exec;
-
   var runProcess = exec('protractor ' + __dirname + '/public/exports/conf.js');
 
   runProcess.stdout.on('data', function(data){
@@ -92,6 +91,27 @@ app.get('/run', function(req, res){
   });
 
   res.send('run');
+});
+
+app.get('/webdriver-manager/:command', function(req, res){
+
+  var command = req.params.command;
+
+  exec('webdriver-manager ' + command, function(error, stdout, stderr) {
+
+    var stdout = stdout.split('\n');
+
+    var drivers = [{driver: 'firefox'}];
+    stdout.forEach(function(driver){
+      if(driver.match(/is up to date/i) && driver.match(/chrome|firefox|ie/i))
+          drivers.push({driver: driver.match(/(\w+)/)[0]});
+    });
+
+    //console.log(stdout);
+    res.send(drivers);
+
+  });
+
 });
 
 app.post('/html', function(req, res){
@@ -179,4 +199,11 @@ app.post('/export', function(req, res){
 
 http.listen(9000, function () {
  console.log('Server listening on *:9000');
+
+  var webdriver = exec('webdriver-manager start');
+
+  webdriver.stdout.on('data', function(data){
+    console.log('webdriver-manager start');
+  });
+
 });

@@ -26,7 +26,7 @@
 
       <div layout="column" layout-padding>
         <md-input-container class="md-block">
-          <label>Url base</label>
+          <label>Base URL</label>
           <input ng-model="main.url" type="text" placeholder="Url">
         </md-input-container>
       </div>
@@ -41,21 +41,25 @@
             <md-icon ng-click="main.removeSpec($index)" md-svg-icon="delete"></md-icon>
           </md-list-item>
         </md-list>
-
       </div>
-
-      <div>
-        <div ivh-treeview="main.bag">
-        </div>
-      </div>
-
       <span flex></span>
+
+      <md-subheader class="md-no-sticky">Drivers</md-subheader>
+      <md-divider></md-divider>
+      <md-list>
+        <md-list-item ng-click="main.setSpec(spec)" ng-repeat="capability in main.capabilities">
+          <img ng-src="/assets/images/{{ capability.driver }}.png" style="width:30px;margin-right: 10px">
+          <p>{{ capability.driver }}</p>
+          <md-checkbox class="md-secondary" ng-model="capability.checked"></md-checkbox>
+        </md-list-item>
+      </md-list>
+
       <md-divider></md-divider>
       <div row="column">
         <md-list>
-          <md-list-item ng-click="openSettings()" aria-label="Configurações">
+          <md-list-item ng-click="openSettings()" aria-label="Settings">
             <md-icon md-svg-icon="settings"></md-icon>
-            <p>Configurações</p>
+            <p>Settings</p>
           </md-list-item>
         </md-list>
       </div>
@@ -73,7 +77,7 @@
 
         <md-input-container class="md-block">
           <label>Spec</label>
-          <input type="text" ng-model="main.spec.string">
+          <input type="text" ng-model="main.spec.string" placeholder="Untitled spec">
         </md-input-container>
 
         <div layout="row" layout-align="center start" flex>

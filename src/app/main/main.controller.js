@@ -61,6 +61,7 @@
 
     vm.dataBind = [];
 
+    vm.capabilities = [];
     //$scope.actions = vm.actions;
 
     /*var actions = localStorage.getItem('actions');
@@ -545,7 +546,7 @@
 
     };
 
-    vm.verifySnippet = function () {
+    vm.verifySnippet = function(){
 
       if (vm.session.source && !vm.session.source.match(/snippet\.js/)) {
         vm.sessionExecute();
@@ -553,7 +554,7 @@
 
     };
 
-    vm.deleteSession = function () {
+    vm.deleteSession = function(){
 
       $http({
         method: 'DELETE',
@@ -568,9 +569,26 @@
 
     };
 
+    vm.getCapabilities = function(){
+
+      $log.debug('getCapabilities');
+
+      $http({
+        method: 'GET',
+        url: 'http://localhost:9000/webdriver-manager/status'
+      }).then(function successCallback(response) {
+
+        $log.debug(response);
+        vm.capabilities = response.data;
+
+      });
+
+    };
+
+    vm.getCapabilities();
     vm.setExample();
     vm.getSession();
 
-
   }
+
 })();
