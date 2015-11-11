@@ -50,7 +50,7 @@
     vm.showConf = false;
 
 
-    vm.url = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://google.com';
+    vm.url = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
 
     vm.session = {};
 
@@ -89,7 +89,7 @@
         {
           string: 'Should do a search',
           actions: [
-            {"type": "link", "value": "http://google.com", "action": "get"}
+            {"type": "link", "value": "http://www.protractortest.org", "action": "get"}
           ]
         }
       ]
