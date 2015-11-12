@@ -22,7 +22,7 @@
 
   <div flex layout="row">
 
-    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="true">
 
       <div layout="column" layout-padding>
         <md-input-container class="md-block">
@@ -55,7 +55,7 @@
         <md-list-item ng-click="main.setSpec(spec)" ng-repeat="capability in main.capabilities | orderBy: 'driver'">
           <img ng-src="/assets/images/{{ capability.driver }}.png" style="width:30px;margin-right: 10px">
           <p>{{ capability.driver }}</p>
-          <md-checkbox class="md-secondary" ng-model="capability.checked"></md-checkbox>
+          <md-checkbox ng-change="main.setCapabilities(capability)" class="md-secondary" ng-model="capability.checked"></md-checkbox>
         </md-list-item>
       </md-list>
 
@@ -75,6 +75,7 @@
       <md-content md-scroll-y class="flex layout-column">
 
         <div ng-if="!main.showConf">
+
           <md-input-container class="md-block">
             <label>Describe</label>
             <input type="text" ng-model="main.describe.string">
@@ -86,7 +87,20 @@
           </md-input-container>
         </div>
         <div ng-if="main.showConf">
-          conf
+          <h2>Conf.js</h2>
+          <md-input-container class="md-block">
+            <label>Selenium Address</label>
+            <input type="text" ng-model="main.conf.seleniumAddress" placeholder="Selenium url">
+          </md-input-container>
+
+          <md-input-container class="md-block">
+            <md-checkbox aria-label="Jasmine" ng-model="main.conf.jasmine">Framework Jasmine 2</md-checkbox>
+          </md-input-container>
+
+          <md-input-container class="md-block">
+            <md-checkbox aria-label="Login page" ng-model="main.conf.login">Login (Wait for url change)</md-checkbox>
+          </md-input-container>
+
         </div>
           <div layout="row" layout-align="center start" flex>
 
@@ -123,7 +137,11 @@
                     </md-input-container>
                     <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
                   </td>
-                  <td>{{ action.value }}</td>
+                  <td>
+                    <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+                      <input type="text" ng-model="action.value" placeholder="Value">
+                    </md-input-container>
+                  </td>
                   <td>
                     <md-button aria-label="Delete action" ng-click="main.removeAction($index)">
                       <md-icon md-svg-icon="close"></md-icon>

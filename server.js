@@ -131,33 +131,38 @@ app.post('/html', function(req, res){
 
 app.post('/export', function(req, res){
 
+  var conf = JSON.parse(req.body.conf);
   var describe = JSON.parse(req.body.describe);
   var baseUrl  = req.body.baseUrl;
   //var onPrepare = JSON.parse(req.body.onPrepare);
 
-  var conf = "exports.config = {\r\n" +
-             "  framework: 'jasmine2',\r\n" +
-             "  seleniumAddress: 'http://localhost:4444/wd/hub',\r\n" +
+  var confOutput = "exports.config = {\r\n";
+
+  if(conf.jasmine)
+    confOutput += "  framework: 'jasmine2',\r\n";
+
+  confOutput += "  seleniumAddress: '" + conf.seleniumAddress + "',\r\n" +
              "  baseUrl: '" + baseUrl + "',\r\n" +
              "  specs: ['spec.js'],\r\n" +
              "  onPrepare: function(){\r\n" +
              "    browser.driver.get('" + baseUrl +"');\r\n";
 
-  describe[0].spec.actions.forEach(function(action){
+  conf.spec.actions.forEach(function(action){
 
     var line = getLine(action);
 
     console.log(action);
-    conf += '    ' + line + ';\r\n';
+    confOutput += '    ' + line + ';\r\n';
 
   });
 
-  conf += "return browser.driver.wait(function() {return browser.driver.getCurrentUrl().then(function(url) {console.log(url);return url === baseUrl;});}, 10000, 'Error');";
+  if(conf.login)
+    confOutput += "return browser.driver.wait(function() {return browser.driver.getCurrentUrl().then(function(url) {console.log(url);return url === '" + baseUrl + "';});}, 10000, 'Error');";
 
-  conf += "\r\n}";
+  confOutput += "  }\r\n}";
 
   // Update conf.js to run with protractor
-  fs.writeFile(__dirname + '/public/exports/conf.js', conf, function(err) {
+  fs.writeFile(__dirname + '/public/exports/conf.js', confOutput, function(err) {
     if(err) {
       return console.log(err);
     }
@@ -166,7 +171,7 @@ app.post('/export', function(req, res){
 
   var output = "describe('" + describe.string + "', function(){\r\n\r\n";
 
-  describe[1].specs.forEach(function(spec){
+  describe[0].specs.forEach(function(spec){
     output += "  it('" + spec.string + "', function(){\r\n\r\n";
 
     spec.actions.forEach(function(action){
@@ -196,7 +201,7 @@ app.post('/export', function(req, res){
 
 function getLine(action){
 
-  var line = null;
+  var line = '';
 
   if(action.action == 'sendKeys') {
     line = "element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')";
@@ -222,8 +227,17 @@ function getLine(action){
     line = "element(by.css('" + action.locators[0].value + "')).click()";
   }
 
-  if(action.action == 'assertion')
+  if(action.action == 'assertion' && action.locator.type == 'bind')
     line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
+  if(action.action == 'assertion' && action.locator.type == 'id')
+    line = "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
+  if(action.action == 'assertion' && action.locator.type == 'xpath')
+    line = "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
+  if(action.action == 'assertion' && action.locator.type == 'css')
+    line = "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
 
   return line;
 }

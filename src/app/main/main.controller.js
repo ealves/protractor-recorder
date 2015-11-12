@@ -10,84 +10,38 @@
 
     var vm = this;
 
-    /*vm.bag = [{
-      label: 'Glasses',
-      value: 'glasses',
-      children: [{
-        label: 'Top Hat',
-        value: 'top_hat'
-      },
-        {
-          label: 'Top Hat 2',
-          value: 'top_hat'
-        },
-        {
-        label: 'Curly Mustache',
-        value: 'mustachio',
-        children: [{
-          label: 'Top Hat',
-          value: 'top_hat'
-        },{
-          label: 'Curly Mustache',
-          value: 'mustachio'
-        }]
-      }]
-    },
-
-      {
-        label: 'Glasses',
-        value: 'glasses',
-        children: [{
-          label: 'Top Hat',
-          value: 'top_hat'
-        }, {
-          label: 'Curly Mustache',
-          value: 'mustachio'
-        }]
-      }
-    ];*/
-
     vm.showConf = false;
 
-
-    vm.url = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
-
-    vm.session = {};
-
+    vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
+    vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
 
-    //vm.actions = [];
-    vm.lines = [];
-
-    vm.describe = {};
-    vm.spec = [];
-
-    vm.dataBind = [];
-
+    vm.session      = {};
+    vm.lines        = [];
+    vm.describe     = {};
+    vm.spec         = [];
+    vm.dataBind     = [];
     vm.capabilities = [];
-    //$scope.actions = vm.actions;
 
-    /*var actions = localStorage.getItem('actions');
+    if(!vm.conf) {
+      vm.conf = {
+        string: 'Conf.js',
+        seleniumAddress: 'http://localhost:4444/wd/hub',
+        capabilities: ['chromedriver'],
+        spec: {
+          actions: [
+            {"type": "link", "value": vm.url, "action": "get"}
+          ]
+        }
 
-     if(actions) {
-     vm.actions = angular.fromJson(actions);
-     }*/
-
-    vm.conf = {
-      string: 'Conf.js',
-      spec: {
-        actions: [
-          {"type": "link", "value": vm.url, "action": "get"}
-        ]
-      }
-
-    };
+      };
+    }
 
     vm.sample = {
-      string: 'Describe Google Search Example',
+      string: 'Describe Protractor Example',
       specs: [
         {
-          string: 'Should do a search',
+          string: 'Should navigate to protractortest.org',
           actions: [
             {"type": "link", "value": "http://www.protractortest.org", "action": "get"}
           ]
@@ -103,6 +57,7 @@
     vm.hidden = false;
     vm.isOpen = false;
     vm.hover = false;
+
     // On opening, add a delayed property which shows tooltips after the speed dial has opened
     // so that they have the proper position; if closing, immediately hide the tooltips
     $scope.$watch('main.isOpen', function (isOpen) {
@@ -163,6 +118,15 @@
       $log.debug(data);
     });
 
+    vm.setCapabilities = function(capability) {
+      if(capability.checked){
+        vm.conf.capabilities.push(capability.driver);
+      } else {
+        var index = vm.conf.capabilities.indexOf(capability.driver);
+        vm.conf.capabilities.splice(index, 1);
+      }
+    }
+
     vm.openConf = function(){
       vm.showConf = true;
 
@@ -173,15 +137,14 @@
 
       if (!vm.describes.length) {
 
-        vm.describes.push(angular.copy(vm.conf));
         vm.describes.push(angular.copy(vm.sample));
 
-        vm.setDescribe(vm.describes[1]);
+        vm.setDescribe(vm.describes[0]);
         vm.setSpec(vm.describe.specs[0]);
 
         vm.createSession();
       } else {
-        vm.setDescribe(vm.describes[1]);
+        vm.setDescribe(vm.describes[0]);
         vm.setSpec(vm.describe.specs[0]);
       }
 
@@ -212,14 +175,14 @@
       vm.spec = spec;
     };
 
-    vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="http://localhost:9000/snippet.js",head.appendChild(e)},script.src="http://localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
+    vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="//localhost:9000/snippet.js",head.appendChild(e)},script.src="//localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
 
     vm.setElement = function (element) {
 
       var target = angular.element(element.outerHTML);
       var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
 
-      if (target[0].tagName.match(/^button/i) || parent[0].tagName.match(/^button/i) && !target[0].tagName.match(/^input/i)) {
+      if (target[0].tagName.match(/^button/i) || (parent[0].tagName && parent[0].tagName.match(/^button/i)) && !target[0].tagName.match(/^input/i)) {
 
         vm.addElement(parent, 'button', 'click', target.text().trim(), element.xPath);
 
@@ -259,7 +222,7 @@
       }
 
       if (vm.getAttr('id', element))
-        locators.push({type: 'id', value: '#' + vm.getAttr('id', element)});
+        locators.push({type: 'id', value: vm.getAttr('id', element)});
 
       if (vm.getAttr('class', element)) {
 
@@ -342,7 +305,7 @@
       $http({
         method: 'POST',
         url: 'http://localhost:9000/export',
-        data: {baseUrl: vm.url, describe: angular.toJson(vm.describes)}
+        data: {baseUrl: vm.url, conf: angular.toJson(vm.conf), describe: angular.toJson(vm.describes)}
       }).then(function successCallback(response) {
 
         $log.debug('Exported');
@@ -474,6 +437,11 @@
 
     };
 
+    $scope.$watch('main.conf', function () {
+      $log.debug('watch conf');
+      localStorage.setItem('conf', angular.toJson(vm.conf));
+    }, true);
+
     $scope.$watch('main.describe', function () {
       $log.debug('watch describe');
       localStorage.setItem('describes', angular.toJson(vm.describes));
@@ -484,10 +452,24 @@
       localStorage.setItem('describes', angular.toJson(vm.describes));
     });
 
-    $scope.$watch('main.url', function () {
+    $scope.$watch('main.url', function (newVal, oldVal) {
       $log.debug('watch Url');
 
-      localStorage.setItem('url', vm.url);
+      if(newVal.match(/^https/)){
+
+        $mdToast.show(
+            $mdToast.simple()
+                .content('Do not use https on Base Url!')
+                .position('bottom left')
+                .hideDelay(3000)
+        );
+
+        vm.url = '';
+
+      } else {
+
+        localStorage.setItem('url', vm.url);
+      }
 
       /*if(newValue != oldValue)
        vm.setSessionUrl();*/
@@ -604,6 +586,14 @@
 
         $log.debug(response);
         vm.capabilities = response.data;
+
+        vm.capabilities.forEach(function(capability){
+
+          if(!vm.conf.capabilities.indexOf(capability.driver)){
+            capability.checked = true;
+          }
+
+        });
 
       });
 
