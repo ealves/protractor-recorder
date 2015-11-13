@@ -203,6 +203,9 @@ function getLine(action){
 
   var line = '';
 
+  if(action.action == 'click' && action.locator.type == 'repeater')
+    line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).click()";
+
   if(action.action == 'sendKeys') {
     line = "element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')";
   }

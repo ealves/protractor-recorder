@@ -175,7 +175,7 @@
       vm.spec = spec;
     };
 
-    vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="//localhost:9000/snippet.js",head.appendChild(e)},script.src="//localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
+    vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="http://localhost:9000/snippet.js",head.appendChild(e)},script.src="http://localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
 
     vm.setElement = function (element) {
 
@@ -190,17 +190,20 @@
         vm.addElement(target, 'input', 'click', false, element.xPath);
       } else if (target[0].tagName.match(/^a/i)) {
         vm.addElement(target, 'a', 'click', false, element.xPath);
+      } else if (element.ngRepeat) {
+        vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
       } else {
-
-        var value = target.text() ? target.text() : false;
-
+        var value = target.text() ? target.text() : false
         vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
       }
     };
 
-    vm.addElement = function (element, type, actionType, value, xPath) {
+    vm.addElement = function (element, type, actionType, value, xPath, repeater) {
 
       var locators = [];
+
+      if(type == 'row')
+        locators.push({type: 'repeater', value: repeater});
 
       if (type == 'button' && value)
         locators.push({type: 'buttonText', value: value});
