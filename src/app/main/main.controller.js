@@ -10,7 +10,6 @@
 
     var vm = this;
 
-    vm.isRecording = false;
     vm.isLoadingSession = false;
     vm.showConf = false;
 
@@ -27,6 +26,7 @@
 
     if(!vm.conf) {
       vm.conf = {
+        isRecording: false,
         string: 'Conf.js',
         seleniumAddress: 'http://localhost:4444/wd/hub',
         capabilities: ['chromedriver'],
@@ -84,7 +84,7 @@
       $log.debug('onkeyup');
       $log.debug(data);
 
-      if(vm.isRecording) {
+      if(vm.conf.isRecording) {
         var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
         lastAction.action = 'sendKeys';
         lastAction.value = data;
@@ -96,7 +96,7 @@
       $log.debug('onassertion');
       $log.debug(data);
 
-      if(vm.isRecording) {
+      if(vm.conf.isRecording) {
         var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
 
         lastAction.action = 'assertion';
@@ -117,6 +117,7 @@
 
       $log.debug('on-session-disconnect');
       $log.debug(data);
+
       vm.getSessionSource();
 
     });
@@ -133,7 +134,7 @@
         var index = vm.conf.capabilities.indexOf(capability.driver);
         vm.conf.capabilities.splice(index, 1);
       }
-    }
+    };
 
     vm.openConf = function(){
       vm.showConf = true;
@@ -187,7 +188,7 @@
 
     vm.setElement = function (element) {
 
-      if(vm.isRecording) {
+      if(vm.conf.isRecording) {
         var target = angular.element(element.outerHTML);
         var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
 
@@ -404,14 +405,13 @@
 
           vm.session.id = response.data.sessionId;
 
-          vm.isRecording = true;
-
+          vm.conf.isRecording = true;
 
           vm.setSessionUrl();
 
         });
       } else {
-        vm.isRecording = true;
+        vm.conf.isRecording = true;
       }
     };
 
@@ -514,6 +514,8 @@
 
         $log.debug('Session Executed');
 
+        vm.isLoadingSession = false;
+
         $mdToast.show(
             $mdToast.simple()
                 .content('Session started!')
@@ -538,9 +540,19 @@
           /*var sourceHtml = angular.element(document.querySelector('#source'));
            sourceHtml.html(response.data.value);*/
 
-          vm.getNgIncludes();
-          vm.verifySnippet();
+          if(response.data.value) {
+            vm.getNgIncludes();
+            vm.verifySnippet();
+          }
+
+        }, function errorCallback(response) {
+          $log.debug('Error session source');
+          vm.deleteSession();
+
         });
+      } else {
+        vm.isLoadingSession = false;
+        vm.conf.isRecording = false;
       }
 
     };
@@ -585,9 +597,8 @@
 
       if (vm.session.source && !vm.session.source.match(/snippet\.js/)) {
         vm.sessionExecute();
-      } else if (!vm.isRecording) {
+      } else {
         vm.isLoadingSession = false;
-        vm.isRecording = true;
       }
 
     };
@@ -603,6 +614,10 @@
         $log.debug(response);
 
         vm.session = {};
+
+        vm.isLoadingSession = false;
+        vm.conf.isRecording = false;
+
       });
 
     };
@@ -632,7 +647,7 @@
     };
 
     vm.pauseRecording = function(){
-      vm.isRecording = false;
+      vm.conf.isRecording = false;
     };
 
     vm.getCapabilities();

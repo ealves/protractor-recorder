@@ -6,13 +6,13 @@
 
       <span class="flex"></span>
 
-      <md-button ng-if="!main.isRecording" style="color: #000" class="md-raised" ng-click="main.createSession()">
+      <md-button ng-if="!main.conf.isRecording" style="color: #000" class="md-raised" ng-click="main.createSession()">
         <md-icon style="color: #000" md-svg-icon="play_circle"></md-icon>
         Record
       </md-button>
 
       <!--<md-button class="md-raised md-warn" ng-click="main.stopRecording()">-->
-      <md-button ng-if="main.isRecording" class="md-raised md-warn" ng-click="main.pauseRecording()">
+      <md-button ng-if="main.conf.isRecording" class="md-raised md-warn" ng-click="main.pauseRecording()">
         <md-icon style="color: #FFF" md-svg-icon="pause"></md-icon>
         Pause
       </md-button>

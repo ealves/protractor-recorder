@@ -157,17 +157,17 @@ app.post('/export', function(req, res){
   });
 
   if(conf.login)
-    confOutput += "return browser.driver.wait(function() {return browser.driver.getCurrentUrl().then(function(url) {console.log(url);return url === '" + baseUrl + "';});}, 10000, 'Error');";
+    confOutput += "return browser.driver.wait(function() {return browser.driver.getCurrentUrl().then(function(url) {console.log(url);return url != '" + baseUrl + "';});}, 10000, 'Error');";
 
   confOutput += "  }\r\n}";
 
   // Update conf.js to run with protractor
-  /*fs.writeFile(__dirname + '/public/exports/conf.js', confOutput, function(err) {
+  fs.writeFile(__dirname + '/public/exports/conf.js', confOutput, function(err) {
     if(err) {
       return console.log(err);
     }
     console.log("The file conf.js was saved!");
-  });*/
+  });
 
   var output = "describe('" + describe.string + "', function(){\r\n\r\n";
 
