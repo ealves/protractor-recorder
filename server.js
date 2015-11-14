@@ -162,12 +162,12 @@ app.post('/export', function(req, res){
   confOutput += "  }\r\n}";
 
   // Update conf.js to run with protractor
-  fs.writeFile(__dirname + '/public/exports/conf.js', confOutput, function(err) {
+  /*fs.writeFile(__dirname + '/public/exports/conf.js', confOutput, function(err) {
     if(err) {
       return console.log(err);
     }
     console.log("The file conf.js was saved!");
-  });
+  });*/
 
   var output = "describe('" + describe.string + "', function(){\r\n\r\n";
 
@@ -202,6 +202,14 @@ app.post('/export', function(req, res){
 function getLine(action){
 
   var line = '';
+
+  if(action.action == 'wait'){
+
+    line = "var EC = protractor.ExpectedConditions;\r\n";
+    line += "    var elm = element(by.xpath('" + action.locator.value + "'));\r\n"
+    line += "    browser.wait(EC.presenceOf(elm), 10000)";
+
+  }
 
   if(action.action == 'click' && action.locator.type == 'repeater')
     line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).click()";
@@ -248,10 +256,10 @@ function getLine(action){
 http.listen(9000, function () {
  console.log('Server listening on *:9000');
 
-  var webdriver = exec('webdriver-manager start');
+  /*var webdriver = exec('webdriver-manager start');
 
   webdriver.stdout.on('data', function(data){
     console.log('webdriver-manager start');
-  });
+  });*/
 
 });

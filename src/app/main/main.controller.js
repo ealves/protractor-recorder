@@ -191,7 +191,12 @@
       } else if (target[0].tagName.match(/^a/i)) {
         vm.addElement(target, 'a', 'click', false, element.xPath);
       } else if (element.ngRepeat) {
+
+        var value = target.text() ? target.text() : false
+        vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value, element.xPath);
+
         vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
+
       } else {
         var value = target.text() ? target.text() : false
         vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
@@ -227,7 +232,7 @@
       if (vm.getAttr('id', element))
         locators.push({type: 'id', value: vm.getAttr('id', element)});
 
-      if (vm.getAttr('class', element)) {
+      if (vm.getAttr('class', element) || actionType == 'wait') {
 
         if (value)
           locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});

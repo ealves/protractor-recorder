@@ -11,7 +11,7 @@ document.body.addEventListener('mousedown', function (event) {
   };
 
   if(ngRepeat)
-    element.ngRepeat = {value: ngRepeat, rowIndex: event.target.parentNode.rowIndex};
+    element.ngRepeat = {value: ngRepeat, rowIndex: event.target.parentNode.rowIndex.toString()};
 
   socket.emit('onclick', element);
 });
