@@ -6,19 +6,21 @@
 
       <span class="flex"></span>
 
-      <md-button style="color: #000" class="md-raised" ng-click="main.createSession()">
+      <md-button ng-if="!main.isRecording" style="color: #000" class="md-raised" ng-click="main.createSession()">
         <md-icon style="color: #000" md-svg-icon="play_circle"></md-icon>
         Record
       </md-button>
 
       <!--<md-button class="md-raised md-warn" ng-click="main.stopRecording()">-->
-      <md-button class="md-raised md-warn" ng-click="main.deleteSession()">
-        <md-icon style="color: #FFF" md-svg-icon="stop"></md-icon>
-        Stop
+      <md-button ng-if="main.isRecording" class="md-raised md-warn" ng-click="main.pauseRecording()">
+        <md-icon style="color: #FFF" md-svg-icon="pause"></md-icon>
+        Pause
       </md-button>
 
     </div>
   </md-toolbar>
+
+  <md-progress-linear ng-if="main.isLoadingSession" md-mode="indeterminate"></md-progress-linear>
 
   <div flex layout="row">
 

@@ -10,6 +10,8 @@
 
     var vm = this;
 
+    vm.isRecording = false;
+    vm.isLoadingSession = false;
     vm.showConf = false;
 
     vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
@@ -82,10 +84,11 @@
       $log.debug('onkeyup');
       $log.debug(data);
 
-      var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
-
-      lastAction.action = 'sendKeys';
-      lastAction.value = data;
+      if(vm.isRecording) {
+        var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
+        lastAction.action = 'sendKeys';
+        lastAction.value = data;
+      }
 
     });
 
@@ -93,20 +96,25 @@
       $log.debug('onassertion');
       $log.debug(data);
 
-      var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
+      if(vm.isRecording) {
+        var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
 
-      lastAction.action = 'assertion';
-      lastAction.value = data;
+        lastAction.action = 'assertion';
+        lastAction.value = data;
 
-      vm.dataBind.forEach(function (data) {
+        vm.dataBind.forEach(function (data) {
 
-        lastAction.locators.push(data);
+          lastAction.locators.push(data);
 
-      });
+        });
+      }
 
     });
 
     socket.on('session-disconnect', function (data) {
+
+      vm.isLoadingSession = true;
+
       $log.debug('on-session-disconnect');
       $log.debug(data);
       vm.getSessionSource();
@@ -179,27 +187,29 @@
 
     vm.setElement = function (element) {
 
-      var target = angular.element(element.outerHTML);
-      var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
+      if(vm.isRecording) {
+        var target = angular.element(element.outerHTML);
+        var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
 
-      if (target[0].tagName.match(/^button/i) || (parent[0].tagName && parent[0].tagName.match(/^button/i)) && !target[0].tagName.match(/^input/i)) {
+        if (target[0].tagName.match(/^button/i) || (parent[0].tagName && parent[0].tagName.match(/^button/i)) && !target[0].tagName.match(/^input/i)) {
 
-        vm.addElement(parent, 'button', 'click', target.text().trim(), element.xPath);
+          vm.addElement(parent, 'button', 'click', target.text().trim(), element.xPath);
 
-      } else if (target[0].tagName.match(/^input/i)) {
-        vm.addElement(target, 'input', 'click', false, element.xPath);
-      } else if (target[0].tagName.match(/^a/i)) {
-        vm.addElement(target, 'a', 'click', false, element.xPath);
-      } else if (element.ngRepeat) {
+        } else if (target[0].tagName.match(/^input/i)) {
+          vm.addElement(target, 'input', 'click', false, element.xPath);
+        } else if (target[0].tagName.match(/^a/i)) {
+          vm.addElement(target, 'a', 'click', false, element.xPath);
+        } else if (element.ngRepeat) {
 
-        var value = target.text() ? target.text() : false
-        vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value, element.xPath);
+          var value = target.text() ? target.text() : false
+          vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value, element.xPath);
 
-        vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
+          vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
 
-      } else {
-        var value = target.text() ? target.text() : false
-        vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
+        } else {
+          var value = target.text() ? target.text() : false
+          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
+        }
       }
     };
 
@@ -379,19 +389,30 @@
     };
 
     vm.createSession = function () {
-      $http({
-        method: 'POST',
-        url: 'http://localhost:4444/wd/hub/session',
-        data: {'desiredCapabilities': {'browserName': 'chrome'}}
-      }).then(function successCallback(response) {
 
-        $log.debug('Session Created');
+      if(!vm.session.id) {
 
-        vm.session.id = response.data.sessionId;
+        vm.isLoadingSession = true;
 
-        vm.setSessionUrl();
+        $http({
+          method: 'POST',
+          url: 'http://localhost:4444/wd/hub/session',
+          data: {'desiredCapabilities': {'browserName': 'chrome'}}
+        }).then(function successCallback(response) {
 
-      });
+          $log.debug('Session Created');
+
+          vm.session.id = response.data.sessionId;
+
+          vm.isRecording = true;
+
+
+          vm.setSessionUrl();
+
+        });
+      } else {
+        vm.isRecording = true;
+      }
     };
 
     vm.getSession = function () {
@@ -564,6 +585,9 @@
 
       if (vm.session.source && !vm.session.source.match(/snippet\.js/)) {
         vm.sessionExecute();
+      } else if (!vm.isRecording) {
+        vm.isLoadingSession = false;
+        vm.isRecording = true;
       }
 
     };
@@ -605,6 +629,10 @@
 
       });
 
+    };
+
+    vm.pauseRecording = function(){
+      vm.isRecording = false;
     };
 
     vm.getCapabilities();

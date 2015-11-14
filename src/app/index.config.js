@@ -54,6 +54,7 @@
         .icon('more_vert', 'assets/svg/ic_more_vert_24px.svg'        , 24)
         .icon('menu', 'assets/svg/ic_menu_24px.svg'        , 24)
         .icon('music_note', 'assets/svg/ic_music_note_24px.svg', 24)
+        .icon('pause', 'assets/svg/ic_pause_24px.svg', 24)
         .icon('picture_as_pdf', 'assets/svg/ic_picture_as_pdf_24px.svg', 24)
         .icon('person', 'assets/svg/ic_person_24px.svg', 24)
         .icon('play_circle', 'assets/svg/ic_play_circle_outline_24px.svg', 24)
