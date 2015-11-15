@@ -214,8 +214,12 @@ function getLine(action){
   if(action.action == 'click' && action.locator.type == 'repeater')
     line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).click()";
 
-  if(action.action == 'sendKeys') {
+  if(action.action == 'sendKeys' && action.locator.type == 'model') {
     line = "element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')";
+  }
+
+  if(action.action == 'sendKeys' && action.locator.type == 'css') {
+    line = "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "')";
   }
 
   if(action.action == 'click' && action.type == 'button' && action.value) {
@@ -227,7 +231,7 @@ function getLine(action){
   }
 
   if(action.action == 'click' && action.locators[0].type == 'xpath') {
-    line = "element(by.xpath('" + action.locators[0].value + "')).click()";
+    line = "element(by.xpath(\"" + action.locators[0].value + "\")).click()";
   }
 
   if(action.action == 'click' && action.locators[0].type == 'id') {
@@ -245,7 +249,7 @@ function getLine(action){
     line = "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
 
   if(action.action == 'assertion' && action.locator.type == 'xpath')
-    line = "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+    line = "expect(element(by.xpath(\"" + action.locator.value + "\")).getText()).toBe('" + action.value + "')";
 
   if(action.action == 'assertion' && action.locator.type == 'css')
     line = "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";

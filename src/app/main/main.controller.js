@@ -186,6 +186,24 @@
 
     vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="http://localhost:9000/snippet.js",head.appendChild(e)},script.src="http://localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
 
+    vm.snippet1 = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){},script.src="http://localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
+    vm.snippet2 = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){},script.src="http://localhost:9000/snippet.js",head.appendChild(script);';
+    /*vm.snippet = '(function() {' +
+    'var script = document.createElement("script");' +
+    'script.type = "text/javascript";' +
+    'script.onload = function() {'+
+        'console.log("teste");' +
+    'script.onload = null;' +
+    '}' +
+        '(document.getElementsByTagName( "head" )[ 0 ]).appendChild( script );' +
+        'script.src = "http://localhost:9000/socket.io-1.3.7.js";' +
+        '})();';*/
+
+    /*'var script2 = document.createElement("script");' +
+     'script2.type = "text/javascript";' +
+     'script2.src = "http://localhost:9000/snippet.js";' +
+     'document.getElementsByTagName("head")[0]).appendChild(script2);' +*/
+
     vm.setElement = function (element) {
 
       if(vm.conf.isRecording) {
@@ -226,6 +244,9 @@
 
       if (type == 'input' && vm.getAttr('ng-model', element))
         locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
+
+      if (type == 'input' && vm.getAttr('name', element))
+        locators.push({type: 'css', value: '[name="' + vm.getAttr('name', element) + '"]'});
 
       if (type == 'input' && vm.getAttr('type', element) == 'button') {
         locators.push({type: 'id', value: vm.getAttr('id', element)});
@@ -269,6 +290,9 @@
 
       var mainContent = angular.element( document.querySelector('#main') );
       mainContent[0].scrollTop = mainContent[0].scrollHeight;
+
+      vm.getSessionUrl();
+
       //localStorage.setItem('actions', angular.toJson(vm.actions));
 
       //vm.getSessionUrl();
@@ -512,9 +536,22 @@
         data: {'script': vm.snippet, 'args': [{'f': ''}]}
       }).then(function successCallback() {
 
+
+       /* $http({
+          method: 'POST',
+          url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/execute',
+          data: {'script': vm.snippet2, 'args': [{'f': ''}]}
+        }).then(function successCallback() {
+
+          $log.debug('Session Executed 2');
+
+        });*/
+
         $log.debug('Session Executed');
 
         vm.isLoadingSession = false;
+
+        vm.getSessionUrl();
 
         $mdToast.show(
             $mdToast.simple()

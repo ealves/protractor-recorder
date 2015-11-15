@@ -1,7 +1,7 @@
 var socket = io('http://localhost:9000');
 document.body.addEventListener('mousedown', function (event) {
   var xPath = getPathTo(event.target);
-  var ngRepeat = getNgRepeat(event.target);
+  var ngRepeat = getNgRepeat(event);
   var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : event.target.parentNode;
 
   var element = {
@@ -25,7 +25,7 @@ document.body.addEventListener('mouseup', function (event) {
     socket.emit('onassertion', document.selection.createRange().text);
   }
 });
-function getNgRepeat(element) {
+function getNgRepeat(event) {
   if(event.target.parentNode.getAttribute('ng-repeat')){
     return event.target.parentNode.getAttribute('ng-repeat');
   }
