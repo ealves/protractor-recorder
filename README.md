@@ -21,7 +21,7 @@ $ bower install
 
 #### Node Server
 
-- The node server is used to control the messages flow from socket, on root folder execute:
+- The node server is used to control the messages flow from socket, on root folder, run:
 
 ``` shell
 $ node server.js
@@ -29,10 +29,18 @@ $ node server.js
 
 #### Web Interface
 
-- To start the Angular Material web interface execute:
+- To start the Angular Material web interface, run:
 
 ``` shell
 $ gulp serve
+```
+
+#### Selenium
+
+- To start the Selenium run:
+
+``` shell
+$ webdriver-manager start
 ```
 
 ## Usage
