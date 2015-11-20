@@ -1,7 +1,11 @@
 var socket = io('http://localhost:9000');
 document.body.addEventListener('mousedown', function (event) {
+
+  var ngRepeats = [];
   var xPath = getPathTo(event.target);
-  var ngRepeat = getNgRepeat(event);
+  getNgRepeat(event.target, ngRepeats);
+  //console.log(ngRepeats);
+
   var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : event.target.parentNode;
 
   var element = {
@@ -10,8 +14,8 @@ document.body.addEventListener('mousedown', function (event) {
       offsetParent: {'outerHTML': offsetParent}
   };
 
-  if(ngRepeat)
-    element.ngRepeat = {value: ngRepeat, rowIndex: event.target.parentNode.rowIndex.toString()};
+  if(ngRepeats)
+    element.ngRepeat = {value: ngRepeats[ngRepeats.length-1], rowIndex: '0'};
 
   socket.emit('onclick', element);
 });
@@ -25,27 +29,34 @@ document.body.addEventListener('mouseup', function (event) {
     socket.emit('onassertion', document.selection.createRange().text);
   }
 });
-function getNgRepeat(event) {
-  if(event.target.parentNode.getAttribute('ng-repeat')){
-    return event.target.parentNode.getAttribute('ng-repeat');
+function getNgRepeat(element, ngs) {
+  var ix = 0;
+  if(element.parentNode) {
+    var siblings = element.parentNode.childNodes;
+    for (var i = 0; i < siblings.length; i++) {
+      var sibling = siblings[i];
+
+      if (sibling === element) {
+        if(element.getAttribute('ng-repeat'))
+          ngs.push(element.getAttribute('ng-repeat'));
+        return getNgRepeat(element.parentNode, ngs);
+      }
+      if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
+        ix++;
+      }
+    }
   }
-  return false;
 }
 function getPathTo(element) {
-
   if (element.id !== '')
     return "//*[@id='" + element.id + "']";
-
   if (element === document.body)
     return element.tagName.toLowerCase();
-
   var ix = 0;
   var siblings = element.parentNode.childNodes;
   for (var i = 0; i < siblings.length; i++) {
     var sibling = siblings[i];
-
     if (sibling === element) return getPathTo(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + (ix + 1) + ']';
-
     if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
       ix++;
     }

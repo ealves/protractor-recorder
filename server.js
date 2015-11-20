@@ -231,7 +231,7 @@ function getLine(action){
   }
 
   if(action.action == 'click' && action.locators[0].type == 'xpath') {
-    line = "element(by.xpath(\"" + action.locators[0].value + "\")).click()";
+    line = "element(by.xpath('" + action.locators[0].value + "')).click()";
   }
 
   if(action.action == 'click' && action.locators[0].type == 'id') {
