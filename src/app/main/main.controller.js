@@ -217,7 +217,7 @@
         } else if (target[0].tagName.match(/^input/i)) {
           vm.addElement(target, 'input', 'click', false, element.xPath);
         } else if (target[0].tagName.match(/^a/i)) {
-          vm.addElement(target, 'a', 'click', false, element.xPath);
+          vm.addElement(target, 'a', 'click', target.text().trim(), element.xPath);
         } else if (element.ngRepeat) {
 
           var value = target.text() ? target.text() : false
@@ -257,8 +257,8 @@
       }
 
       if (vm.getAttr('href', element)) {
-        locators.push({type: 'href', value: vm.getAttr('href', element)});
-        value = vm.getAttr('href', element);
+        locators.push({type: 'linkText', value: value});
+        locators.push({type: 'get', value: vm.getAttr('href', element)});
       }
 
       if (vm.getAttr('id', element))

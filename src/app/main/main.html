@@ -104,6 +104,27 @@
             <md-checkbox aria-label="Login page" ng-model="main.conf.login">Login (Wait for url change)</md-checkbox>
           </md-input-container>
 
+          <md-divider></md-divider>
+
+          <md-input-container class="md-block">
+            <md-checkbox aria-label="Window maximize" ng-model="main.conf.maximize">Window maximize</md-checkbox>
+          </md-input-container>
+
+          <div ng-if="!main.conf.maximize" layout layout="column">
+
+            <md-input-container flex>
+              <label>Width</label>
+              <input type="text" ng-model="main.conf.width">
+            </md-input-container>
+
+            <md-input-container flex>
+              <label>Height</label>
+              <input type="text" ng-model="main.conf.height">
+            </md-input-container>
+
+
+          </div>
+
         </div>
           <div layout="row" layout-align="center start" flex>
 

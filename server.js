@@ -144,8 +144,12 @@ app.post('/export', function(req, res){
   confOutput += "  seleniumAddress: '" + conf.seleniumAddress + "',\r\n" +
              "  baseUrl: '" + baseUrl + "',\r\n" +
              "  specs: ['spec.js'],\r\n" +
-             "  onPrepare: function(){\r\n" +
-             "    browser.driver.get('" + baseUrl +"');\r\n";
+             "  onPrepare: function(){\r\n";
+
+  if(conf.maximize)
+    confOutput += "    browser.driver.manage().window().maximize();\r\n";
+
+  confOutput += "    browser.driver.get('" + baseUrl +"');\r\n";
 
   conf.spec.actions.forEach(function(action){
 
@@ -157,7 +161,10 @@ app.post('/export', function(req, res){
   });
 
   if(conf.login)
-    confOutput += "return browser.driver.wait(function() {return browser.driver.getCurrentUrl().then(function(url) {console.log(url);return url != '" + baseUrl + "';});}, 10000, 'Error');";
+    confOutput += "    return browser.driver.wait(function() {\r\n" +
+        "      return browser.driver.getCurrentUrl().then(function(url) {\r\n" +
+        "        return url != '" + baseUrl + "';});\r\n" +
+        "    }, 10000, 'Error');\r\n";
 
   confOutput += "  }\r\n}";
 
@@ -226,8 +233,12 @@ function getLine(action){
     line = "element(by.buttonText('" + action.value + "')).click()";
   }
 
-  if(action.action == 'click' && action.type == 'a') {
-    line = "browser.get('" + action.value + "')";
+  if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
+    line = "element(by.linkText('" + action.value + "')).click()";
+  }
+
+  if(action.action == 'click' && action.type == 'a' && action.locator.type == 'get') {
+    line = "browser.get('" + action.locator.value + "')";
   }
 
   if(action.action == 'click' && action.locators[0].type == 'xpath') {
