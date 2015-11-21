@@ -15,7 +15,7 @@ document.body.addEventListener('mousedown', function (event) {
   };
 
   if(ngRepeats)
-    element.ngRepeat = {value: ngRepeats[ngRepeats.length-1], rowIndex: '0'};
+    element.ngRepeat = ngRepeats[ngRepeats.length-1];
 
   socket.emit('onclick', element);
 });
@@ -37,8 +37,10 @@ function getNgRepeat(element, ngs) {
       var sibling = siblings[i];
 
       if (sibling === element) {
-        if(element.getAttribute('ng-repeat'))
-          ngs.push(element.getAttribute('ng-repeat'));
+        if(element.getAttribute('ng-repeat')) {
+          var rowIndex = Array.prototype.indexOf.call(element.parentNode.children, element);
+          ngs.push({value: element.getAttribute('ng-repeat'), rowIndex: rowIndex});
+        }
         return getNgRepeat(element.parentNode, ngs);
       }
       if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
