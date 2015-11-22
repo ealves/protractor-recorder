@@ -221,9 +221,13 @@
         } else if (element.ngRepeat) {
 
           var value = target.text() ? target.text() : false
+
+          //if(value)
           vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value, element.xPath);
 
           vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
+
+          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
 
         } else {
           var value = target.text() ? target.text() : false
@@ -268,11 +272,13 @@
 
         if (value)
           locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});
-        else if (xPath && !vm.getAttr('ng-click', element))
+        else if (xPath && !vm.getAttr('ng-click', element) && !vm.getAttr('class', element))
           locators.push({type: 'xpath', value: xPath});
         else if (vm.getAttr('ng-click', element)) {
           //element(by.css("[ng-click='changeToRemove(row.entity)']")).click();
           locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]'})
+        } else if(vm.getAttr('class', element)) {
+          locators.push({type: 'css', value: '.' + vm.getAttr('class', element)});
         }
 
       }
