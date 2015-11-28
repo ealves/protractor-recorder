@@ -1,5 +1,5 @@
 var socket = io('http://localhost:9000');
-document.body.addEventListener('mousedown', function (event) {
+parent.document.body.addEventListener('mousedown', function (event) {
 
   var ngRepeats = [];
   var xPath = getPathTo(event.target);
@@ -19,10 +19,10 @@ document.body.addEventListener('mousedown', function (event) {
 
   socket.emit('onclick', element);
 });
-document.body.addEventListener('keyup', function (event) {
+parent.document.body.addEventListener('keyup', function (event) {
   socket.emit('onkeyup', event.target.value);
 });
-document.body.addEventListener('mouseup', function (event) {
+parent.document.body.addEventListener('mouseup', function (event) {
   if (window.getSelection && window.getSelection().toString() != '') {
     socket.emit('onassertion', window.getSelection().toString());
   } else if (document.selection && document.selection.createRange().text != '') {

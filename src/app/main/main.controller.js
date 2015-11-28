@@ -184,31 +184,26 @@
       vm.spec = spec;
     };
 
-    vm.snippet = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){var e=document.createElement("script");e.src="http://localhost:9000/snippet.js",head.appendChild(e)},script.src="http://localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
-
-    vm.snippet1 = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){},script.src="http://localhost:9000/socket.io-1.3.7.js",head.appendChild(script);';
-    vm.snippet2 = 'var head=document.getElementsByTagName("head")[0],script=document.createElement("script");script.onload=function(){},script.src="http://localhost:9000/snippet.js",head.appendChild(script);';
-    /*vm.snippet = '(function() {' +
-    'var script = document.createElement("script");' +
-    'script.type = "text/javascript";' +
-    'script.onload = function() {'+
-        'console.log("teste");' +
-    'script.onload = null;' +
-    '}' +
-        '(document.getElementsByTagName( "head" )[ 0 ]).appendChild( script );' +
-        'script.src = "http://localhost:9000/socket.io-1.3.7.js";' +
-        '})();';*/
-
-    /*'var script2 = document.createElement("script");' +
-     'script2.type = "text/javascript";' +
-     'script2.src = "http://localhost:9000/snippet.js";' +
-     'document.getElementsByTagName("head")[0]).appendChild(script2);' +*/
+    vm.snippet = 'var b=document.getElementsByTagName("body")[0];' +
+        'var i = document.createElement("iframe");' +
+        'i.id="recorder-iframe";' +
+        'i.setAttribute("style", "display:none");' +
+        'b.appendChild(i);' +
+        'var i = document.getElementById("recorder-iframe");' +
+        'var s = i.contentWindow.document.createElement("script");' +
+        's.src = "http://localhost:9000/socket.io-1.3.7.js";' +
+        'i.contentWindow.document.body.appendChild(s);' +
+        'var s = i.contentWindow.document.createElement("script");' +
+        's.src = "http://localhost:9000/snippet.js";' +
+        'i.contentWindow.document.body.appendChild(s);';
 
     vm.setElement = function (element) {
 
       if(vm.conf.isRecording) {
         var target = angular.element(element.outerHTML);
         var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
+
+        var value = '';
 
         if (target[0].tagName.match(/^button/i) || (parent[0].tagName && parent[0].tagName.match(/^button/i)) && !target[0].tagName.match(/^input/i)) {
 
@@ -220,7 +215,7 @@
           vm.addElement(target, 'a', 'click', target.text().trim(), element.xPath);
         } else if (element.ngRepeat) {
 
-          var value = target.text() ? target.text() : false
+          value = target.text() ? target.text() : false
 
           //if(value)
           vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value, element.xPath);
@@ -230,7 +225,7 @@
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
 
         } else {
-          var value = target.text() ? target.text() : false
+          value = target.text() ? target.text() : false;
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
         }
       }
@@ -511,7 +506,7 @@
       localStorage.setItem('describes', angular.toJson(vm.describes));
     });
 
-    $scope.$watch('main.url', function (newVal, oldVal) {
+    $scope.$watch('main.url', function (newVal) {
       $log.debug('watch Url');
 
       if(newVal.match(/^https/)){
@@ -541,17 +536,6 @@
         url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/execute',
         data: {'script': vm.snippet, 'args': [{'f': ''}]}
       }).then(function successCallback() {
-
-
-       /* $http({
-          method: 'POST',
-          url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/execute',
-          data: {'script': vm.snippet2, 'args': [{'f': ''}]}
-        }).then(function successCallback() {
-
-          $log.debug('Session Executed 2');
-
-        });*/
 
         $log.debug('Session Executed');
 
@@ -589,6 +573,7 @@
           }
 
         }, function errorCallback(response) {
+          $log.debug(response);
           $log.debug('Error session source');
           vm.deleteSession();
 
@@ -632,8 +617,6 @@
         includes.push(include);
 
       });
-
-
     };
 
     vm.verifySnippet = function(){
