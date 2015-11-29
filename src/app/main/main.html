@@ -129,6 +129,9 @@
           <div layout="row" layout-align="center start" flex>
 
             <md-whiteframe layout-margin layout="column" flex class="md-whiteframe-1dp">
+              <md-select placeholder="Assign to user" ng-model="main.user" style="min-width: 200px;">
+                <md-option ng-value="user" ng-repeat="user in main.users">{{user.name}}</md-option>
+              </md-select>
               <table class="table table-hover table-mc-light-blue ng-scope">
                 <thead>
                 <tr>
@@ -153,11 +156,18 @@
                   <td>
                     <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
                                         class="md-block">
-                      <md-select ng-change="setActionLocator()" aria-label="Locator {{ locator.value }}" ng-model="action.locator.value">
-                        <md-option ng-repeat="locator in action.locators" value="{{locator.value}}">
+                      <md-select style="max-width: 225px" aria-label="Locator {{ locator.value }}"
+                                 ng-model="action.locator"
+                                 ng-model-options="{trackBy: '$value.type'}">
+                        <md-option ng-value="locator" ng-repeat="locator in action.locators">
                           {{ locator.type }} - {{ locator.value }}
                         </md-option>
                       </md-select>
+
+                      <!--<md-select placeholder="Assign to user" ng-model="main.user" style="min-width: 200px;">
+                        <md-option ng-value="user" ng-repeat="user in main.users">{{ user.id }} - {{user.name}}</md-option>
+                      </md-select>-->
+
                     </md-input-container>
                     <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
                   </td>
