@@ -31,6 +31,14 @@ console.log('a user connected');
 
   });
 
+  socket.on('onchange', function (data) {
+    console.log('onchange');
+    console.log(data);
+
+    io.emit('change', data);
+
+  });
+
   socket.on('onkeyup', function (data) {
   	console.log('onkeyup');
     console.log(data);
@@ -176,7 +184,7 @@ app.post('/export', function(req, res){
     console.log("The file conf.js was saved!");
   });
 
-  var output = "describe('" + describe.string + "', function(){\r\n\r\n";
+  var output = "describe('" + describe[0].string + "', function(){\r\n\r\n";
 
   describe[0].specs.forEach(function(spec){
     output += "  it('" + spec.string + "', function(){\r\n\r\n";
@@ -232,14 +240,17 @@ function getLine(action){
     line = "var EC = protractor.ExpectedConditions;\r\n";
 
     if(action.locator.type == 'xpath')
-      line += "    var elm = element(by.xpath('" + action.locator.value + "'));\r\n"
+      line += "    var elm = element(by.xpath('" + action.locator.value + "'));\r\n";
 
     if(action.locator.type == 'css')
-      line += "    var elm = element(by.css('" + action.locator.value + "'));\r\n"
+      line += "    var elm = element(by.css('" + action.locator.value + "'));\r\n";
 
     line += "    browser.wait(EC.presenceOf(elm), 10000)";
 
   }
+
+  if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
+    line = "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click()";
 
   if(action.action == 'click' && action.locator.type == 'repeater')
     line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + "))";

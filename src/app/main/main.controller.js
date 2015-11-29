@@ -85,6 +85,14 @@
 
     });
 
+    socket.on('change', function (data) {
+      $log.debug('onchange');
+      $log.debug(data);
+
+      vm.setElement(data);
+
+    });
+
     socket.on('keyup', function (data) {
       $log.debug('onkeyup');
       $log.debug(data);
@@ -94,14 +102,6 @@
         lastAction.action = 'sendKeys';
         lastAction.value = data;
       }
-
-    });
-
-    socket.on('change', function (data) {
-      $log.debug('onchange');
-      $log.debug(data);
-
-      vm.setElement(data);
 
     });
 
@@ -239,7 +239,9 @@
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
 
         } else if (target[0].tagName.match(/^select/i)) {
-          vm.addElement(target, 'select', 'click', false, element.xPath);
+
+          if(element.value)
+            vm.addElement(target, 'select', 'click', element.value, element.xPath);
 
         } else {
           value = target.text() ? target.text() : false;
@@ -251,6 +253,9 @@
     vm.addElement = function (element, type, actionType, value, xPath, repeater) {
 
       var locators = [];
+
+      if(type == 'select' && vm.getAttr('ng-model', element))
+        locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
 
       if(type == 'row')
         locators.push({type: 'repeater', value: repeater});
@@ -290,7 +295,7 @@
           //element(by.css("[ng-click='changeToRemove(row.entity)']")).click();
           locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]'})
         } else if(vm.getAttr('class', element)) {
-          locators.push({type: 'css', value: '.' + vm.getAttr('class', element)});
+          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(' ', '.')});
         }
 
       }

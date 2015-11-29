@@ -18,7 +18,15 @@ parent.document.body.addEventListener('keyup', function (event) {
   socket.emit('onkeyup', event.target.value);
 });
 parent.document.body.addEventListener('change', function (event) {
-  socket.emit('onchange', event.target);
+  var xPath = getPathTo(event.target);
+  var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : event.target.parentNode;
+  var element = {
+    xPath: xPath,
+    outerHTML: event.target.outerHTML,
+    offsetParent: {'outerHTML': offsetParent},
+    value: event.target.value
+  };
+  socket.emit('onchange', element);
 });
 parent.document.body.addEventListener('mouseup', function (event) {
   if (window.getSelection && window.getSelection().toString() != '') {
