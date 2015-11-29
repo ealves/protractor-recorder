@@ -19,7 +19,7 @@
 
   <div flex layout="row">
 
-    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="true">
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 
       <div layout="column" layout-padding>
         <md-input-container class="md-block">
@@ -40,7 +40,7 @@
         <md-list>
           <md-list-item ng-click="main.setSpec(spec, false)" ng-repeat="spec in describe.specs">
             <p>{{ spec.string ? spec.string : 'Untitled Spec' }}</p>
-            <md-icon ng-click="main.removeSpec($index)" md-svg-icon="delete"></md-icon>
+
           </md-list-item>
         </md-list>
       </div>
@@ -71,8 +71,8 @@
     <div flex layout-padding layout="column">
       <md-content md-scroll-y class="flex layout-column">
         {{ vm.session.id }}
-        <div ng-if="!main.showConf">
-          <md-input-container class="md-block">
+        <div ng-if="!main.showConf" layout="row">
+          <!--<md-input-container class="md-block">
             <label>Describe</label>
             <input type="text" ng-model="main.describe.string">
           </md-input-container>
@@ -80,7 +80,29 @@
           <md-input-container class="md-block">
             <label>Spec</label>
             <input type="text" ng-model="main.spec.string" placeholder="Untitled spec">
-          </md-input-container>
+          </md-input-container>-->
+
+          <h2>{{ main.spec.string }}</h2>
+          <span flex></span>
+
+          <md-button aria-label="Edit Spec" ng-click="main.editSpec($index)">
+            <md-icon md-svg-icon="edit"></md-icon>
+          </md-button>
+
+          <md-menu md-position-mode="target-right target">
+            <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+              <md-icon md-menu-origin md-svg-icon="more_horiz"></md-icon>
+            </md-button>
+            <md-menu-content width="2">
+              <md-menu-item>
+                <md-button ng-click="ctrl.duplicateSpec($index)"><span md-menu-align-target>Duplicate</span></md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-click="main.removeSpec($index)"><span md-menu-align-target>Remove</span></md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+
         </div>
         <div ng-if="main.showConf">
           <h2>Conf.js</h2>
@@ -153,14 +175,31 @@
                     <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
                   </td>
                   <td>
-                    <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+                    <md-input-container ng-if="action.value" style="padding-bottom: 5px;" md-no-float class="md-block">
                       <input type="text" ng-model="action.value" placeholder="Value">
                     </md-input-container>
                   </td>
-                  <td>
-                    <md-button aria-label="Delete action" ng-click="main.removeAction($index)">
+                  <td style="text-align: right;">
+                    <md-menu md-position-mode="target-right target">
+                      <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                        <md-icon md-menu-origin md-svg-icon="more_horiz"></md-icon>
+                      </md-button>
+                      <md-menu-content width="2">
+                        <md-menu-item>
+                          <md-button ng-click="ctrl.runFromHere($index)"><span md-menu-align-target>Run from here</span></md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                          <md-button ng-click="ctrl.addBreakPoint($index)"><span md-menu-align-target>Add breakpoint</span></md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                          <md-button ng-click="main.removeAction($index)"><span md-menu-align-target>Remove</span></md-button>
+                        </md-menu-item>
+                      </md-menu-content>
+                    </md-menu>
+
+                    <!--<md-button aria-label="Delete action" ng-click="main.removeAction($index)">
                       <md-icon md-svg-icon="close"></md-icon>
-                    </md-button>
+                    </md-button>-->
                   </td>
                 </tr>
                 </tbody>
