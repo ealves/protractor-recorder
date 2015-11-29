@@ -3,20 +3,15 @@
   <md-toolbar layout-align="center end">
     <div class="md-toolbar-tools">
       <h2>Protractor Recorder</h2>
-
       <span class="flex"></span>
-
       <md-button ng-if="!main.conf.isRecording" style="color: #000" class="md-raised" ng-click="main.createSession()">
         <md-icon style="color: #000" md-svg-icon="play_circle"></md-icon>
         Record
       </md-button>
-
-      <!--<md-button class="md-raised md-warn" ng-click="main.stopRecording()">-->
       <md-button ng-if="main.conf.isRecording" class="md-raised md-warn" ng-click="main.pauseRecording()">
         <md-icon style="color: #FFF" md-svg-icon="pause"></md-icon>
         Pause
       </md-button>
-
     </div>
   </md-toolbar>
 
@@ -77,8 +72,6 @@
       <md-content md-scroll-y class="flex layout-column">
         {{ vm.session.id }}
         <div ng-if="!main.showConf">
-
-
           <md-input-container class="md-block">
             <label>Describe</label>
             <input type="text" ng-model="main.describe.string">
@@ -121,17 +114,10 @@
               <label>Height</label>
               <input type="text" ng-model="main.conf.height">
             </md-input-container>
-
-
           </div>
-
         </div>
           <div layout="row" layout-align="center start" flex>
-
             <md-whiteframe layout-margin layout="column" flex class="md-whiteframe-1dp">
-              <md-select placeholder="Assign to user" ng-model="main.user" style="min-width: 200px;">
-                <md-option ng-value="user" ng-repeat="user in main.users">{{user.name}}</md-option>
-              </md-select>
               <table class="table table-hover table-mc-light-blue ng-scope">
                 <thead>
                 <tr>
@@ -163,11 +149,6 @@
                           {{ locator.type }} - {{ locator.value }}
                         </md-option>
                       </md-select>
-
-                      <!--<md-select placeholder="Assign to user" ng-model="main.user" style="min-width: 200px;">
-                        <md-option ng-value="user" ng-repeat="user in main.users">{{ user.id }} - {{user.name}}</md-option>
-                      </md-select>-->
-
                     </md-input-container>
                     <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
                   </td>
@@ -186,31 +167,8 @@
               </table>
             </md-whiteframe>
           </div>
-
-
-
-        <!--<md-button ng-click="main.newDescribe()">New Describe</md-button>-->
-
-        <!--<md-button ng-click="main.addSpec()">Add Spec</md-button>-->
-
-        <!--<md-button ng-click="main.createSession()">Create Session</md-button>-->
-
-        <!--<md-button ng-click="main.setSessionUrl()">Start Session</md-button>-->
-
-        <!--<md-button ng-click="main.getSessionUrl()">Session Url</md-button>-->
-
-        <!--<md-button ng-click="main.deleteSession()">Delete Session</md-button>-->
-
         <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
-
         <md-button ng-click="main.runTest()">Run Test</md-button>
-
-        <!--<div style="display: none" id="source">teste</div>-->
-
-        <!--<span ng-repeat="line in main.lines">
-          {{ line }};
-        </span>-->
-
       </md-content>
       <md-fab-speed-dial ng-hide="main.hidden" md-direction="up" md-open="main.isOpen"
                          class="md-scale md-fab-bottom-right" ng-class="{ 'md-hover-full': main.hover }"
