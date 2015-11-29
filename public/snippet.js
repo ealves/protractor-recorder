@@ -1,4 +1,5 @@
 var socket = io('http://localhost:9000');
+socket.emit('onsnippet', 'ip');
 parent.document.body.addEventListener('mousedown', function (event) {
 
   var ngRepeats = [];

@@ -12,6 +12,7 @@
 
     vm.isLoadingSession = false;
     vm.showConf = false;
+    vm.isSnippet = false;
 
     vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
@@ -72,6 +73,10 @@
       }
     });
 
+    socket.on('onsnippet', function(data){
+      vm.isSnippet = true;
+    });
+
     socket.on('click', function (data) {
       $log.debug('onclick');
       $log.debug(data);
@@ -113,6 +118,7 @@
 
     socket.on('session-disconnect', function (data) {
 
+      vm.isSnippet = false;
       vm.isLoadingSession = true;
 
       $log.debug('on-session-disconnect');
@@ -247,9 +253,9 @@
       if (type == 'input' && vm.getAttr('name', element))
         locators.push({type: 'css', value: '[name="' + vm.getAttr('name', element) + '"]'});
 
-      if (type == 'input' && vm.getAttr('type', element) == 'button') {
+      /*if (type == 'input' && vm.getAttr('type', element) == 'button') {
         locators.push({type: 'id', value: vm.getAttr('id', element)});
-      }
+      }*/
 
       if (type == 'input' && vm.getAttr('type', element) == 'submit') {
         locators.push({type: 'css', value: '[value="' + element.val() + '"]'});
@@ -540,12 +546,13 @@
         $log.debug('Session Executed');
 
         vm.isLoadingSession = false;
+        vm.isSnippet = true;
 
         vm.getSessionUrl();
 
         $mdToast.show(
             $mdToast.simple()
-                .content('Session started!')
+                .content('Session ready to record!')
                 .position('bottom left')
                 .hideDelay(3000)
         );
@@ -621,7 +628,7 @@
 
     vm.verifySnippet = function(){
 
-      if (vm.session.source && !vm.session.source.match(/snippet\.js/)) {
+      if (!vm.isSnippet && !vm.session.source.match(/recorder-iframe/)) {
         vm.sessionExecute();
       } else {
         vm.isLoadingSession = false;

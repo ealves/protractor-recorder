@@ -47,4 +47,4 @@ $ webdriver-manager start
 
 - Access http://localhost:3000;
 - Enter a url base and click on 'Record' to start recording
-- After end up your test flow click on 'Export Protractor' to export conf.js and spec.js.
+- After end up your test flow click on 'Export Protractor' to export conf.js and spec.js inside the folder public/exports.
