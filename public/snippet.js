@@ -56,7 +56,7 @@ function getNgRepeat(element, ngs) {
 }
 function getPathTo(element) {
   if (element.id !== '')
-    return "//*[@id='" + element.id + "']";
+    return "//*[@id=\"" + element.id + "\"]";
   if (element === document.body)
     return element.tagName.toLowerCase();
   var ix = 0;

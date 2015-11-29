@@ -10,13 +10,32 @@
 
     var vm = this;
 
+    /*-------------------------------------------------------------------
+     * 		 				 	ATTRIBUTES
+     *-------------------------------------------------------------------*/
+
     vm.isLoadingSession = false;
     vm.showConf = false;
     vm.isSnippet = false;
 
+    /* If first run set examples or get from local storage */
     vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
     vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
+
+    /* Javascript snippet to inject on session */
+    vm.snippet = 'var b=document.getElementsByTagName("body")[0];' +
+        'var i = document.createElement("iframe");' +
+        'i.id="recorder-iframe";' +
+        'i.setAttribute("style", "display:none");' +
+        'b.appendChild(i);' +
+        'var i = document.getElementById("recorder-iframe");' +
+        'var s = i.contentWindow.document.createElement("script");' +
+        's.src = "http://localhost:9000/socket.io-1.3.7.js";' +
+        'i.contentWindow.document.body.appendChild(s);' +
+        'var s = i.contentWindow.document.createElement("script");' +
+        's.src = "http://localhost:9000/snippet.js";' +
+        'i.contentWindow.document.body.appendChild(s);';
 
     vm.session      = {};
     vm.lines        = [];
@@ -25,6 +44,7 @@
     vm.dataBind     = [];
     vm.capabilities = [];
 
+    /* Configuration example */
     if(!vm.conf) {
       vm.conf = {
         isRecording: false,
@@ -40,6 +60,7 @@
       };
     }
 
+    /* Spec example */
     vm.sample = {
       string: 'Describe Protractor Example',
       specs: [
@@ -52,6 +73,7 @@
       ]
     };
 
+    /* Base options for new spec */
     vm.blankSpec = {
       string: '',
       actions: []
@@ -72,6 +94,13 @@
         vm.tooltipVisible = vm.isOpen;
       }
     });
+
+    /*-------------------------------------------------------------------
+     * 		 				  SOCKET ON
+     *-------------------------------------------------------------------*/
+    /**
+     * Messages: onsnippet, click, change, keyup, assertion, session-disconnect, protractor-log
+     */
 
     socket.on('onsnippet', function(data){
       vm.isSnippet = true;
@@ -150,12 +179,11 @@
       }
     };
 
-    vm.openConf = function(){
+    vm.openConf = function() {
       vm.showConf = true;
-
       vm.setSpec(vm.conf.spec, vm.showConf);
-
     };
+
     vm.setExample = function () {
 
       if (!vm.describes.length) {
@@ -183,8 +211,6 @@
 
       vm.describe.specs.push(angular.copy(vm.blankSpec));
       vm.setSpec(vm.describe.specs[vm.describe.specs.length - 1]);
-
-
     };
 
     vm.setDescribe = function (describe) {
@@ -198,18 +224,18 @@
       vm.spec = spec;
     };
 
-    vm.snippet = 'var b=document.getElementsByTagName("body")[0];' +
-        'var i = document.createElement("iframe");' +
-        'i.id="recorder-iframe";' +
-        'i.setAttribute("style", "display:none");' +
-        'b.appendChild(i);' +
-        'var i = document.getElementById("recorder-iframe");' +
-        'var s = i.contentWindow.document.createElement("script");' +
-        's.src = "http://localhost:9000/socket.io-1.3.7.js";' +
-        'i.contentWindow.document.body.appendChild(s);' +
-        'var s = i.contentWindow.document.createElement("script");' +
-        's.src = "http://localhost:9000/snippet.js";' +
-        'i.contentWindow.document.body.appendChild(s);';
+    vm.setElementOnChange = function (element) {
+
+      if (vm.conf.isRecording) {
+
+        var target = angular.element(element.outerHTML);
+
+        if (target[0].tagName.match(/^select/i) && element.value) {
+
+          vm.addElement(target, 'select', 'click', element.value, element.xPath);
+        }
+      }
+    };
 
     vm.setElement = function (element) {
 
@@ -237,11 +263,6 @@
           vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
 
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
-
-        } else if (target[0].tagName.match(/^select/i)) {
-
-          if(element.value)
-            vm.addElement(target, 'select', 'click', element.value, element.xPath);
 
         } else {
           value = target.text() ? target.text() : false;
@@ -289,15 +310,19 @@
 
         if (value)
           locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});
-        else if (xPath && !vm.getAttr('ng-click', element) && !vm.getAttr('class', element))
+        if (xPath && !vm.getAttr('ng-click', element) && !vm.getAttr('class', element))
           locators.push({type: 'xpath', value: xPath});
-        else if (vm.getAttr('ng-click', element)) {
+        if (vm.getAttr('ng-click', element)) {
           //element(by.css("[ng-click='changeToRemove(row.entity)']")).click();
           locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]'})
-        } else if(vm.getAttr('class', element)) {
-          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(' ', '.')});
         }
 
+        if(vm.getAttr('class', element)) {
+          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(/\s/g, '.')});
+        }
+
+        if (xPath)
+          locators.push({type: 'xpath', value: xPath});
       }
 
       var action = {
@@ -322,6 +347,9 @@
 
     };
 
+    /**
+     * Get all data bind to suggest on assertions
+     */
     vm.getAllDataBind = function () {
 
       $log.debug('getAllDataBind');
@@ -368,6 +396,30 @@
 
       $log.debug('exportProtractor');
       $log.debug(vm.describes);
+
+      /* Get line export to actions in conf.js */
+      vm.conf.spec.lines = [];
+
+      angular.forEach(vm.conf.spec.actions, function (action) {
+
+        vm.conf.spec.lines.push(vm.getLine(action));
+
+      });
+
+      /* Get line exported to actions in spec.js */
+      vm.spec.lines = [];
+
+      if($filter('filter')(vm.spec.actions, {action: 'wait'}).length != 0)
+        vm.spec.lines.push('var EC = protractor.ExpectedConditions');
+
+      angular.forEach(vm.spec.actions, function (action) {
+
+        vm.spec.lines.push(vm.getLine(action));
+
+      });
+
+      $log.debug(vm.spec.lines);
+
       $http({
         method: 'POST',
         url: 'http://localhost:9000/export',
@@ -386,48 +438,85 @@
 
       });
 
-      $log.debug('Export Protractor');
-      var lines = [];
+    };
 
-      angular.forEach(vm.spec.actions, function (action) {
+    vm.getLine = function(action) {
 
-        if (action.action == 'sendKeys') {
-          lines.push("element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')");
-        }
+      var line = '';
 
-        if (action.action == 'click' && action.type == 'button' && action.value) {
-          lines.push("element(by.buttonText('" + action.value + "')).click()");
-        }
+      if(action.action == 'wait'){
 
-        if (action.action == 'click' && action.type == 'a') {
-          lines.push("browser.get('" + action.value + "')");
-        }
+        var elm = '';
 
-        if (action.action == 'click' && action.locators[0].type == 'xpath') {
-          lines.push("element(by.xpath('" + action.locators[0].value + "')).click()");
-        }
+        if(action.locator.type == 'xpath')
+          elm = "element(by.xpath('" + action.locator.value + "'))";
 
-        if (action.action == 'click' && action.locators[0].type == 'id') {
-          lines.push("element(by.id('" + action.locators[0].value + "')).click()");
-        }
+        if(action.locator.type == 'css')
+          elm = "element(by.css('" + action.locator.value + "'))";
 
-        if (action.action == 'click' && action.type == 'input' && action.locators[0].type == 'css') {
-          lines.push("element(by.css('" + action.locators[0].value + "')).click()");
-        }
+        line = "browser.wait(EC.presenceOf(" + elm + "), 10000)";
 
-      });
+      }
 
-      vm.lines = lines;
+      if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
+        line = "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click()";
 
-      $log.debug(lines);
+      if(action.action == 'click' && action.locator.type == 'repeater')
+        line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + "))";
+
+      if(action.action == 'sendKeys' && action.locator.type == 'model') {
+        line = "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "')";
+      }
+
+      if(action.action == 'sendKeys' && action.locator.type == 'css') {
+        line = "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "')";
+      }
+
+      if(action.action == 'click' && action.type == 'button' && action.value) {
+        line = "element(by.buttonText('" + action.value + "')).click()";
+      }
+
+      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
+        line = "element(by.linkText('" + action.value + "')).click()";
+      }
+
+      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'get') {
+        line = "browser.get('" + action.locator.value + "')";
+      }
+
+      if(action.action == 'click' && action.locator.type == 'xpath') {
+        line = "element(by.xpath('" + action.locator.value + "')).click()";
+      }
+
+      if(action.action == 'click' && action.locator.type == 'id') {
+        line = "element(by.id('" + action.locator.value + "')).click()";
+      }
+
+      if(action.action == 'click' && action.locator.type == 'css') {
+        line = "element(by.css('" + action.locator.value + "')).click()";
+      }
+
+      if(action.action == 'assertion' && action.locator.type == 'bind')
+        line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
+      if(action.action == 'assertion' && action.locator.type == 'id')
+        line = "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
+      if(action.action == 'assertion' && action.locator.type == 'xpath')
+        line = "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
+      if(action.action == 'assertion' && action.locator.type == 'css')
+        line = "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
+
+      return line;
+    };
+
+    vm.setActionLocator = function(){
 
     };
 
     vm.removeAction = function (index) {
       vm.spec.actions.splice(index, 1);
-
-      //localStorage.setItem('actions', angular.toJson(vm.actions));
-
     };
 
     vm.getAttr = function (attr, elem) {
@@ -547,8 +636,6 @@
         localStorage.setItem('url', vm.url);
       }
 
-      /*if(newValue != oldValue)
-       vm.setSessionUrl();*/
     });
 
     vm.sessionExecute = function () {
@@ -587,9 +674,6 @@
 
           vm.session.source = response.data.value;
 
-          /*var sourceHtml = angular.element(document.querySelector('#source'));
-           sourceHtml.html(response.data.value);*/
-
           if(response.data.value) {
             vm.getNgIncludes();
             vm.verifySnippet();
@@ -608,6 +692,9 @@
 
     };
 
+    /**
+     * Get all html from ng-includes and concatenate with main source
+     */
     vm.getNgIncludes = function () {
 
       $log.debug('getNgIncludes');
@@ -634,11 +721,8 @@
             vm.getAllDataBind();
 
           });
-
         }
-
         includes.push(include);
-
       });
     };
 
@@ -649,7 +733,6 @@
       } else {
         vm.isLoadingSession = false;
       }
-
     };
 
     vm.deleteSession = function(){

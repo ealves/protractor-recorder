@@ -159,11 +159,8 @@ app.post('/export', function(req, res){
 
   confOutput += "    browser.driver.get('" + baseUrl +"');\r\n";
 
-  conf.spec.actions.forEach(function(action){
+  conf.spec.lines.forEach(function(line){
 
-    var line = getLine(action);
-
-    //console.log(action);
     confOutput += '    ' + line + ';\r\n';
 
   });
@@ -189,17 +186,11 @@ app.post('/export', function(req, res){
   describe[0].specs.forEach(function(spec){
     output += "  it('" + spec.string + "', function(){\r\n\r\n";
 
-    var lastAction = null;
+    spec.lines.forEach(function(line, index){
 
-    spec.actions.forEach(function(action, index){
+      output += '     ' + line + ';\r\n';
 
-      var line = getLine(action);
-
-      console.log(lastAction);
-
-      if(lastAction != null && lastAction.locator && lastAction.locator.type == 'repeater') {
-
-        console.log(spec.actions[index - 1]);
+      /*if(lastAction != null && lastAction.locator && lastAction.locator.type == 'repeater') {
 
         output += line + ';\r\n';
 
@@ -211,7 +202,7 @@ app.post('/export', function(req, res){
           output += '    ' + line + ';\r\n';
       }
 
-      lastAction = action;
+      lastAction = action;*/
 
     });
 
@@ -230,77 +221,6 @@ app.post('/export', function(req, res){
 
   res.send('ok');
 });
-
-function getLine(action){
-
-  var line = '';
-
-  if(action.action == 'wait'){
-
-    line = "var EC = protractor.ExpectedConditions;\r\n";
-
-    if(action.locator.type == 'xpath')
-      line += "    var elm = element(by.xpath('" + action.locator.value + "'));\r\n";
-
-    if(action.locator.type == 'css')
-      line += "    var elm = element(by.css('" + action.locator.value + "'));\r\n";
-
-    line += "    browser.wait(EC.presenceOf(elm), 10000)";
-
-  }
-
-  if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
-    line = "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click()";
-
-  if(action.action == 'click' && action.locator.type == 'repeater')
-    line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + "))";
-
-  if(action.action == 'sendKeys' && action.locator.type == 'model') {
-    line = "element(by.model('" + action.locators[0].value + "')).sendKeys('" + action.value + "')";
-  }
-
-  if(action.action == 'sendKeys' && action.locator.type == 'css') {
-    line = "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "')";
-  }
-
-  if(action.action == 'click' && action.type == 'button' && action.value) {
-    line = "element(by.buttonText('" + action.value + "')).click()";
-  }
-
-  if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
-    line = "element(by.linkText('" + action.value + "')).click()";
-  }
-
-  if(action.action == 'click' && action.type == 'a' && action.locator.type == 'get') {
-    line = "browser.get('" + action.locator.value + "')";
-  }
-
-  if(action.action == 'click' && action.locators[0].type == 'xpath') {
-    line = "element(by.xpath('" + action.locators[0].value + "')).click()";
-  }
-
-  if(action.action == 'click' && action.locators[0].type == 'id') {
-    line = "element(by.id('" + action.locators[0].value + "')).click()";
-  }
-
-  if(action.action == 'click' && action.locators[0].type == 'css') {
-    line = "element(by.css('" + action.locators[0].value + "')).click()";
-  }
-
-  if(action.action == 'assertion' && action.locator.type == 'bind')
-    line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
-
-  if(action.action == 'assertion' && action.locator.type == 'id')
-    line = "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
-
-  if(action.action == 'assertion' && action.locator.type == 'xpath')
-    line = "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
-
-  if(action.action == 'assertion' && action.locator.type == 'css')
-    line = "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "')";
-
-  return line;
-}
 
 http.listen(9000, function () {
  console.log('Server listening on *:9000');
