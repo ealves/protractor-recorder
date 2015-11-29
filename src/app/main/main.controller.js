@@ -97,6 +97,14 @@
 
     });
 
+    socket.on('change', function (data) {
+      $log.debug('onchange');
+      $log.debug(data);
+
+      vm.setElement(data);
+
+    });
+
     socket.on('assertion', function (data) {
       $log.debug('onassertion');
       $log.debug(data);
@@ -229,6 +237,9 @@
           vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
 
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
+
+        } else if (target[0].tagName.match(/^select/i)) {
+          vm.addElement(target, 'select', 'click', false, element.xPath);
 
         } else {
           value = target.text() ? target.text() : false;

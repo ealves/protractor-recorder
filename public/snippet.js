@@ -1,27 +1,24 @@
 var socket = io('http://localhost:9000');
 socket.emit('onsnippet', 'ip');
 parent.document.body.addEventListener('mousedown', function (event) {
-
   var ngRepeats = [];
   var xPath = getPathTo(event.target);
   getNgRepeat(event.target, ngRepeats);
-  //console.log(ngRepeats);
-
   var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : event.target.parentNode;
-
   var element = {
       xPath: xPath,
       outerHTML: event.target.outerHTML,
       offsetParent: {'outerHTML': offsetParent}
   };
-
   if(ngRepeats)
     element.ngRepeat = ngRepeats[ngRepeats.length-1];
-
   socket.emit('onclick', element);
 });
 parent.document.body.addEventListener('keyup', function (event) {
   socket.emit('onkeyup', event.target.value);
+});
+parent.document.body.addEventListener('change', function (event) {
+  socket.emit('onchange', event.target);
 });
 parent.document.body.addEventListener('mouseup', function (event) {
   if (window.getSelection && window.getSelection().toString() != '') {
@@ -36,7 +33,6 @@ function getNgRepeat(element, ngs) {
     var siblings = element.parentNode.childNodes;
     for (var i = 0; i < siblings.length; i++) {
       var sibling = siblings[i];
-
       if (sibling === element) {
         if(element.getAttribute('ng-repeat')) {
           var rowIndex = Array.prototype.indexOf.call(element.parentNode.children, element);
