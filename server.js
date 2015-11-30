@@ -188,7 +188,10 @@ app.post('/export', function(req, res){
 
     spec.lines.forEach(function(line, index){
 
-      output += '     ' + line + ';\r\n';
+      if(line.slice(-1) == ';')
+        output += line + '\r\n    ';
+      else
+        output += line;
 
       /*if(lastAction != null && lastAction.locator && lastAction.locator.type == 'repeater') {
 

@@ -4,6 +4,10 @@
     <div class="md-toolbar-tools">
       <h2>Protractor Recorder</h2>
       <span class="flex"></span>
+      <md-button style="color:#000" class="md-raised" ng-click="main.exportProtractor()">
+        <md-icon style="color:#000" md-svg-icon="file_download"></md-icon>
+        Export
+      </md-button>
       <md-button style="color:#000" class="md-raised" ng-click="main.runTest()">
         <md-icon style="color:#000" md-svg-icon="play_circle"></md-icon>
         Run
@@ -179,7 +183,7 @@
                                         class="md-block">
                       <md-select style="max-width: 225px" aria-label="Locator {{ locator.value }}"
                                  ng-model="action.locator"
-                                 ng-model-options="{trackBy: '$value.type'}">
+                                 ng-model-options="{trackBy: '$value.value'}">
                         <md-option ng-value="locator" ng-repeat="locator in action.locators">
                           {{ locator.value }}
                         </md-option>
@@ -188,7 +192,7 @@
                     <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
                   </td>
                   <td>
-                    <md-input-container ng-if="action.value" style="padding-bottom: 5px;" md-no-float class="md-block">
+                    <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
                       <input type="text" ng-model="action.value" placeholder="Value">
                     </md-input-container>
                   </td>

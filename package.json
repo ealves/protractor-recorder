@@ -1,7 +1,9 @@
 {
   "name": "protractorRec",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "protractor": "^3.0.0"
+  },
   "scripts": {
     "test": "gulp test"
   },
@@ -56,6 +58,6 @@
     "request": "~2.67.0"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4.2.2"
   }
 }
