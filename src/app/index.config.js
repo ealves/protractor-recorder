@@ -60,7 +60,8 @@
         .icon('play_circle', 'assets/svg/ic_play_circle_outline_24px.svg', 24)
         .icon('settings', 'assets/svg/ic_settings_24px.svg', 24)
         .icon('stop', 'assets/svg/ic_stop_24px.svg', 24)
-        .icon('save', 'assets/svg/ic_save_24px.svg', 24);
+        .icon('save', 'assets/svg/ic_save_24px.svg', 24)
+        .icon('record', 'assets/svg/ic_fiber_manual_record_24px.svg', 24);
 
 
   }

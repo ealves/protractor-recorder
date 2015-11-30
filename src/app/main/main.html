@@ -4,8 +4,12 @@
     <div class="md-toolbar-tools">
       <h2>Protractor Recorder</h2>
       <span class="flex"></span>
-      <md-button ng-if="!main.conf.isRecording" style="color: #000" class="md-raised" ng-click="main.createSession()">
-        <md-icon style="color: #000" md-svg-icon="play_circle"></md-icon>
+      <md-button style="color:#000" class="md-raised" ng-click="main.runTest()">
+        <md-icon style="color:#000" md-svg-icon="play_circle"></md-icon>
+        Run
+      </md-button>
+      <md-button ng-if="!main.conf.isRecording" style="color:#000" class="md-raised" ng-click="main.createSession()">
+        <md-icon style="color:#9b1b1d" md-svg-icon="record"></md-icon>
         Record
       </md-button>
       <md-button ng-if="main.conf.isRecording" class="md-raised md-warn" ng-click="main.pauseRecording()">
@@ -22,7 +26,7 @@
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 
       <div layout="column" layout-padding>
-        <md-input-container class="md-block">
+        <md-input-container class="md-block" style="padding-bottom: 0px;">
           <label>Base URL</label>
           <input ng-model="main.url" type="text" placeholder="Url">
         </md-input-container>
@@ -168,7 +172,7 @@
                                  ng-model="action.locator"
                                  ng-model-options="{trackBy: '$value.type'}">
                         <md-option ng-value="locator" ng-repeat="locator in action.locators">
-                          {{ locator.type }} - {{ locator.value }}
+                          {{ locator.value }}
                         </md-option>
                       </md-select>
                     </md-input-container>
@@ -206,8 +210,8 @@
               </table>
             </md-whiteframe>
           </div>
-        <md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
-        <md-button ng-click="main.runTest()">Run Test</md-button>
+        <!--<md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
+        <md-button ng-click="main.runTest()">Run Test</md-button>-->
       </md-content>
       <md-fab-speed-dial ng-hide="main.hidden" md-direction="up" md-open="main.isOpen"
                          class="md-scale md-fab-bottom-right" ng-class="{ 'md-hover-full': main.hover }"
