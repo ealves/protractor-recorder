@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $http, $log, $filter, $timeout, $mdToast, socket) {
+  function MainController($scope, $http, $log, $filter, $timeout, $mdToast, $location, $mdDialog, socket) {
 
     var vm = this;
 
@@ -15,7 +15,7 @@
      *-------------------------------------------------------------------*/
 
     vm.isLoadingSession = false;
-    vm.showConf = false;
+    vm.showConf  = $location.path() == '/conf' ? true : false;
     vm.isSnippet = false;
 
     /* If first run set examples or get from local storage */
@@ -219,9 +219,15 @@
 
     vm.setSpec = function (spec, conf) {
 
-      $log.debug(conf);
-      vm.showConf = conf;
-      vm.spec = spec;
+      if(vm.showConf && conf == undefined || conf == true) {
+        vm.showConf = true;
+        vm.spec = vm.conf.spec;
+        $location.path('/conf');
+      } else {
+        vm.spec = spec;
+        vm.showConf = false;
+        $location.path('/');
+      }
     };
 
     vm.setElementOnChange = function (element) {
@@ -780,6 +786,55 @@
 
     vm.pauseRecording = function(){
       vm.conf.isRecording = false;
+    };
+
+    var DialogSpecController = function ($scope, $mdDialog, spec, describe) {
+
+      var vm = this;
+
+      vm.spec = spec;
+      vm.describe = describe;
+
+      this.hide = function() {
+        $mdDialog.hide();
+      };
+
+      this.cancel = function() {
+        $mdDialog.cancel();
+      };
+
+      this.saveSpec = function() {
+        $mdDialog.hide(vm);
+      };
+    };
+
+    vm.specDialog = function(ev) {
+
+      var spec     = angular.copy(vm.spec);
+      var describe = angular.copy(vm.describe);
+
+      var closeTo = angular.element(document.getElementById('edit-spec'));
+
+      $mdDialog.show({
+        controller: DialogSpecController,
+        controllerAs: 'spec',
+        templateUrl: 'app/main/spec-dialog.html',
+        parent: angular.element(document.body),
+        targetEvent: ev,
+        closeTo: closeTo,
+        locals: {
+          spec: spec,
+          describe: describe
+        },
+        clickOutsideToClose: true
+      }).then(function(result) {
+        if(result) {
+          vm.spec     = result.spec;
+          vm.describe = result.describe;
+        }
+          //angular.copy(vm.spec, spec);
+      }, function() {
+      });
     };
 
     vm.getCapabilities();

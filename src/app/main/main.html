@@ -44,7 +44,6 @@
         <md-list>
           <md-list-item ng-click="main.setSpec(spec, false)" ng-repeat="spec in describe.specs">
             <p>{{ spec.string ? spec.string : 'Untitled Spec' }}</p>
-
           </md-list-item>
         </md-list>
       </div>
@@ -74,7 +73,6 @@
 
     <div flex layout-padding layout="column">
       <md-content md-scroll-y class="flex layout-column">
-        {{ vm.session.id }}
         <div ng-if="!main.showConf" layout="row">
           <!--<md-input-container class="md-block">
             <label>Describe</label>
@@ -89,7 +87,7 @@
           <h2>{{ main.spec.string }}</h2>
           <span flex></span>
 
-          <md-button aria-label="Edit Spec" ng-click="main.editSpec($index)">
+          <md-button id="edit-spec" aria-label="Edit Spec" ng-click="main.specDialog(main.spec)">
             <md-icon md-svg-icon="edit"></md-icon>
           </md-button>
 
@@ -109,37 +107,48 @@
 
         </div>
         <div ng-if="main.showConf">
-          <h2>Conf.js</h2>
-          <md-input-container class="md-block">
-            <label>Selenium Address</label>
-            <input type="text" ng-model="main.conf.seleniumAddress" placeholder="Selenium url">
-          </md-input-container>
 
-          <md-input-container class="md-block">
-            <md-checkbox aria-label="Jasmine" ng-model="main.conf.jasmine">Framework Jasmine 2</md-checkbox>
-          </md-input-container>
+          <div layout="row">
 
-          <md-input-container class="md-block">
-            <md-checkbox aria-label="Login page" ng-model="main.conf.login">Login (Wait for url change)</md-checkbox>
-          </md-input-container>
+            <h2 flex>Conf.js</h2>
+            <div flex>
+              <md-input-container class="md-block">
+                <label>Selenium Address</label>
+                <input type="text" ng-model="main.conf.seleniumAddress" placeholder="Selenium url">
+              </md-input-container>
+            </div>
+          </div>
 
-          <md-divider></md-divider>
+          <div layout="row">
+            <div flex layout="column">
+              <md-input-container class="md-block">
+                <md-checkbox aria-label="Jasmine" ng-model="main.conf.jasmine">Framework Jasmine 2</md-checkbox>
+              </md-input-container>
 
-          <md-input-container class="md-block">
-            <md-checkbox aria-label="Window maximize" ng-model="main.conf.maximize">Window maximize</md-checkbox>
-          </md-input-container>
+              <md-input-container class="md-block">
+                <md-checkbox aria-label="Login page" ng-model="main.conf.login">Login page
+                  <md-tooltip md-direction="right">This option force wait page login redirect</md-tooltip>
+                </md-checkbox>
+              </md-input-container>
+            </div>
 
-          <div ng-if="!main.conf.maximize" layout layout="column">
+            <div flex layout="column">
+              <md-input-container class="md-block">
+                <md-checkbox aria-label="Window maximize" ng-model="main.conf.maximize">Window maximize</md-checkbox>
+              </md-input-container>
 
-            <md-input-container flex>
-              <label>Width</label>
-              <input type="text" ng-model="main.conf.width">
-            </md-input-container>
+              <div layout="row" style="margin-left: 35px">
+                <md-input-container class="md-block">
+                  <label>Width</label>
+                  <input type="number" ng-disabled="main.conf.maximize" ng-model="main.conf.windowSize.width">
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label>Height</label>
+                  <input type="number" ng-disabled="main.conf.maximize" ng-model="main.conf.windowSize.height">
+                </md-input-container>
+              </div>
 
-            <md-input-container flex>
-              <label>Height</label>
-              <input type="text" ng-model="main.conf.height">
-            </md-input-container>
+            </div>
           </div>
         </div>
           <div layout="row" layout-align="center start" flex>

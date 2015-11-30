@@ -1,0 +1,27 @@
+<md-dialog aria-label="Spec">
+  <md-dialog-content class="md-dialog-content">
+    <h2>Spec</h2>
+    <div>
+      <form>
+        <md-input-container class="md-block">
+          <label>Describe</label>
+          <input type="text" ng-model="spec.describe.string">
+        </md-input-container>
+
+        <md-input-container class="md-block">
+          <label>Spec</label>
+          <input type="text" ng-model="spec.spec.string" placeholder="Untitled spec">
+        </md-input-container>
+      </form>
+    </div>
+  </md-dialog-content>
+  <div class="md-actions" layout="row">
+    <span flex></span>
+    <md-button ng-click="spec.hide()">
+      Cancel
+    </md-button>
+    <md-button class="md-primary md-raised" ng-click="spec.saveSpec()" style="margin-right:20px;">
+      Save
+    </md-button>
+  </div>
+</md-dialog>
