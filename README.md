@@ -4,7 +4,9 @@ A web interface to record users actions and export to Protractor.
 ## Dependencies
 
 - NodeJs;
-- NPM;
+- Npm;
+- Bower;
+- Gulp;
 - Protractor.
 
 ## Getting Started
