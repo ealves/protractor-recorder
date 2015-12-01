@@ -792,15 +792,15 @@
       vm.spec = spec;
       vm.describe = describe;
 
-      this.hide = function() {
+      vm.hide = function() {
         $mdDialog.hide();
       };
 
-      this.cancel = function() {
+      vm.cancel = function() {
         $mdDialog.cancel();
       };
 
-      this.saveSpec = function() {
+      vm.saveSpec = function() {
         $mdDialog.hide(vm);
       };
     };
@@ -826,8 +826,13 @@
         clickOutsideToClose: true
       }).then(function(result) {
         if(result) {
-          vm.spec     = result.spec;
-          vm.describe = result.describe;
+
+          $filter('filter')(vm.describes[0].specs, {$$hashKey: vm.spec.$$hashKey})[0].string = result.spec.string;
+
+          vm.spec = result.spec;
+          vm.describes[0].string = result.describe.string;
+
+          //localStorage.setItem('describes', angular.toJson(vm.describes));
         }
           //angular.copy(vm.spec, spec);
       }, function() {
