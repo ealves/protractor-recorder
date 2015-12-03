@@ -173,6 +173,12 @@ table {
 .fabSpeedDialdemoMoreOptions .intro {
   padding-left: 5px; }
 
+md-toast {
+  position : fixed !important;
+  paddding-top: 5px;
+  line-height: 45px;
+}
+
 /**
  *  Do not remove the comment below. It's the markers used by gulp-inject to inject
  *  all your sass files automatically
