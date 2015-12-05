@@ -524,10 +524,6 @@
       $log.debug(action);
     };
 
-    vm.removeAction = function (index) {
-      vm.spec.actions.splice(index, 1);
-    };
-
     vm.getAttr = function (attr, elem) {
       if (elem.attr(attr))
         return elem.attr(attr);
@@ -675,13 +671,25 @@
       }
     };
 
-    vm.removeActions = function(){
+    vm.removeActions = function(index){
 
-      var i = vm.spec.actions.length;
-      while (i--) {
-        var action = vm.spec.actions[i];
+      if(index){
+        vm.spec.actions.splice(index, 1);
+      } else {
+        var i = vm.spec.actions.length;
+        while (i--) {
+          var action = vm.spec.actions[i];
           if (action.checked)
             vm.spec.actions.splice(i, 1);
+        }
+      }
+    };
+
+    vm.duplicateActions = function(index){
+
+      if(index){
+        var newAction = angular.copy(vm.spec.actions[index]);
+        vm.spec.actions.push(newAction);
       }
     };
 
