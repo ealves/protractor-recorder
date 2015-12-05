@@ -14,9 +14,10 @@
      * 		 				 	ATTRIBUTES
      *-------------------------------------------------------------------*/
 
-    vm.isLoadingSession = false;
-    vm.showConf  = $location.path() == '/conf' ? true : false;
-    vm.isSnippet = false;
+    vm.isLoadingSession    = false;
+    vm.showConf            = $location.path() == '/conf' ? true : false;
+    vm.isSnippet           = false;
+    vm.showSelectedOptions = false;
 
     /* If first run set examples or get from local storage */
     vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
@@ -37,12 +38,13 @@
         's.src = "http://localhost:9000/snippet.js";' +
         'i.contentWindow.document.body.appendChild(s);';
 
-    vm.session      = {};
-    vm.lines        = [];
-    vm.describe     = {};
-    vm.spec         = [];
-    vm.dataBind     = [];
-    vm.capabilities = [];
+    vm.session       = {};
+    vm.lines         = [];
+    vm.describe      = {};
+    vm.spec          = [];
+    vm.dataBind      = [];
+    vm.capabilities  = [];
+    vm.selectedItems = 0;
 
     /* Configuration example */
     if(!vm.conf) {
@@ -218,7 +220,7 @@
     };
 
     vm.setSpec = function (spec, conf) {
-
+      $log.debug('setSpec');
       if(vm.showConf && conf == undefined || conf == true) {
         vm.showConf = true;
         vm.spec = vm.conf.spec;
@@ -228,6 +230,10 @@
         vm.showConf = false;
         $location.path('/');
       }
+
+      angular.forEach(vm.spec.actions, function(action) {
+        action.checked = false;
+      });
     };
 
     vm.setElementOnChange = function (element) {
@@ -613,6 +619,15 @@
     $scope.$watch('main.describe', function () {
       $log.debug('watch describe');
       localStorage.setItem('describes', angular.toJson(vm.describes));
+
+      vm.selectedItems = $filter('filter')(vm.spec.actions, {checked: true}).length;
+
+      if(vm.selectedItems){
+        vm.showSelectedOptions = true
+      } else {
+        vm.showSelectedOptions = false;
+      }
+
     }, true);
 
     $scope.$watchCollection('main.describes', function () {
@@ -640,6 +655,35 @@
       }
 
     });
+
+    vm.toggleAll = function(){
+
+      angular.forEach(vm.spec.actions, function(action){
+
+        action.checked = !vm.selectAll;
+
+      });
+
+      if(vm.selectAll)
+        vm.showSelectedOptions = false;
+
+    };
+
+    vm.toggleAction = function(action){
+      if(!action.checked){
+        //vm.showSelectedOptions = true;
+      }
+    };
+
+    vm.removeActions = function(){
+
+      var i = vm.spec.actions.length;
+      while (i--) {
+        var action = vm.spec.actions[i];
+          if (action.checked)
+            vm.spec.actions.splice(i, 1);
+      }
+    };
 
     vm.sessionExecute = function () {
 
