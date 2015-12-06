@@ -18,6 +18,7 @@
     vm.showConf            = $location.path() == '/conf' ? true : false;
     vm.isSnippet           = false;
     vm.showSelectedOptions = false;
+    vm.index = false;
 
     /* If first run set examples or get from local storage */
     vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
@@ -520,6 +521,14 @@
       return line;
     };
 
+    vm.runFromHere = function(index) {
+
+      vm.index = index;
+      var element = vm.getElementAction(vm.spec.actions[index]);
+      vm.getSessionElementId(element);
+
+    };
+
     vm.setActionLocator = function(action){
       $log.debug(action);
     };
@@ -888,6 +897,108 @@
         }
           //angular.copy(vm.spec, spec);
       }, function() {
+      });
+    };
+
+    vm.getSessionElementId = function(element) {
+
+      $log.debug('getSessionElementId');
+
+      $http({
+        method: 'POST',
+        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/element',
+        data: element
+      }).then(function successCallback(response) {
+          $log.debug(response);
+
+          vm.sessionElementExecute(response.data.value.ELEMENT, element);
+
+      });
+
+    };
+
+    vm.getElementAction = function(action){
+
+      var element     = {};
+      var using       = false;
+      var value       = false;
+      var actionType  = false;
+
+      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
+        using      = 'link text';
+        value      = action.value;
+        actionType = 'click';
+      }
+
+      if(action.action == 'sendKeys') {
+
+        angular.forEach(action.locators, function(locator){
+
+          if(locator.type != 'model') {
+
+            using = locator.type;
+
+            if(locator.type == 'css')
+              using = 'css selector';
+
+            value = locator.value;
+            actionType = 'value';
+
+            return true;
+
+          }
+
+        });
+
+        //line = "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+      }
+
+      if(action.action == 'click' && action.type == 'button' && action.value) {
+
+        angular.forEach(action.locators, function(locator){
+
+          if(locator.type == 'css') {
+            using = 'css selector';
+            value = locator.value;
+            actionType = 'click';
+          }
+
+        });
+      }
+
+
+      if(using && value && actionType) {
+        element.using  = using;
+        element.value  = value;
+        element.action = actionType;
+        element.keys   = action.value;
+
+        return element;
+      }
+
+      return false;
+
+    };
+
+    vm.sessionElementExecute = function(elementId, element){
+
+      var data = {};
+
+      if(element.action == 'value'){
+        data.value = [element.keys];
+      }
+
+      $http({
+        method: 'POST',
+        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/element/' + elementId + '/' + element.action,
+        data: data
+      }).then(function successCallback(response) {
+        $log.debug(response);
+
+        if(vm.spec.actions[vm.index + 1]) {
+          vm.runFromHere(vm.index + 1);
+        }
+
       });
     };
 
