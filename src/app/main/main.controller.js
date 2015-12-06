@@ -106,7 +106,7 @@
      */
 
     socket.on('onsnippet', function(data){
-      vm.isSnippet = true;
+       vm.isSnippet = true;
     });
 
     socket.on('click', function (data) {
@@ -792,7 +792,10 @@
 
     vm.verifySnippet = function(){
 
-      if (!vm.isSnippet && !vm.session.source.match(/recorder-iframe/)) {
+      var countIframe = vm.session.source.match(/recorder-iframe/);
+      countIframe != null ? countIframe.length : countIframe = 0;
+
+      if (!vm.isSnippet && countIframe == 0) {
         vm.sessionExecute();
       } else {
         vm.isLoadingSession = false;
