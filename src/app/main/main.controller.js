@@ -26,7 +26,7 @@
     vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
 
     /* Javascript snippet to inject on session */
-    vm.snippet = 'var b=document.getElementsByTagName("body")[0];' +
+    vm.snippet = 'if(document.getElementById("recorder-iframe")==null){var b=document.getElementsByTagName("body")[0];' +
         'var i = document.createElement("iframe");' +
         'i.id="recorder-iframe";' +
         'i.setAttribute("style", "display:none");' +
@@ -37,7 +37,7 @@
         'i.contentWindow.document.body.appendChild(s);' +
         'var s = i.contentWindow.document.createElement("script");' +
         's.src = "http://localhost:9000/snippet.js";' +
-        'i.contentWindow.document.body.appendChild(s);';
+        'i.contentWindow.document.body.appendChild(s);}';
 
     vm.session       = {};
     vm.lines         = [];
@@ -271,11 +271,11 @@
           value = target.text() ? target.text() : false
 
           //if(value)
-          vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value, element.xPath);
+          vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value.trim(), element.xPath);
 
           vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
 
-          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
+          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
 
         } else {
           value = target.text() ? target.text() : false;
@@ -307,35 +307,33 @@
         locators.push({type: 'id', value: vm.getAttr('id', element)});
       }*/
 
-      if (type == 'input' && vm.getAttr('type', element) == 'submit') {
+      if (type == 'input' && vm.getAttr('type', element) == 'submit')
         locators.push({type: 'css', value: '[value="' + element.val() + '"]'});
-      }
 
       if (vm.getAttr('href', element)) {
-        locators.push({type: 'linkText', value: value});
+        locators.push({type: 'linkText', value: value, strategy: 'link text'});
         locators.push({type: 'get', value: vm.getAttr('href', element)});
       }
 
       if (vm.getAttr('id', element))
-        locators.push({type: 'id', value: vm.getAttr('id', element)});
+        locators.push({type: 'id', value: vm.getAttr('id', element), strategy: 'id'});
 
       if (vm.getAttr('class', element) || actionType == 'wait') {
 
         if (value)
-          locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]'});
+          locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]', strategy: 'xpath'});
+
         if (xPath && !vm.getAttr('ng-click', element) && !vm.getAttr('class', element))
           locators.push({type: 'xpath', value: xPath});
-        if (vm.getAttr('ng-click', element)) {
-          //element(by.css("[ng-click='changeToRemove(row.entity)']")).click();
-          locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]'})
-        }
 
-        if(vm.getAttr('class', element)) {
-          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(/\s/g, '.')});
-        }
+        if (vm.getAttr('ng-click', element))
+          locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]', strategy: 'css selector'})
+
+        if(vm.getAttr('class', element))
+          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(/\s/g, '.'), strategy: 'css selector'});
 
         if (xPath)
-          locators.push({type: 'xpath', value: xPath});
+          locators.push({type: 'xpath', value: xPath, strategy: 'xpath'});
       }
 
       var action = {
@@ -409,7 +407,7 @@
 
       $log.debug('exportProtractor');
 
-      /* Get line export to actions in conf.js */
+      /* Get line to export actions in conf.js */
       vm.conf.spec.lines = [];
 
       angular.forEach(vm.conf.spec.actions, function (action) {
@@ -418,7 +416,7 @@
 
       });
 
-      /* Get line exported to actions in spec.js */
+      /* Get line to export actions in spec.js */
       vm.spec.lines = [];
 
       if($filter('filter')(vm.spec.actions, {action: 'wait'}).length != 0)

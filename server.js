@@ -21,7 +21,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 io.on('connection', function(socket){
-console.log('a user connected');
+
+  //console.log(socket.id);
+  //console.log(socket);
+
+  console.log('a user connected');
 
   socket.on('onclick', function (data) {
     console.log('onclick');
@@ -161,7 +165,7 @@ app.post('/export', function(req, res){
 
   conf.spec.lines.forEach(function(line){
 
-    confOutput += '    ' + line + ';\r\n';
+    confOutput += '    ' + line + '\r\n';
 
   });
 
