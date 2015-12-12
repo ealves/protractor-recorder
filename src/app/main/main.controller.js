@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $http, $log, $filter, $timeout, $mdToast, $location, $mdDialog, socket) {
+  function MainController($scope, $http, $log, $filter, $timeout, $mdToast, $location, $mdDialog, socket, webDriverManager, seleniumJWP) {
 
     var vm = this;
 
@@ -545,76 +545,49 @@
       if(!vm.session.id) {
 
         vm.isLoadingSession = true;
+        var options = {'desiredCapabilities': {'browserName': 'chrome'}};
 
-        $http({
-          method: 'POST',
-          url: 'http://localhost:4444/wd/hub/session',
-          data: {'desiredCapabilities': {'browserName': 'chrome'}}
-        }).then(function successCallback(response) {
-
+        seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
-
-          vm.session.id = response.data.sessionId;
-
+          seleniumJWP.setSession(response);
+          vm.session.id = response.sessionId;
           vm.conf.isRecording = true;
-
           vm.setSessionUrl();
 
         });
+
       } else {
         vm.conf.isRecording = true;
       }
     };
 
-    vm.getSession = function () {
+    vm.getSeleniumSession = function () {
 
-      $http({
-        method: 'GET',
-        url: 'http://localhost:4444/wd/hub/sessions'
-      }).then(function successCallback(response) {
-
-        $log.debug('Get Session');
-
-        if (response.data.value.length) {
-          vm.session = response.data.value[0];
-
+      seleniumJWP.getSessions().success(function(response){
+        if (response.value.length) {
+          seleniumJWP.setSession(response.value[0]);
+          vm.session = response.value[0];
           vm.getSessionSource();
         }
-
+      }).error(function(message){
+        $log.debug(message);
       });
 
     };
 
     vm.setSessionUrl = function () {
-
-      $http({
-        method: 'POST',
-        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/url',
-        data: {'url': vm.url}
-      }).then(function successCallback() {
-
+      seleniumJWP.setSessionUrl(vm.url).success(function(){
         $log.debug('setSessionUrl');
-
         vm.getSessionUrl();
         vm.getSessionSource();
-
       });
-
     };
 
     vm.getSessionUrl = function () {
-
-      $http({
-        method: 'GET',
-        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/url'
-      }).then(function successCallback(response) {
-
+      seleniumJWP.getSessionUrl().success(function(response){
         $log.debug('getSessionUrl');
-
-        vm.session.url = response.data.value;
-
+        vm.session.url = response.value;
       });
-
     };
 
     $scope.$watch('main.conf', function () {
@@ -705,12 +678,7 @@
 
     vm.sessionExecute = function () {
 
-      $http({
-        method: 'POST',
-        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/execute',
-        data: {'script': vm.snippet, 'args': [{'f': ''}]}
-      }).then(function successCallback() {
-
+      seleniumJWP.sessionExecute(vm.snippet).success(function(){
         $log.debug('Session Executed');
 
         vm.isLoadingSession = false;
@@ -724,7 +692,6 @@
                 .position('bottom left')
                 .hideDelay(3000)
         );
-
       });
 
     };
@@ -732,29 +699,21 @@
     vm.getSessionSource = function () {
 
       if (vm.session.id) {
-        $http({
-          method: 'GET',
-          url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/source'
-        }).then(function successCallback(response) {
-
-          vm.session.source = response.data.value;
-
-          if(response.data.value) {
+        seleniumJWP.getSessionSource().success(function(response) {
+          vm.session.source = response.value;
+          if(response.value) {
             vm.getNgIncludes();
             vm.verifySnippet();
           }
-
-        }, function errorCallback(response) {
+        }).error(function(response){
           $log.debug(response);
           $log.debug('Error session source');
           vm.deleteSession();
-
         });
       } else {
         vm.isLoadingSession = false;
         vm.conf.isRecording = false;
       }
-
     };
 
     /**
@@ -805,45 +764,34 @@
 
     vm.deleteSession = function(){
 
-      $http({
-        method: 'DELETE',
-        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id
-      }).then(function successCallback(response) {
-
+      seleniumJWP.deleteSession().success(function() {
         $log.debug('Session Deleted');
         $log.debug(response);
 
         vm.session = {};
 
+        seleniumJWP.setSession();
+
         vm.isLoadingSession = false;
         vm.conf.isRecording = false;
-
       });
 
     };
 
     vm.getCapabilities = function(){
-
       $log.debug('getCapabilities');
 
-      $http({
-        method: 'GET',
-        url: 'http://localhost:9000/webdriver-manager/status'
-      }).then(function successCallback(response) {
-
-        $log.debug(response);
-        vm.capabilities = response.data;
-
+      webDriverManager.getCapabilities().success(function(response){
+        vm.capabilities = response;
         vm.capabilities.forEach(function(capability){
-
           if(!vm.conf.capabilities.indexOf(capability.driver)){
             capability.checked = true;
           }
-
         });
 
+      }).error(function(message){
+        $log.debug(message);
       });
-
     };
 
     vm.pauseRecording = function(){
@@ -908,14 +856,9 @@
 
       $log.debug('getSessionElementId');
 
-      $http({
-        method: 'POST',
-        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/element',
-        data: element
-      }).then(function successCallback(response) {
-          $log.debug(response);
+      seleniumJWP.findSessionElement(element).success(function(response) {
 
-          vm.sessionElementExecute(response.data.value.ELEMENT, element);
+        vm.sessionElementExecute(response.value.ELEMENT, element);
 
       });
 
@@ -1008,7 +951,7 @@
 
     vm.getCapabilities();
     vm.setExample();
-    vm.getSession();
+    vm.getSeleniumSession();
 
   }
 
