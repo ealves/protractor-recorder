@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $http, $log, $filter, $timeout, $mdToast, $location, $mdDialog, socket, webDriverManager, seleniumJWP) {
+  function MainController($scope, $log, $filter, $timeout, $mdToast, $location, $mdDialog, $document, socket, protractorRecServer, seleniumJWP) {
 
     var vm = this;
 
@@ -91,7 +91,7 @@
                 {
                   type: 'get',
                   value: '#/tutorial'
-                },
+                }
               ]
             },
             {
@@ -145,7 +145,7 @@
      * Messages: onsnippet, click, change, keyup, assertion, session-disconnect, protractor-log
      */
 
-    socket.on('onsnippet', function(data){
+    socket.on('onsnippet', function(){
        vm.isSnippet = true;
     });
 
@@ -308,7 +308,7 @@
           vm.addElement(target, 'a', 'click', target.text().trim(), element.xPath);
         } else if (element.ngRepeat) {
 
-          value = target.text() ? target.text() : false
+          value = target.text() ? target.text() : false;
 
           //if(value)
           vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value.trim(), element.xPath);
@@ -319,7 +319,7 @@
 
         } else {
           value = target.text() ? target.text() : false;
-          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
+          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
         }
       }
     };
@@ -387,7 +387,7 @@
 
       vm.spec.actions.push(action);
 
-      var mainContent = angular.element( document.querySelector('#main') );
+      var mainContent = angular.element( $document[0].querySelector('#main') );
       mainContent[0].scrollTop = mainContent[0].scrollHeight;
 
       vm.getSessionUrl();
@@ -428,14 +428,9 @@
 
       $log.debug('runTest');
 
-      $http({
-        method: 'GET',
-        url: 'http://localhost:9000/run'
-      }).then(function successCallback(response) {
-
+      protractorRecServer.runProtractor().success(function(response){
         $log.debug('Test finished');
         $log.debug(response);
-
       });
     };
 
@@ -468,12 +463,9 @@
 
       });
 
-      $http({
-        method: 'POST',
-        url: 'http://localhost:9000/export',
-        data: {baseUrl: vm.url, conf: angular.toJson(vm.conf), describe: angular.toJson(vm.describes)}
-      }).then(function successCallback(response) {
+      var data = {baseUrl: vm.url, conf: angular.toJson(vm.conf), describe: angular.toJson(vm.describes)};
 
+      protractorRecServer.exportProtractor(data).success(function(response){
         $log.debug('Exported');
         $log.debug(response);
 
@@ -483,9 +475,7 @@
                 .position('bottom left')
                 .hideDelay(3000)
         );
-
       });
-
     };
 
     vm.getLine = function(action) {
@@ -772,15 +762,9 @@
 
         if (!$filter('filter')(includes, include).length) {
 
-          $http({
-            method: 'POST',
-            url: 'http://localhost:9000/html',
-            data: {url: vm.url, include: include}
-          }).then(function successCallback(response) {
-
-            vm.session.source += response.data;
+          protractorRecServer.getHtmlSource({url: vm.url, include: include}).success(function(response){
+            vm.session.source += response;
             vm.getAllDataBind();
-
           });
         }
         includes.push(include);
@@ -816,7 +800,7 @@
     vm.getCapabilities = function(){
       $log.debug('getCapabilities');
 
-      webDriverManager.getCapabilities().success(function(response){
+      protractorRecServer.getCapabilities().success(function(response){
         vm.capabilities = response;
         vm.capabilities.forEach(function(capability){
           if(!vm.conf.capabilities.indexOf(capability.driver)){
@@ -858,13 +842,13 @@
       var spec     = angular.copy(vm.spec);
       var describe = angular.copy(vm.describe);
 
-      var closeTo = angular.element(document.getElementById('edit-spec'));
+      var closeTo = angular.element($document[0].getElementById('edit-spec'));
 
       $mdDialog.show({
         controller: DialogSpecController,
         controllerAs: 'spec',
         templateUrl: 'app/main/spec-dialog.html',
-        parent: angular.element(document.body),
+        parent: angular.element($document[0].body),
         targetEvent: ev,
         closeTo: closeTo,
         locals: {
@@ -890,11 +874,8 @@
     vm.getSessionElementId = function(element) {
 
       $log.debug('getSessionElementId');
-
       seleniumJWP.findSessionElement(element).success(function(response) {
-
         vm.sessionElementExecute(response.value.ELEMENT, element);
-
       });
 
     };
@@ -970,18 +951,15 @@
         data.value = [element.keys];
       }
 
-      $http({
-        method: 'POST',
-        url: 'http://localhost:4444/wd/hub/session/' + vm.session.id + '/element/' + elementId + '/' + element.action,
-        data: data
-      }).then(function successCallback(response) {
-        $log.debug(response);
+      seleniumJWP.sessionElementExecute(elementId, element, data).success(function(response) {
 
+        $log.debug(response);
         if(vm.spec.actions[vm.index + 1]) {
           vm.runFromHere(vm.index + 1);
         }
 
       });
+
     };
 
     vm.getCapabilities();

@@ -83,6 +83,14 @@
       });
     };
 
+    this.sessionElementExecute = function(elementId, element, data){
+      return $http({
+        method: 'POST',
+        url: this.url + 'session/' + this.session.id + '/element/' + elementId + '/' + element.action,
+        data: data
+      });
+    };
+
     this.deleteSession = function(){
       return $http({
         method: 'DELETE',

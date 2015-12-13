@@ -86,12 +86,6 @@ app.get('/', function (req, res) {
  res.send('ok');
 });
 
-app.get('/teste', function(req, res){
-	io.emit('click', 'teste');
-	io.emit('keyup', 'teste');
-	res.send('teste');
-});
-
 app.get('/run', function(req, res){
 
   var runProcess = exec('protractor ' + __dirname + '/public/exports/conf.js');
@@ -130,12 +124,9 @@ app.post('/html', function(req, res){
   var url = req.body.url;
   var include = req.body.include;
 
-  console.log(url + '/' + include);
-
   request({
     uri: url + '/' + include,
   }, function(error, response, body) {
-    //console.log(body);
     res.send(body);
   });
 
