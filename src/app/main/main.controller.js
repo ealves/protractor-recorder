@@ -144,7 +144,7 @@
       $log.debug('onassertion');
       $log.debug(data);
 
-      if(vm.conf.isRecording) {
+      if(vm.conf.isRecording && data) {
         var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
 
         lastAction.action = 'assertion';
@@ -321,7 +321,7 @@
       if (vm.getAttr('id', element))
         locators.push({type: 'id', value: vm.getAttr('id', element), strategy: 'id'});
 
-      if (vm.getAttr('class', element) || actionType == 'wait') {
+      //if (vm.getAttr('class', element) || actionType == 'wait') {
 
         if (value)
           locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]', strategy: 'xpath'});
@@ -337,7 +337,7 @@
 
         if (xPath)
           locators.push({type: 'xpath', value: xPath, strategy: 'xpath'});
-      }
+      //}
 
       var action = {
         //element: element.html(),
@@ -404,6 +404,8 @@
 
     vm.removeSpec = function (index) {
       vm.describe.specs.splice(index, 1);
+      vm.spec = {};
+      vm.spec.actions = [];
     };
 
     vm.exportProtractor = function () {
@@ -766,10 +768,8 @@
 
       seleniumJWP.deleteSession().success(function() {
         $log.debug('Session Deleted');
-        $log.debug(response);
 
         vm.session = {};
-
         seleniumJWP.setSession();
 
         vm.isLoadingSession = false;

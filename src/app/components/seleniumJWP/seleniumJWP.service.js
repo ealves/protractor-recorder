@@ -23,13 +23,10 @@
     };
 
     this.setSession = function(session){
-
       if(session == undefined)
         return this.session = {};
-
       if(session.sessionId)
         session.id = session.sessionId;
-
       return this.session = session;
     };
 
@@ -79,13 +76,11 @@
     };
 
     this.findSessionElement = function(element){
-
       return $http({
         method: 'POST',
         url: this.url + 'session/' + this.session.id + '/element',
         data: element
       });
-
     };
 
     this.deleteSession = function(){

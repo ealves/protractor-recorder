@@ -29,10 +29,14 @@ parent.document.body.addEventListener('change', function (event) {
   socket.emit('onchange', element);
 });
 parent.document.body.addEventListener('mouseup', function (event) {
-  if (window.getSelection && window.getSelection().toString() != '') {
-    socket.emit('onassertion', window.getSelection().toString());
-  } else if (document.selection && document.selection.createRange().text != '') {
-    socket.emit('onassertion', document.selection.createRange().text);
+  if (parent.window.getSelection && parent.window.getSelection.toString() != '') {
+    if(parent.window.getSelection().toString().length) {
+      socket.emit('onassertion', parent.window.getSelection().toString());
+    }
+  } else if (parent.document.selection && parent.document.selection.createRange().text != '') {
+    if(parent.document.selection.createRange().text.length) {
+      socket.emit('onassertion', parent.document.selection.createRange().text);
+    }
   }
 });
 function getNgRepeat(element, ngs) {
