@@ -161,7 +161,7 @@
       $log.debug('onchange');
       $log.debug(data);
 
-      vm.setElement(data);
+      vm.setElementOnChange(data);
 
     });
 
@@ -317,7 +317,7 @@
 
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
 
-        } else {
+        } else if(!target[0].tagName.match(/^select/i)){
           value = target.text() ? target.text() : false;
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
         }
@@ -355,7 +355,7 @@
         locators.push({type: 'get', value: vm.getAttr('href', element)});
       }
 
-      if (vm.getAttr('id', element))
+      if (vm.getAttr('id', element) && !element[0].tagName.match(/md/i))
         locators.push({type: 'id', value: vm.getAttr('id', element), strategy: 'id'});
 
       //if (vm.getAttr('class', element) || actionType == 'wait') {
