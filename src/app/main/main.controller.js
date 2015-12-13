@@ -59,7 +59,7 @@
         capabilities: ['chromedriver'],
         spec: {
           actions: [
-            {"type": "link", "value": vm.url, "action": "get"}
+            {type: 'link', value: vm.url, action: 'get'}
           ]
         }
 
@@ -73,7 +73,44 @@
         {
           string: 'Should navigate to protractortest.org',
           actions: [
-            {"type": "link", "value": "http://www.protractortest.org", "action": "get"}
+            {
+              type: 'a',
+              value: 'Tutorial',
+              action: 'click',
+              locator: {
+                type: 'linkText',
+                value: 'Tutorial',
+                strategy: 'link text'
+              },
+              locators: [
+                {
+                  type: 'linkText',
+                  value: 'Tutorial',
+                  strategy: 'link text'
+                },
+                {
+                  type: 'get',
+                  value: '#/tutorial'
+                },
+              ]
+            },
+            {
+              type: 'h1',
+              value: 'Tutorial',
+              action: 'assertion',
+              locator: {
+                type: 'xpath',
+                value: "//*[@id=\"tutorial\"]",
+                strategy: 'xpath'
+              },
+              locators: [
+                {
+                  type: 'id',
+                  value: 'tutorial',
+                  strategy: 'id'
+                }
+              ]
+            }
           ]
         }
       ]
