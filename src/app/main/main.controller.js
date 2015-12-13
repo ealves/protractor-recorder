@@ -185,7 +185,7 @@
         var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
 
         lastAction.action = 'assertion';
-        lastAction.value = data;
+        lastAction.value = data.trim();
 
         vm.dataBind.forEach(function (data) {
 
@@ -441,8 +441,6 @@
 
     vm.removeSpec = function (index) {
       vm.describe.specs.splice(index, 1);
-      vm.spec = {};
-      vm.spec.actions = [];
     };
 
     vm.exportProtractor = function () {
