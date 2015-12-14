@@ -198,7 +198,7 @@
                   <td>
                     <md-checkbox ng-click="main.toggleAction(action)" ng-model="action.checked" aria-label="Checkbox $index"></md-checkbox>
                   </td>
-                  <td><b>{{ action.action }}</b></td>
+                  <td><md-icon ng-if="action.breakpoint" style="color:#9b1b1d" md-svg-icon="record"></md-icon><b>{{ action.action }}</b></td>
                   <td>{{ action.type }}</td>
                   <td>
                     <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
@@ -228,7 +228,10 @@
                           <md-button ng-click="main.runFromHere($index)"><span md-menu-align-target>Run from here</span></md-button>
                         </md-menu-item>
                         <md-menu-item>
-                          <md-button ng-click="ctrl.addBreakPoint($index)"><span md-menu-align-target>Add breakpoint</span></md-button>
+                          <md-button ng-click="main.toggleBreakPoint($index)"><span md-menu-align-target>{{ action.breakpoint ? 'Remove' : 'Add' }} breakpoint</span></md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                          <md-button ng-click="main.addBrowserSleep($index)"><span md-menu-align-target>Force wait</span></md-button>
                         </md-menu-item>
                         <md-menu-item>
                           <md-button ng-click="main.duplicateActions($index)"><span md-menu-align-target>Duplicate</span></md-button>

@@ -24,6 +24,11 @@
     vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
     vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
+    vm.session   = localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
+
+    if(vm.session.id) {
+      seleniumJWP.setSession(vm.session);
+    }
 
     /**
      * Javascript snippet to inject on session
@@ -42,7 +47,6 @@
         'i.contentWindow.document.body.appendChild(s);' +
       '},s.src = "http://localhost:9000/socket.io-1.3.7.js",i.contentWindow.document.body.appendChild(s);}';
 
-    vm.session       = {};
     vm.lines         = [];
     vm.describe      = {};
     vm.spec          = [];
@@ -447,6 +451,10 @@
 
       angular.forEach(vm.conf.spec.actions, function (action) {
 
+        if(action.breakpoint) {
+          vm.conf.spec.lines('    browser.pause();');
+        }
+
         vm.conf.spec.lines.push(vm.getLine(action));
 
       });
@@ -455,9 +463,13 @@
       vm.spec.lines = [];
 
       if($filter('filter')(vm.spec.actions, {action: 'wait'}).length != 0)
-        vm.spec.lines.push('var EC = protractor.ExpectedConditions;');
+        vm.spec.lines.push('    var EC = protractor.ExpectedConditions;');
 
       angular.forEach(vm.spec.actions, function (action) {
+
+        if(action.breakpoint) {
+          vm.spec.lines.push('    browser.pause();');
+        }
 
         vm.spec.lines.push(vm.getLine(action));
 
@@ -492,59 +504,62 @@
         if(action.locator.type == 'css')
           elm = "element(by.css('" + action.locator.value + "');";
 
-        line = "browser.wait(EC.presenceOf(" + elm + "), 10000);";
+        line += "browser.wait(EC.presenceOf(" + elm + "), 10000);";
 
       }
 
       if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
-        line = "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click();";
+        line += "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click();";
 
       if(action.action == 'click' && action.locator.type == 'repeater')
-        line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).";
+        line += "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).";
 
       if(action.action == 'sendKeys' && action.locator.type == 'model') {
-        line = "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+        line += "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
       }
 
       if(action.action == 'sendKeys' && action.locator.type == 'css') {
-        line = "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+        line += "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "');";
       }
 
       if(action.action == 'click' && action.type == 'button' && action.value) {
-        line = "element(by.buttonText('" + action.value + "')).click();";
+        line += "element(by.buttonText('" + action.value + "')).click();";
       }
 
       if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
-        line = "element(by.linkText('" + action.value + "')).click();";
+        line += "element(by.linkText('" + action.value + "')).click();";
       }
 
       if(action.action == 'click' && action.type == 'a' && action.locator.type == 'get') {
-        line = "browser.get('" + action.locator.value + "');";
+        line += "browser.get('" + action.locator.value + "');";
       }
 
       if(action.action == 'click' && action.locator.type == 'xpath') {
-        line = "element(by.xpath('" + action.locator.value + "')).click();";
+        line += "element(by.xpath('" + action.locator.value + "')).click();";
       }
 
       if(action.action == 'click' && action.locator.type == 'id') {
-        line = "element(by.id('" + action.locator.value + "')).click();";
+        line += "element(by.id('" + action.locator.value + "')).click();";
       }
 
       if(action.action == 'click' && action.locator.type == 'css') {
-        line = "element(by.css('" + action.locator.value + "')).click();";
+        line += "element(by.css('" + action.locator.value + "')).click();";
       }
 
       if(action.action == 'assertion' && action.locator.type == 'bind')
-        line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line += "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
 
       if(action.action == 'assertion' && action.locator.type == 'id')
-        line = "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line += "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
 
       if(action.action == 'assertion' && action.locator.type == 'xpath')
-        line = "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line += "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
 
       if(action.action == 'assertion' && action.locator.type == 'css')
-        line = "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line += "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+
+      if(action.action == 'browser' && action.type == 'sleep')
+        line += "browser.sleep(" + action.value + ");";
 
       return line;
     };
@@ -588,20 +603,6 @@
       }
     };
 
-    vm.getSeleniumSession = function () {
-
-      seleniumJWP.getSessions().success(function(response){
-        if (response.value.length) {
-          seleniumJWP.setSession(response.value[0]);
-          vm.session = response.value[0];
-          vm.getSessionSource();
-        }
-      }).error(function(message){
-        $log.debug(message);
-      });
-
-    };
-
     vm.setSessionUrl = function () {
       seleniumJWP.setSessionUrl(vm.url).success(function(){
         $log.debug('setSessionUrl');
@@ -640,6 +641,11 @@
       $log.debug('watch describes');
       localStorage.setItem('describes', angular.toJson(vm.describes));
     });
+
+    $scope.$watch('main.session', function () {
+      $log.debug('watch session');
+      localStorage.setItem('session', angular.toJson(vm.session));
+    }, true);
 
     $scope.$watch('main.url', function (newVal) {
       $log.debug('watch Url');
@@ -683,7 +689,7 @@
 
     vm.removeActions = function(index){
 
-      if(index){
+      if(index != undefined){
         vm.spec.actions.splice(index, 1);
       } else {
         var i = vm.spec.actions.length;
@@ -697,10 +703,26 @@
 
     vm.duplicateActions = function(index){
 
-      if(index){
+      if(index != undefined){
         var newAction = angular.copy(vm.spec.actions[index]);
         vm.spec.actions.push(newAction);
       }
+    };
+
+    vm.toggleBreakPoint = function(index) {
+      if(vm.spec.actions[index].breakpoint == undefined)
+        vm.spec.actions[index].breakpoint = true;
+      else
+        vm.spec.actions[index].breakpoint = !vm.spec.actions[index].breakpoint;
+    };
+
+    vm.addBrowserSleep = function(index) {
+      var action = {
+        action: 'browser',
+        type: 'sleep',
+        value: 1000
+      };
+      vm.spec.actions.splice(index, 0, action);
     };
 
     vm.sessionExecute = function () {
@@ -964,7 +986,7 @@
 
     vm.getCapabilities();
     vm.setExample();
-    vm.getSeleniumSession();
+    vm.getSessionSource();
 
   }
 
