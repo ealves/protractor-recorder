@@ -587,7 +587,7 @@
       if(!vm.session.id) {
 
         vm.isLoadingSession = true;
-        var options = {'desiredCapabilities': {'browserName': 'chrome'}};
+        var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
 
         seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
@@ -810,6 +810,12 @@
       seleniumJWP.deleteSession().success(function() {
         $log.debug('Session Deleted');
 
+        vm.session = {};
+        seleniumJWP.setSession();
+
+        vm.isLoadingSession = false;
+        vm.conf.isRecording = false;
+      }).error(function(response){
         vm.session = {};
         seleniumJWP.setSession();
 
