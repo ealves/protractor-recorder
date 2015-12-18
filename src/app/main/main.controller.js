@@ -33,7 +33,7 @@
     /**
      * Javascript snippet to inject on session
      */
-    vm.snippet = 'if(document.getElementById("recorder-iframe")==null){' +
+    vm.snippet = 'if(!document.getElementById("recorder-iframe")){' +
       'var b=document.getElementsByTagName("body")[0];' +
       'var i=document.createElement("iframe");' +
       'i.id="recorder-iframe";' +
@@ -732,7 +732,6 @@
 
         vm.isLoadingSession = false;
         vm.isSnippet = true;
-
         vm.getSessionUrl();
 
         $mdToast.show(
