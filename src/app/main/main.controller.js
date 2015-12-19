@@ -202,13 +202,24 @@
 
     socket.on('session-disconnect', function (data) {
 
-      vm.isSnippet = false;
-      vm.isLoadingSession = true;
+      seleniumJWP.getSessionUrl().success(function(response){
+
+        if(vm.session.url != response.value && !vm.isSnippet) {
+
+          vm.isLoadingSession = true;
+
+          vm.getSessionSource();
+
+        }
+
+        vm.session.url = response.value;
+      });
+
+      //vm.isSnippet = false;
+
 
       $log.debug('on-session-disconnect');
       $log.debug(data);
-
-      vm.getSessionSource();
 
     });
 
@@ -322,8 +333,8 @@
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
 
         } else if(!target[0].tagName.match(/^select/i)){
-          value = target.text() ? target.text() : false;
-          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
+          value = target.text() ? target.text().trim() : false;
+          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
         }
       }
     };
@@ -468,7 +479,7 @@
       angular.forEach(vm.spec.actions, function (action) {
 
         if(action.breakpoint) {
-          vm.spec.lines.push('    browser.pause();');
+          vm.spec.lines.push('browser.pause();');
         }
 
         vm.spec.lines.push(vm.getLine(action));
@@ -516,6 +527,10 @@
 
       if(action.action == 'sendKeys' && action.locator.type == 'model') {
         line += "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+      }
+
+      if(action.action == 'click' && action.locator.type == 'model') {
+        line += "element(by.model('" + action.locator.value + "')).click();";
       }
 
       if(action.action == 'sendKeys' && action.locator.type == 'css') {
@@ -727,19 +742,22 @@
 
     vm.sessionExecute = function () {
 
-      seleniumJWP.sessionExecute(vm.snippet).success(function(){
+      seleniumJWP.sessionExecute(vm.snippet).success(function() {
         $log.debug('Session Executed');
+
+
+        if (!vm.isSnippet) {
+          $mdToast.show(
+              $mdToast.simple()
+                  .content('Session ready to record!')
+                  .position('bottom left')
+                  .hideDelay(3000)
+          );
+        }
 
         vm.isLoadingSession = false;
         vm.isSnippet = true;
         vm.getSessionUrl();
-
-        $mdToast.show(
-            $mdToast.simple()
-                .content('Session ready to record!')
-                .position('bottom left')
-                .hideDelay(3000)
-        );
       });
 
     };
