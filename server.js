@@ -154,11 +154,13 @@ app.post('/export', function(req, res){
 
   confOutput += "    browser.driver.get('" + baseUrl +"');\r\n";
 
-  conf.spec.lines.forEach(function(line){
+  if(conf.spec.lines){
+    conf.spec.lines.forEach(function(line){
 
-    confOutput += '    ' + line + '\r\n';
+      confOutput += '    ' + line + '\r\n';
 
-  });
+    });
+  }
 
   if(conf.login)
     confOutput += "    return browser.driver.wait(function() {\r\n" +
@@ -181,28 +183,30 @@ app.post('/export', function(req, res){
   describe[0].specs.forEach(function(spec){
     output += "  it('" + spec.string + "', function(){\r\n\r\n";
 
-    spec.lines.forEach(function(line, index){
+    if(spec.lines){  
+      spec.lines.forEach(function(line, index){
 
-      if(line.slice(-1) == ';')
-        output += line + '\r\n    ';
-      else
-        output += line;
-
-      /*if(lastAction != null && lastAction.locator && lastAction.locator.type == 'repeater') {
-
-        output += line + ';\r\n';
-
-      } else {
-
-        if (action.locator.type == 'repeater')
-          output += '    ' + line + '.';
+        if(line.slice(-1) == ';')
+          output += line + '\r\n    ';
         else
-          output += '    ' + line + ';\r\n';
-      }
+          output += line;
 
-      lastAction = action;*/
+        /*if(lastAction != null && lastAction.locator && lastAction.locator.type == 'repeater') {
 
-    });
+          output += line + ';\r\n';
+
+        } else {
+
+          if (action.locator.type == 'repeater')
+            output += '    ' + line + '.';
+          else
+            output += '    ' + line + ';\r\n';
+        }
+
+        lastAction = action;*/
+
+      });
+    }
 
     output += '\r\n  });\r\n\r\n';
   });
