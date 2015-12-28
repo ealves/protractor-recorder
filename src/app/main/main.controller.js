@@ -899,8 +899,7 @@
       }).then(function(result) {
         if(result) {
 
-          $filter('filter')(vm.describes[0].specs, {$$hashKey: vm.spec.$$hashKey})[0].string = result.spec.string;
-
+          $filter('filter')(vm.describes[0].specs, {string: vm.spec.string})[0].string = result.spec.string;
           vm.spec = result.spec;
           vm.describes[0].string = result.describe.string;
 
