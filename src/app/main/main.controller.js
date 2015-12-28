@@ -822,29 +822,25 @@
       }
     };
 
-    vm.deleteSession = function(){
+    vm.clearSession = function(){
+      vm.session = {};
+      seleniumJWP.setSession();
+      vm.isLoadingSession = false;
+      vm.conf.isRecording = false;
+    };
 
+    vm.deleteSession = function(){
       seleniumJWP.deleteSession().success(function() {
         $log.debug('Session Deleted');
-
-        vm.session = {};
-        seleniumJWP.setSession();
-
-        vm.isLoadingSession = false;
-        vm.conf.isRecording = false;
+        vm.clearSession();
       }).error(function(response){
-        vm.session = {};
-        seleniumJWP.setSession();
-
-        vm.isLoadingSession = false;
-        vm.conf.isRecording = false;
+        $log.debug(response);
+        vm.clearSession();
       });
-
     };
 
     vm.getCapabilities = function(){
       $log.debug('getCapabilities');
-
       protractorRecServer.getCapabilities().success(function(response){
         vm.capabilities = response;
         vm.capabilities.forEach(function(capability){
@@ -852,7 +848,6 @@
             capability.checked = true;
           }
         });
-
       }).error(function(message){
         $log.debug(message);
       });
