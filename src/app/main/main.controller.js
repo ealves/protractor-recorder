@@ -356,14 +356,14 @@
         locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
 
       if (type == 'input' && vm.getAttr('name', element))
-        locators.push({type: 'css', value: '[name="' + vm.getAttr('name', element) + '"]'});
+        locators.push({type: 'css', value: '[name="' + vm.getAttr('name', element) + '"]', strategy: 'css selector'});
 
       /*if (type == 'input' && vm.getAttr('type', element) == 'button') {
         locators.push({type: 'id', value: vm.getAttr('id', element)});
       }*/
 
       if (type == 'input' && vm.getAttr('type', element) == 'submit')
-        locators.push({type: 'css', value: '[value="' + element.val() + '"]'});
+        locators.push({type: 'css', value: '[value="' + element.val() + '"]', strategy: 'css selector'});
 
       if (vm.getAttr('href', element)) {
         locators.push({type: 'linkText', value: value, strategy: 'link text'});
@@ -379,13 +379,13 @@
           locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]', strategy: 'xpath'});
 
         if (xPath && !vm.getAttr('ng-click', element) && !vm.getAttr('class', element))
-          locators.push({type: 'xpath', value: xPath});
+          locators.push({type: 'xpath', value: xPath, strategy: 'xpath'});
 
         if (vm.getAttr('ng-click', element))
           locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]', strategy: 'css selector'})
 
         if(vm.getAttr('class', element))
-          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(/\s/g, '.'), strategy: 'css selector'});
+          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(/\s/g, '.'), strategy: 'css'});
 
         if (xPath)
           locators.push({type: 'xpath', value: xPath, strategy: 'xpath'});
@@ -921,61 +921,54 @@
 
     vm.getElementAction = function(action){
 
-      var element     = {};
-      var using       = false;
-      var value       = false;
-      var actionType  = false;
+      $log.debug('getElementAction');
+
+      var element = {};
+
+      element.keys = action.value;
 
       if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
-        using      = 'link text';
-        value      = action.value;
-        actionType = 'click';
+        element.using      = 'link text';
+        element.value      = action.value;
+        element.action     = 'click';
+
+        $log.debug(element);
+        return element;
       }
 
       if(action.action == 'sendKeys') {
 
         angular.forEach(action.locators, function(locator){
 
-          if(locator.type != 'model') {
-
-            using = locator.type;
-
-            if(locator.type == 'css')
-              using = 'css selector';
-
-            value = locator.value;
-            actionType = 'value';
-
-            return true;
-
+          if(locator.strategy && !element.using) {
+            element.using  = locator.strategy;
+            element.value  = locator.value;
+            element.action = 'value';
           }
 
         });
 
-        //line = "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+        $log.debug(element);
+        return element;
+
       }
 
-      if(action.action == 'click' && action.type == 'button' && action.value) {
+      if(action.action == 'click') {
 
         angular.forEach(action.locators, function(locator){
 
-          if(locator.type == 'css') {
-            using = 'css selector';
-            value = locator.value;
-            actionType = 'click';
+          if(locator.strategy && !element.using) {
+
+            element.using  = locator.strategy;
+            element.value  = locator.value;
+            element.action = 'click';
           }
 
         });
-      }
 
-
-      if(using && value && actionType) {
-        element.using  = using;
-        element.value  = value;
-        element.action = actionType;
-        element.keys   = action.value;
-
+        $log.debug(element);
         return element;
+
       }
 
       return false;
