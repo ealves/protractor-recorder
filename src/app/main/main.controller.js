@@ -913,8 +913,25 @@
     vm.getSessionElementId = function(element) {
 
       $log.debug('getSessionElementId');
-      seleniumJWP.findSessionElement(element).success(function(response) {
-        vm.sessionElementExecute(response.value.ELEMENT, element);
+
+      seleniumJWP.findSessionElements(element).success(function(response) {
+
+        angular.forEach(response.value, function(value){
+
+          var elementId = value.ELEMENT;
+          $log.debug(value.ELEMENT);
+
+          seleniumJWP.getSessionElementDisplayed(elementId).success(function(response){
+
+            $log.debug(response);
+
+            if(response.value) {
+              vm.sessionElementExecute(elementId, element);
+            }
+
+          });
+
+        });
       });
 
     };

@@ -83,6 +83,22 @@
       });
     };
 
+    this.findSessionElements = function(element){
+      return $http({
+        method: 'POST',
+        url: this.url + 'session/' + this.session.id + '/elements',
+        data: element
+      });
+    };
+
+    this.getSessionElementDisplayed = function(elementId) {
+      return $http({
+        method: 'GET',
+        url: this.url + 'session/' + this.session.id + '/element/' + elementId + '/displayed' ,
+      });
+
+    };
+
     this.sessionElementExecute = function(elementId, element, data){
       return $http({
         method: 'POST',
