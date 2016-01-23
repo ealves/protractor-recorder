@@ -148,6 +148,8 @@ table {
   cursor: pointer;
 }
 
+.table tbody tr.executed{opacity: 0.5}
+
 /* FAB SPEED DIAL */
 .fabSpeedDialdemoMoreOptions .md-fab-top-right {
   top: 16px; }

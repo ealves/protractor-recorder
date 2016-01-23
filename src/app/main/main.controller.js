@@ -916,22 +916,23 @@
 
       seleniumJWP.findSessionElements(element).success(function(response) {
 
-        angular.forEach(response.value, function(value){
+        angular.forEach(response.value, function (value) {
 
           var elementId = value.ELEMENT;
           $log.debug(value.ELEMENT);
 
-          seleniumJWP.getSessionElementDisplayed(elementId).success(function(response){
+          seleniumJWP.getSessionElementDisplayed(elementId).success(function (response) {
 
             $log.debug(response);
 
-            if(response.value) {
+            if (response.value) {
               vm.sessionElementExecute(elementId, element);
             }
 
           });
 
         });
+
       });
 
     };
@@ -994,6 +995,8 @@
 
     vm.sessionElementExecute = function(elementId, element){
 
+      $log.debug('sessionElementExecute');
+
       var data = {};
 
       if(element.action == 'value'){
@@ -1003,12 +1006,34 @@
       seleniumJWP.sessionElementExecute(elementId, element, data).success(function(response) {
 
         $log.debug(response);
+
+        vm.spec.actions[vm.index].executed = true;
+
         if(vm.spec.actions[vm.index + 1]) {
           vm.runFromHere(vm.index + 1);
+        } else {
+
+          $mdToast.show(
+              $mdToast.simple()
+                  .content('Actions executed!')
+                  .position('bottom left')
+                  .hideDelay(3000)
+          );
+
+          angular.forEach(vm.spec.actions, function(action){
+            action.executed = false;
+          });
+
         }
 
       });
 
+    };
+
+    vm.clearRunTestResult = function(){
+      angular.forEach(vm.spec.actions, function(action){
+        action.executed = false;
+      });
     };
 
     vm.getCapabilities();

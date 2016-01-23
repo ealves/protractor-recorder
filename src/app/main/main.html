@@ -107,6 +107,9 @@
                 <md-menu-item>
                   <md-button ng-click="main.removeSpec($index)"><span md-menu-align-target>Remove</span></md-button>
                 </md-menu-item>
+                <md-menu-item>
+                  <md-button ng-click="main.clearRunTestResult()"><span md-menu-align-target>Clear Results</span></md-button>
+                </md-menu-item>
               </md-menu-content>
             </md-menu>
           </div>
@@ -194,7 +197,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="action in main.spec.actions track by $index">
+                <tr ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed}">
                   <td>
                     <md-checkbox ng-click="main.toggleAction(action)" ng-model="action.checked" aria-label="Checkbox $index"></md-checkbox>
                   </td>
@@ -241,7 +244,6 @@
                         </md-menu-item>
                       </md-menu-content>
                     </md-menu>
-
                     <!--<md-button aria-label="Delete action" ng-click="main.removeAction($index)">
                       <md-icon md-svg-icon="close"></md-icon>
                     </md-button>-->
