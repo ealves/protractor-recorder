@@ -185,6 +185,7 @@
               <table class="table table-hover table-mc-light-blue ng-scope">
                 <thead>
                 <tr>
+                  <th>-</th>
                   <th>
                     <md-checkbox ng-click="main.toggleAll()" ng-model="main.selectAll" aria-label="Checkbox 1">
                     </md-checkbox>
@@ -197,7 +198,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed}">
+                <tr ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed, 'error': action.error}">
+                  <td>
+                    {{ $index }}
+                  </td>
                   <td>
                     <md-checkbox ng-click="main.toggleAction(action)" ng-model="action.checked" aria-label="Checkbox $index"></md-checkbox>
                   </td>

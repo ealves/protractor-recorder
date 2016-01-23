@@ -375,7 +375,7 @@
 
       //if (vm.getAttr('class', element) || actionType == 'wait') {
 
-        if (value)
+        if (value && type != 'row')
           locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]', strategy: 'xpath'});
 
         if (xPath && !vm.getAttr('ng-click', element) && !vm.getAttr('class', element))
@@ -384,11 +384,11 @@
         if (vm.getAttr('ng-click', element))
           locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]', strategy: 'css selector'})
 
-        if(vm.getAttr('class', element))
-          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(/\s/g, '.'), strategy: 'css'});
-
         if (xPath)
           locators.push({type: 'xpath', value: xPath, strategy: 'xpath'});
+
+        if(vm.getAttr('class', element))
+          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(/\s/g, '.')});
       //}
 
       var action = {
@@ -929,10 +929,15 @@
               vm.sessionElementExecute(elementId, element);
             }
 
-          });
+          })
 
         });
 
+      }).error(function(response){
+        $log.debug(response);
+        $log.debug('index: ' + vm.index);
+
+        vm.spec.actions[vm.index].error = true;
       });
 
     };
@@ -973,20 +978,31 @@
 
       if(action.action == 'click') {
 
-        angular.forEach(action.locators, function(locator){
+        // Priority to use locator xpath
+        var locator = $filter('filter')(action.locators, {type: 'xpath'})[0];
 
-          if(locator.strategy && !element.using) {
+        if(locator) {
 
-            element.using  = locator.strategy;
-            element.value  = locator.value;
-            element.action = 'click';
-          }
+          element.using  = locator.strategy;
+          element.value  = locator.value;
+          element.action = 'click';
 
-        });
+        } else {
+
+          angular.forEach(action.locators, function (locator) {
+
+            if (locator.strategy && !element.using) {
+
+              element.using = locator.strategy;
+              element.value = locator.value;
+              element.action = 'click';
+            }
+          });
+
+        }
 
         $log.debug(element);
         return element;
-
       }
 
       return false;
@@ -1010,7 +1026,11 @@
         vm.spec.actions[vm.index].executed = true;
 
         if(vm.spec.actions[vm.index + 1]) {
-          vm.runFromHere(vm.index + 1);
+
+          $timeout(function(){
+            vm.runFromHere(vm.index + 1);
+          }, 500);
+
         } else {
 
           $mdToast.show(
@@ -1033,6 +1053,7 @@
     vm.clearRunTestResult = function(){
       angular.forEach(vm.spec.actions, function(action){
         action.executed = false;
+        action.error    = false;
       });
     };
 
