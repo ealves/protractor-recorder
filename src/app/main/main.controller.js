@@ -1027,9 +1027,21 @@
 
         if(vm.spec.actions[vm.index + 1]) {
 
-          $timeout(function(){
-            vm.runFromHere(vm.index + 1);
-          }, 500);
+          if(vm.spec.actions[vm.index + 1].action == 'wait' || vm.spec.actions[vm.index + 1].type == 'sleep') {
+
+            $timeout(function () {
+              vm.spec.actions[vm.index + 1].executed = true;
+              vm.runFromHere(vm.index + 2);
+            }, vm.spec.actions[vm.index + 1].value);
+
+          } else {
+
+            var time = vm.conf.runSpeed ? vm.conf.runSpeed : 0;
+            $timeout(function () {
+              vm.runFromHere(vm.index + 1);
+            }, time);
+
+          }
 
         } else {
 
