@@ -51,7 +51,7 @@
     vm.describe      = {};
     vm.spec          = [];
     vm.dataBind      = [];
-    vm.capabilities  = [];
+    
     vm.selectedItems = 0;
 
     /* Configuration example */
@@ -237,10 +237,7 @@
       }
     };
 
-    vm.openConf = function() {
-      vm.showConf = true;
-      vm.setSpec(vm.conf.spec, vm.showConf);
-    };
+    
 
     vm.setExample = function () {
 
@@ -839,19 +836,7 @@
       });
     };
 
-    vm.getCapabilities = function(){
-      $log.debug('getCapabilities');
-      protractorRecServer.getCapabilities().success(function(response){
-        vm.capabilities = response;
-        vm.capabilities.forEach(function(capability){
-          if(!vm.conf.capabilities.indexOf(capability.driver)){
-            capability.checked = true;
-          }
-        });
-      }).error(function(message){
-        $log.debug(message);
-      });
-    };
+    
 
     vm.pauseRecording = function(){
       vm.conf.isRecording = false;
@@ -1069,7 +1054,6 @@
       });
     };
 
-    vm.getCapabilities();
     vm.setExample();
     vm.getSessionSource();
 

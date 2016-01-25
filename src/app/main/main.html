@@ -1,86 +1,11 @@
-<div flex layout="column">
-
-  <md-toolbar layout-align="center end">
-    <div class="md-toolbar-tools">
-      <h2>Protractor Recorder</h2>
-      <span class="flex"></span>
-      <md-button style="color:#000" class="md-raised" ng-click="main.exportProtractor()">
-        <md-icon style="color:#000" md-svg-icon="file_download"></md-icon>
-        Export
-      </md-button>
-      <md-button style="color:#000" class="md-raised" ng-click="main.runTest()">
-        <md-icon style="color:#000" md-svg-icon="play_circle"></md-icon>
-        Run
-      </md-button>
-      <md-button ng-if="!main.conf.isRecording" style="color:#000" class="md-raised" ng-click="main.createSession()">
-        <md-icon style="color:#9b1b1d" md-svg-icon="record"></md-icon>
-        Record
-      </md-button>
-      <md-button ng-if="main.conf.isRecording" class="md-raised md-warn" ng-click="main.pauseRecording()">
-        <md-icon style="color: #FFF" md-svg-icon="pause"></md-icon>
-        Pause
-      </md-button>
-    </div>
-  </md-toolbar>
+<div class="layout-column flex">
 
   <md-progress-linear ng-if="main.isLoadingSession" md-mode="indeterminate"></md-progress-linear>
 
-  <div flex layout="row">
-
-    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
-
-      <div layout="column" layout-padding>
-        <md-input-container class="md-block" style="padding-bottom: 0px;">
-          <label>Base URL</label>
-          <input ng-model="main.url" type="text" placeholder="Url">
-        </md-input-container>
-        <md-input-container class="md-block" style="padding-bottom: 0px;">
-          <label>Run speed</label>
-          <input ng-model="main.conf.runSpeed" type="number" placeholder="Milliseconds">
-        </md-input-container>
-      </div>
-      <md-list>
-        <md-list-item ng-click="main.openConf()" aria-label="Conf">
-          <p>Conf.js</p>
-        </md-list-item>
-      </md-list>
-      <div ng-repeat="describe in main.describes">
-        <md-subheader class="md-no-sticky">
-          {{ describe.string }}
-        </md-subheader>
-        <md-divider></md-divider>
-        <md-list>
-          <md-list-item ng-click="main.setSpec(spec, false)" ng-repeat="spec in describe.specs">
-            <p>{{ spec.string ? spec.string : 'Untitled Spec' }}</p>
-          </md-list-item>
-        </md-list>
-      </div>
-      <span flex></span>
-
-      <md-subheader class="md-no-sticky">Drivers</md-subheader>
-      <md-divider></md-divider>
-      <md-list>
-        <md-list-item ng-click="main.setSpec(spec)" ng-repeat="capability in main.capabilities | orderBy: 'driver'">
-          <img ng-src="/assets/images/{{ capability.driver }}.png" style="width:30px;margin-right: 10px">
-          <p>{{ capability.driver }}</p>
-          <md-checkbox ng-change="main.setCapabilities(capability)" class="md-secondary" ng-model="capability.checked"></md-checkbox>
-        </md-list-item>
-      </md-list>
-
-      <md-divider></md-divider>
-      <div row="column">
-        <md-list>
-          <md-list-item ng-click="openSettings()" aria-label="Settings">
-            <md-icon md-svg-icon="settings"></md-icon>
-            <p>Settings</p>
-          </md-list-item>
-        </md-list>
-      </div>
-
-    </md-sidenav>
+  <div flex layout="row">  
 
     <div flex layout-padding layout="column">
-      <md-content md-scroll-y class="flex layout-column">
+      <md-content md-scroll-y md-scroll-x class="flex layout-column">
         <div ng-if="!main.showConf" layout="row">
           <div layout="row" flex ng-if="!main.showSelectedOptions">
             <!--<md-input-container class="md-block">
@@ -260,7 +185,7 @@
         <!--<md-button ng-click="main.exportProtractor()">Export Protractor</md-button>
         <md-button ng-click="main.runTest()">Run Test</md-button>-->
       </md-content>
-      <md-fab-speed-dial ng-hide="main.hidden" md-direction="up" md-open="main.isOpen"
+      <!-- <md-fab-speed-dial ng-hide="main.hidden" md-direction="up" md-open="main.isOpen"
                          class="md-scale md-fab-bottom-right" ng-class="{ 'md-hover-full': main.hover }"
                          ng-mouseenter="main.isOpen=true" ng-mouseleave="main.isOpen=false">
         <md-fab-trigger>
@@ -288,7 +213,7 @@
           </md-button>
 
         </md-fab-actions>
-      </md-fab-speed-dial>
+      </md-fab-speed-dial> -->
     </div>
   </div>
 </div>

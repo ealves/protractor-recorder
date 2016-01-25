@@ -24,13 +24,104 @@
 
 
   </head>
-  <body class="layout-row">
+  <body class="layout-row" ng-controller="NavbarController as navbar">
     <!--[if lt IE 10]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     
-      <md-content id="main" class="flex layout-column layout-fill" ng-view></md-content>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
+
+      <header class="nav-header">
+        <md-toolbar layout-align="center end">
+          <div class="md-toolbar-tools">
+            <h2>Protractor Recorder</h2>
+          </div>
+        </md-toolbar>  
+      </header>
+
+      <div layout="column" layout-padding>
+        <md-input-container class="md-block" style="padding-bottom: 0px;">
+          <label>Base URL</label>
+          <input ng-model="navbar.conf.url" type="text" placeholder="Url">
+        </md-input-container>
+        <md-input-container class="md-block" style="padding-bottom: 0px;">
+          <label>Run speed</label>
+          <input ng-model="navbar.conf.runSpeed" type="number" placeholder="Milliseconds">
+        </md-input-container>
+      </div>
+      <md-list>
+        <md-list-item ng-click="navbar.openConf()" aria-label="Conf">
+          <p>Conf.js</p>
+        </md-list-item>
+      </md-list>
+      <div ng-repeat="describe in navbar.describes">
+        <md-subheader class="md-no-sticky">
+          {{ describe.string }}
+        </md-subheader>
+        <md-divider></md-divider>
+        <md-list>
+          <md-list-item ng-click="navbar.setSpec(spec, false)" ng-repeat="spec in describe.specs">
+            <p>{{ spec.string ? spec.string : 'Untitled Spec' }}</p>
+          </md-list-item>
+        </md-list>
+      </div>
+      <span flex></span>
+
+      <md-subheader class="md-no-sticky">Drivers</md-subheader>
+      <md-divider></md-divider>
+      <md-list>
+        <md-list-item ng-click="navbar.setSpec(spec)" ng-repeat="capability in navbar.capabilities | orderBy: 'driver'">
+          <img ng-src="/assets/images/{{ capability.driver }}.png" style="width:30px;margin-right: 10px">
+          <p>{{ capability.driver }}</p>
+          <md-checkbox ng-change="navbar.setCapabilities(capability)" class="md-secondary" ng-model="capability.checked"></md-checkbox>
+        </md-list-item>
+      </md-list>
+
+      <md-divider></md-divider>
+      <div row="column">
+        <md-list>
+          <md-list-item ng-click="openSettings()" aria-label="Settings">
+            <md-icon md-svg-icon="settings"></md-icon>
+            <p>Settings</p>
+          </md-list-item>
+        </md-list>
+      </div>
+
+    </md-sidenav>
+
+    <div class="layout-column flex">
+
+      <md-toolbar layout-align="center end">
+        <div class="md-toolbar-tools">
+          <h2>{{ navbar.title }}</h2>
+          <span class="flex"></span>
+          <md-button style="color:#000" class="md-raised" ng-click="navbar.exportProtractor()">
+            <md-icon style="color:#000" md-svg-icon="file_download"></md-icon>
+            Export
+          </md-button>
+          <md-button style="color:#000" class="md-raised" ng-click="navbar.runTest()">
+            <md-icon style="color:#000" md-svg-icon="play_circle"></md-icon>
+            Run
+          </md-button>
+          <md-button ng-if="!navbar.conf.isRecording" style="color:#000" class="md-raised" ng-click="navbar.createSession()">
+            <md-icon style="color:#9b1b1d" md-svg-icon="record"></md-icon>
+            Record
+          </md-button>
+          <md-button ng-if="navbar.conf.isRecording" class="md-raised md-warn" ng-click="navbar.pauseRecording()">
+            <md-icon style="color: #FFF" md-svg-icon="pause"></md-icon>
+            Pause
+          </md-button>
+        </div>
+      </md-toolbar>
+
+      <md-progress-linear ng-if="navbar.isLoadingSession" md-mode="indeterminate"></md-progress-linear>
+
+      <md-content id="main" class="flex layout-column" ng-view></md-content>
+
+    </div>
+
+    
    
     <!-- build:js(src) scripts/vendor.js -->
     <!-- bower:js -->
