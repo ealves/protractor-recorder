@@ -6,9 +6,11 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $log, $filter, $timeout, $mdToast, $location, $mdDialog, $document, socket, protractorRecServer, seleniumJWP) {
+  function MainController($scope, $routeParams, $log, $filter, $timeout, $mdToast, $location, $mdDialog, $document, socket, protractorRecServer, seleniumJWP) {
 
     var vm = this;
+
+    $log.debug($location.path());
 
     /*-------------------------------------------------------------------
      * 		 				 	ATTRIBUTES
@@ -21,7 +23,7 @@
     vm.index = false;
 
     /* If first run set examples or get from local storage */
-    
+    vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
     vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
     vm.session   = localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
@@ -51,8 +53,20 @@
     vm.describe      = {};
     vm.spec          = [];
     vm.dataBind      = [];
-    
+
     vm.selectedItems = 0;
+
+    if($location.path() == '/conf') {
+
+      vm.spec = vm.conf.spec;
+
+    } else if($routeParams.id) {
+
+      var index = parseInt($routeParams.id) - 1;
+      vm.spec = vm.describes[0].specs[index];
+
+    }
+
 
     /* Configuration example */
     if(!vm.conf) {
@@ -237,9 +251,9 @@
       }
     };
 
-    
 
-    vm.setExample = function () {
+
+    /*vm.setExample = function () {
 
       if (!vm.describes.length) {
 
@@ -254,7 +268,7 @@
         vm.setSpec(vm.describe.specs[0]);
       }
 
-    };
+    };*/
 
     vm.newDescribe = function () {
       $log.debug('newDescribe');
@@ -270,23 +284,6 @@
 
     vm.setDescribe = function (describe) {
       vm.describe = describe;
-    };
-
-    vm.setSpec = function (spec, conf) {
-      $log.debug('setSpec');
-      if(vm.showConf && conf == undefined || conf == true) {
-        vm.showConf = true;
-        vm.spec = vm.conf.spec;
-        $location.path('/conf');
-      } else {
-        vm.spec = spec;
-        vm.showConf = false;
-        $location.path('/');
-      }
-
-      angular.forEach(vm.spec.actions, function(action) {
-        action.checked = false;
-      });
     };
 
     vm.setElementOnChange = function (element) {
@@ -638,15 +635,6 @@
     $scope.$watch('main.describe', function () {
       $log.debug('watch describe');
       localStorage.setItem('describes', angular.toJson(vm.describes));
-
-      vm.selectedItems = $filter('filter')(vm.spec.actions, {checked: true}).length;
-
-      if(vm.selectedItems){
-        vm.showSelectedOptions = true
-      } else {
-        vm.showSelectedOptions = false;
-      }
-
     }, true);
 
     $scope.$watchCollection('main.describes', function () {
@@ -815,7 +803,7 @@
       });
     };
 
-    
+
 
     vm.pauseRecording = function(){
       vm.conf.isRecording = false;
@@ -1033,7 +1021,6 @@
       });
     };
 
-    vm.setExample();
     vm.getSessionSource();
 
   }

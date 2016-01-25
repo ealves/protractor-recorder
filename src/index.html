@@ -29,7 +29,7 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    
+
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 
       <header class="nav-header">
@@ -37,7 +37,7 @@
           <div class="md-toolbar-tools">
             <h2>Protractor Recorder</h2>
           </div>
-        </md-toolbar>  
+        </md-toolbar>
       </header>
 
       <div layout="column" layout-padding>
@@ -61,7 +61,7 @@
         </md-subheader>
         <md-divider></md-divider>
         <md-list>
-          <md-list-item ng-click="navbar.setSpec(spec, false)" ng-repeat="spec in describe.specs">
+          <md-list-item ng-click="navbar.setSpec(spec, $index + 1)" ng-repeat="spec in describe.specs">
             <p>{{ spec.string ? spec.string : 'Untitled Spec' }}</p>
           </md-list-item>
         </md-list>
@@ -121,8 +121,8 @@
 
     </div>
 
-    
-   
+
+
     <!-- build:js(src) scripts/vendor.js -->
     <!-- bower:js -->
     <!-- run `gulp inject` to automatically populate bower script dependencies -->
