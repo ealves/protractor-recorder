@@ -67,7 +67,6 @@
 
     }
 
-
     /* Configuration example */
     if(!vm.conf) {
       vm.conf = {

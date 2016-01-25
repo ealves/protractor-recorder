@@ -2,25 +2,14 @@
 
   <md-progress-linear ng-if="main.isLoadingSession" md-mode="indeterminate"></md-progress-linear>
 
-  <div flex layout="row">  
+  <div flex layout="row">
 
     <div flex layout-padding layout="column">
       <md-content md-scroll-y md-scroll-x class="flex layout-column">
         <div ng-if="!main.showConf" layout="row">
           <div layout="row" flex ng-if="!main.showSelectedOptions">
-            <!--<md-input-container class="md-block">
-              <label>Describe</label>
-              <input type="text" ng-model="main.describe.string">
-            </md-input-container>
-
-            <md-input-container class="md-block">
-              <label>Spec</label>
-              <input type="text" ng-model="main.spec.string" placeholder="Untitled spec">
-            </md-input-container>-->
-
             <h2>{{ main.spec.string }}</h2>
             <span flex></span>
-
             <md-button id="edit-spec" aria-label="Edit Spec" ng-click="main.specDialog(main.spec)">
               <md-icon md-svg-icon="edit"></md-icon>
             </md-button>
@@ -48,20 +37,6 @@
             <md-button aria-label="Remove Actions" ng-click="main.removeActions()">
               <md-icon md-svg-icon="delete"></md-icon>
             </md-button>
-            <!--<md-menu md-position-mode="target-right target">
-              <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                <md-icon md-menu-origin md-svg-icon="more_horiz"></md-icon>
-              </md-button>
-              <md-menu-content width="2">
-                <md-menu-item>
-                  <md-button ng-click="main.duplicateActions()"><span md-menu-align-target>Duplicate</span></md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="main.removeActions()"><span md-menu-align-target>Remove</span></md-button>
-                </md-menu-item>
-              </md-menu-content>
-            </md-menu>-->
-
           </div>
         </div>
         <div ng-if="main.showConf">
