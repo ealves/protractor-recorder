@@ -55,114 +55,6 @@
       $location.url('/conf');
     };
 
-    vm.setElement = function (element) {
-
-      if(vm.conf.isRecording) {
-        var target = angular.element(element.outerHTML);
-        var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
-
-        var value = '';
-
-        if (target[0].tagName.match(/^button/i) || (parent[0].tagName && parent[0].tagName.match(/^button/i)) && !target[0].tagName.match(/^input/i)) {
-
-          vm.addElement(parent, 'button', 'click', target.text().trim(), element.xPath);
-
-        } else if (target[0].tagName.match(/^input/i)) {
-          vm.addElement(target, 'input', 'click', false, element.xPath);
-        } else if (target[0].tagName.match(/^a/i)) {
-          vm.addElement(target, 'a', 'click', target.text().trim(), element.xPath);
-        } else if (element.ngRepeat) {
-
-          value = target.text() ? target.text() : false;
-
-          //if(value)
-          vm.addElement(target, target[0].tagName.toLowerCase(), 'wait', value.trim(), element.xPath);
-
-          vm.addElement(target, 'row', 'click', element.ngRepeat.rowIndex, element.xPath, element.ngRepeat.value);
-
-          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
-
-        } else if(!target[0].tagName.match(/^select/i)){
-          value = target.text() ? target.text().trim() : false;
-          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
-        }
-      }
-    };
-
-    vm.addElement = function (element, type, actionType, value, xPath, repeater) {
-
-      var locators = [];
-
-      if(type == 'select' && vm.getAttr('ng-model', element))
-        locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
-
-      if(type == 'row')
-        locators.push({type: 'repeater', value: repeater});
-
-      if (type == 'button' && value)
-        locators.push({type: 'buttonText', value: value});
-
-      if (type == 'input' && vm.getAttr('ng-model', element))
-        locators.push({type: 'model', value: vm.getAttr('ng-model', element)});
-
-      if (type == 'input' && vm.getAttr('name', element))
-        locators.push({type: 'css', value: '[name="' + vm.getAttr('name', element) + '"]', strategy: 'css selector'});
-
-      /*if (type == 'input' && vm.getAttr('type', element) == 'button') {
-        locators.push({type: 'id', value: vm.getAttr('id', element)});
-      }*/
-
-      if (type == 'input' && vm.getAttr('type', element) == 'submit')
-        locators.push({type: 'css', value: '[value="' + element.val() + '"]', strategy: 'css selector'});
-
-      if (vm.getAttr('href', element)) {
-        locators.push({type: 'linkText', value: value, strategy: 'link text'});
-        locators.push({type: 'get', value: vm.getAttr('href', element)});
-      }
-
-      if (vm.getAttr('id', element) && !element[0].tagName.match(/md/i))
-        locators.push({type: 'id', value: vm.getAttr('id', element), strategy: 'id'});
-
-      //if (vm.getAttr('class', element) || actionType == 'wait') {
-
-        if (value && type != 'row')
-          locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]', strategy: 'xpath'});
-
-        if (xPath && !vm.getAttr('ng-click', element) && !vm.getAttr('class', element))
-          locators.push({type: 'xpath', value: xPath, strategy: 'xpath'});
-
-        if (vm.getAttr('ng-click', element))
-          locators.push({type: 'css', value: '[ng-click="' + vm.getAttr('ng-click', element) + '"]', strategy: 'css selector'})
-
-        if (xPath)
-          locators.push({type: 'xpath', value: xPath, strategy: 'xpath'});
-
-        if(vm.getAttr('class', element))
-          locators.push({type: 'css', value: '.' + vm.getAttr('class', element).replace(/\s/g, '.')});
-      //}
-
-      var action = {
-        //element: element.html(),
-        type: type,
-        value: value,
-        action: actionType,
-        locators: locators,
-        locator: locators ? {type: locators[0].type, value: locators[0].value} : null
-      };
-
-      vm.spec.actions.push(action);
-
-      var mainContent = angular.element( $document[0].querySelector('#main') );
-      mainContent[0].scrollTop = mainContent[0].scrollHeight;
-
-      vm.getSessionUrl();
-
-      //localStorage.setItem('actions', angular.toJson(vm.actions));
-
-      //vm.getSessionUrl();
-
-    };
-
     vm.verifySnippet = function(){
 
       var countIframe = vm.session.source.match(/recorder-iframe/);
@@ -248,54 +140,6 @@
       });
     };
 
-    vm.exportProtractor = function () {
-
-      $log.debug('exportProtractor');
-
-      /* Get line to export actions in conf.js */
-      vm.conf.spec.lines = [];
-
-      angular.forEach(vm.conf.spec.actions, function (action) {
-
-        if(action.breakpoint) {
-          vm.conf.spec.lines('    browser.pause();');
-        }
-
-        vm.conf.spec.lines.push(vm.getLine(action));
-
-      });
-
-      /* Get line to export actions in spec.js */
-      vm.spec.lines = [];
-
-      if($filter('filter')(vm.spec.actions, {action: 'wait'}).length != 0)
-        vm.spec.lines.push('    var EC = protractor.ExpectedConditions;');
-
-      angular.forEach(vm.spec.actions, function (action) {
-
-        if(action.breakpoint) {
-          vm.spec.lines.push('browser.pause();');
-        }
-
-        vm.spec.lines.push(vm.getLine(action));
-
-      });
-
-      var data = {baseUrl: vm.url, conf: angular.toJson(vm.conf), describe: angular.toJson(vm.describes)};
-
-      protractorRecServer.exportProtractor(data).success(function(response){
-        $log.debug('Exported');
-        $log.debug(response);
-
-        $mdToast.show(
-          $mdToast.simple()
-          .content('File exported!')
-          .position('bottom left')
-          .hideDelay(3000)
-          );
-      });
-    };
-
     vm.createSession = function () {
 
       if(!vm.session.id) {
@@ -359,8 +203,6 @@
           index = $routeParams.id;
         }
 
-
-
         $location.path('/spec/' + index);
       }
 
@@ -421,6 +263,23 @@
       if (elem.attr(attr))
         return elem.attr(attr);
       return false;
+    };
+
+    vm.clearSession = function(){
+      vm.session = {};
+      seleniumJWP.setSession();
+      vm.isLoadingSession = false;
+      vm.conf.isRecording = false;
+    };
+
+    vm.deleteSession = function(){
+      seleniumJWP.deleteSession().success(function() {
+        $log.debug('Session Deleted');
+        vm.clearSession();
+      }).error(function(response){
+        $log.debug(response);
+        vm.clearSession();
+      });
     };
 
     vm.getCapabilities = function(){
