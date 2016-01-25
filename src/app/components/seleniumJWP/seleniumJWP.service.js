@@ -94,7 +94,7 @@
     this.getSessionElementDisplayed = function(elementId) {
       return $http({
         method: 'GET',
-        url: this.url + 'session/' + this.session.id + '/element/' + elementId + '/displayed' ,
+        url: this.url + 'session/' + this.session.id + '/element/' + elementId + '/displayed'
       });
 
     };
