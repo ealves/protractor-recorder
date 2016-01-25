@@ -21,7 +21,7 @@
     vm.index = false;
 
     /* If first run set examples or get from local storage */
-    vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
+    
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
     vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
     vm.session   = localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
@@ -658,27 +658,6 @@
       $log.debug('watch session');
       localStorage.setItem('session', angular.toJson(vm.session));
     }, true);
-
-    $scope.$watch('main.url', function (newVal) {
-      $log.debug('watch Url');
-
-      if(newVal.match(/^https/)){
-
-        $mdToast.show(
-            $mdToast.simple()
-                .content('Do not use https on Base Url!')
-                .position('bottom left')
-                .hideDelay(3000)
-        );
-
-        vm.url = '';
-
-      } else {
-
-        localStorage.setItem('url', vm.url);
-      }
-
-    });
 
     vm.toggleAll = function(){
 
