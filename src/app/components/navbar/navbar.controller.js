@@ -2,14 +2,15 @@
   'use strict';
 
   angular
-  .module('protractorRec')
-  .controller('NavbarController', NavbarController);
+    .module('protractorRec')
+    .controller('NavbarController', NavbarController);
 
   /** @ngInject */
   function NavbarController($rootScope, $scope, $log, $location, $filter, $mdToast, $document, $routeParams, socket, protractorRecServer, seleniumJWP) {
 
     var vm = this;
 
+    vm.protractorRecServer = protractorRecServer;
     /*-------------------------------------------------------------------
      *              ATTRIBUTES
      *-------------------------------------------------------------------*/
@@ -36,9 +37,9 @@
       'var i = document.getElementById("recorder-iframe");' +
       'var s = i.contentWindow.document.createElement("script");' +
       's.onload=function(){' +
-        'var s = i.contentWindow.document.createElement("script");' +
-        's.src = "http://localhost:9000/snippet.js";' +
-        'i.contentWindow.document.body.appendChild(s);' +
+      'var s = i.contentWindow.document.createElement("script");' +
+      's.src = "http://localhost:9000/snippet.js";' +
+      'i.contentWindow.document.body.appendChild(s);' +
       '},s.src = "http://localhost:9000/socket.io-1.3.7.js",i.contentWindow.document.body.appendChild(s);}';
 
     vm.lines         = [];
@@ -165,9 +166,6 @@
     vm.createSession = function () {
 
       if(!vm.session.id) {
-
-        protractorRecServer.setLoading(true);
-
         var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
 
         seleniumJWP.newSession(options).success(function(response){
@@ -243,10 +241,10 @@
 
         if (!vm.isSnippet) {
           $mdToast.show(
-              $mdToast.simple()
-                  .content('Session ready to record!')
-                  .position('bottom left')
-                  .hideDelay(3000)
+            $mdToast.simple()
+              .content('Session ready to record!')
+              .position('bottom left')
+              .hideDelay(3000)
           );
         }
 
@@ -300,8 +298,25 @@
       vm.describe = describe;
     };
 
-    vm.setSpec = function (spec) {
-      vm.spec = spec;
+    vm.setSpec = function (spec, index) {
+
+      $log.debug($routeParams);
+
+      $log.debug('setSpec');
+      if(vm.showConf && index == undefined) {
+        vm.showConf = true;
+        vm.spec = vm.conf.spec;
+        $location.path('/conf');
+      } else {
+        vm.spec = spec;
+        vm.showConf = false;
+        if(index)
+          $location.path('/spec/' + index);
+      }
+
+      angular.forEach(vm.spec.actions, function(action) {
+        action.checked = false;
+      });
     };
 
     vm.setExample = function () {

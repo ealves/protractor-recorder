@@ -16,6 +16,8 @@
      * 		 				 	ATTRIBUTES
      *-------------------------------------------------------------------*/
 
+    vm.actionTypes = ['click', 'sendKeys', 'wait', 'browser'];
+
     vm.isLoadingSession    = false;
     vm.isSnippet           = false;
     vm.showSelectedOptions = false;
@@ -63,8 +65,6 @@
 
       };
     }
-
-
 
     /* Base options for new spec */
     vm.blankSpec = {
@@ -516,8 +516,6 @@
     vm.createSession = function () {
 
       if(!vm.session.id) {
-
-        protractorRecServer.setLoading(true);
 
         var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
 

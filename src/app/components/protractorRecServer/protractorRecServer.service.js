@@ -15,8 +15,8 @@
 
     this.serverUrl = 'http://localhost:9000/';
 
-    this.loading = false;
-    this.recording = false;
+    this.loading   = localStorage.getItem('loading') != undefined ? localStorage.getItem('loading') : false;
+    this.recording = localStorage.getItem('recording') != undefined ? localStorage.getItem('recording') : false;
     /**
      * Javascript snippet to inject on session
      */
@@ -127,6 +127,7 @@
     };
 
     this.setLoading = function(status) {
+      localStorage.setItem('loading', status);
       this.loading = status;
     };
 
@@ -135,6 +136,7 @@
     };
 
     this.setRecording = function(status) {
+      localStorage.setItem('recording', status);
       this.recording = status;
     };
   }

@@ -104,11 +104,11 @@
             <md-icon style="color:#000" md-svg-icon="play_circle"></md-icon>
             Run
           </md-button>
-          <md-button ng-if="!navbar.conf.isRecording" style="color:#000" class="md-raised" ng-click="navbar.createSession()">
+          <md-button ng-if="!navbar.protractorRecServer.isRecording()" style="color:#000" class="md-raised" ng-click="navbar.createSession()">
             <md-icon style="color:#9b1b1d" md-svg-icon="record"></md-icon>
             Record
           </md-button>
-          <md-button ng-if="navbar.conf.isRecording" class="md-raised md-warn" ng-click="navbar.pauseRecording()">
+          <md-button ng-if="navbar.protractorRecServer.isRecording()" class="md-raised md-warn" ng-click="navbar.pauseRecording()">
             <md-icon style="color: #FFF" md-svg-icon="pause"></md-icon>
             Pause
           </md-button>
