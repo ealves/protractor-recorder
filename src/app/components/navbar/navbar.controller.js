@@ -25,6 +25,12 @@
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
     vm.session   = localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
 
+    vm.loading   = localStorage.getItem('loading') != undefined ? localStorage.getItem('loading') : false;
+    vm.recording = localStorage.getItem('recording') != undefined ? localStorage.getItem('recording') : false;
+
+    protractorRecServer.setLoading(vm.loading);
+    protractorRecServer.setRecording(vm.recording);
+
     /**
      * Javascript snippet to inject on session
      */
@@ -180,17 +186,14 @@
 
     vm.createSession = function () {
 
-      protractorRecServer.setLoading(true);
-
       if(!vm.session.id) {
+        protractorRecServer.setLoading(true);
         var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
 
         seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
           seleniumJWP.setSession(response);
           vm.session.id = response.sessionId;
-
-
 
           protractorRecServer.setRecording(true);
 

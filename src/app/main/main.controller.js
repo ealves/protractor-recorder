@@ -111,7 +111,7 @@
       $log.debug('onkeyup');
       $log.debug(data);
 
-      if(protractorRecServer.isRecording) {
+      if(protractorRecServer.isRecording()) {
         var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
         lastAction.action = 'sendKeys';
         lastAction.value = data;
@@ -123,7 +123,7 @@
       $log.debug('onassertion');
       $log.debug(data);
 
-      if(protractorRecServer.isRecording && data) {
+      if(protractorRecServer.isRecording() && data) {
         var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
 
         lastAction.action = 'assertion';
@@ -195,7 +195,7 @@
 
     vm.setElementOnChange = function (element) {
 
-      if (protractorRecServer.isRecording) {
+      if (protractorRecServer.isRecording()) {
 
         var target = angular.element(element.outerHTML);
 
@@ -208,7 +208,7 @@
 
     vm.setElement = function (element) {
 
-      if(protractorRecServer.isRecording) {
+      if(protractorRecServer.isRecording()) {
         var target = angular.element(element.outerHTML);
         var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
 
@@ -540,7 +540,7 @@
 
     vm.sessionExecute = function () {
 
-      seleniumJWP.sessionExecute(vm.snippet).success(function() {
+      seleniumJWP.sessionExecute(protractorRecServer.snippet).success(function() {
         $log.debug('Session Executed');
 
 

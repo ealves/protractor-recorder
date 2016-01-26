@@ -7,16 +7,16 @@
   'use strict';
 
   angular
-      .module('protractorRec')
-      .service('protractorRecServer', protractorRecServer);
+    .module('protractorRec')
+    .service('protractorRecServer', protractorRecServer);
 
   /** @ngInject */
   function protractorRecServer($rootScope, $http) {
 
     this.serverUrl = 'http://localhost:9000/';
 
-    this.loading   = localStorage.getItem('loading') != undefined ? localStorage.getItem('loading') : false;
-    this.recording = localStorage.getItem('recording') != undefined ? localStorage.getItem('recording') : false;
+    this.loading = false;
+    this.recording = false;
 
     /**
      * Javascript snippet to inject on session
