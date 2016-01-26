@@ -138,6 +138,8 @@
     };
 
     this.setLoading = function(status) {
+      if(typeof status == 'string')
+        status == 'true' ? true : false;
       localStorage.setItem('loading', status);
       this.loading = status;
     };
@@ -147,6 +149,8 @@
     };
 
     this.setRecording = function(status) {
+      if(typeof status == 'string')
+        status = status == 'true' ? true : false;
       localStorage.setItem('recording', status);
       this.recording = status;
     };

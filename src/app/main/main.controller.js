@@ -276,8 +276,8 @@
 
       //if (vm.getAttr('class', element) || actionType == 'wait') {
 
-        if (value && type != 'row')
-          locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]', strategy: 'xpath'});
+        /*if (value && type != 'row')
+          locators.push({type: 'xpath', value: '//' + type + '[.="' + value + '"]', strategy: 'xpath'});*/
 
         if (xPath && !vm.getAttr('ng-click', element) && !vm.getAttr('class', element))
           locators.push({type: 'xpath', value: xPath, strategy: 'xpath'});
