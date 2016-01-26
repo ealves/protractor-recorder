@@ -49,6 +49,21 @@
 
     vm.selectedItems = 0;
 
+    /* Configuration example */
+    if(!vm.conf) {
+      protractorRecServer.setConf(protractorRecServer.confSample);
+    }
+
+    /*-------------------------------------------------------------------
+     * 		 				  BROADCAST MESSAGES
+     *-------------------------------------------------------------------*/
+    $scope.$on('conf', function(events, args) {
+      vm.conf = args;
+    });
+
+    /*-------------------------------------------------------------------
+     * 		 				  SOCKET ON
+     *-------------------------------------------------------------------*/
     socket.on('session-disconnect', function (data) {
 
       seleniumJWP.getSessionUrl().success(function(response){
@@ -328,7 +343,8 @@
 
       if (!vm.describes.length) {
 
-        vm.describes.push(angular.copy(protractorRecServer.sample));
+        vm.describes.push(angular.copy(protractorRecServer.specSample));
+        vm.conf = angular.copy(protractorRecServer.confSample);
 
         vm.setDescribe(vm.describes[0]);
         vm.setSpec(vm.describe.specs[0]);
@@ -339,6 +355,54 @@
         vm.setSpec(vm.describe.specs[0]);
       }
 
+    };
+
+    vm.exportProtractor = function () {
+
+      $log.debug('exportProtractor');
+
+      /* Get line to export actions in conf.js */
+      vm.conf.spec.lines = [];
+
+      angular.forEach(vm.conf.spec.actions, function (action) {
+
+        if(action.breakpoint) {
+          vm.conf.spec.lines('    browser.pause();');
+        }
+
+        vm.conf.spec.lines.push(protractorRecServer.getLine(action));
+
+      });
+
+      /* Get line to export actions in spec.js */
+      vm.spec.lines = [];
+
+      if($filter('filter')(vm.spec.actions, {action: 'wait'}).length != 0)
+        vm.spec.lines.push('    var EC = protractor.ExpectedConditions;');
+
+      angular.forEach(vm.spec.actions, function (action) {
+
+        if(action.breakpoint) {
+          vm.spec.lines.push('browser.pause();');
+        }
+
+        vm.spec.lines.push(protractorRecServer.getLine(action));
+
+      });
+
+      var data = {baseUrl: vm.conf.baseUrl, conf: angular.toJson(vm.conf), describe: angular.toJson(vm.describes)};
+
+      protractorRecServer.exportProtractor(data).success(function(response){
+        $log.debug('Exported');
+        $log.debug(response);
+
+        $mdToast.show(
+          $mdToast.simple()
+            .content('File exported!')
+            .position('bottom left')
+            .hideDelay(3000)
+        );
+      });
     };
 
     vm.setExample();

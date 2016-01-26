@@ -17,6 +17,7 @@
 
     this.loading   = localStorage.getItem('loading') != undefined ? localStorage.getItem('loading') : false;
     this.recording = localStorage.getItem('recording') != undefined ? localStorage.getItem('recording') : false;
+
     /**
      * Javascript snippet to inject on session
      */
@@ -34,8 +35,21 @@
       'i.contentWindow.document.body.appendChild(s);' +
       '},s.src = "http://localhost:9000/socket.io-1.3.7.js",i.contentWindow.document.body.appendChild(s);}';
 
+    /* Conf example */
+    this.confSample = {
+      string: 'Conf.js',
+      baseUrl: 'http://protractortest.org',
+      seleniumAddress: 'http://localhost:4444/wd/hub',
+      capabilities: ['chromedriver'],
+      spec: {
+        actions: [
+          {type: 'link', value: 'http://protractortest.org', action: 'get'}
+        ]
+      }
+    };
+
     /* Spec example */
-    this.sample = {
+    this.specSample = {
       string: 'Describe Protractor Example',
       specs: [
         {
@@ -115,6 +129,7 @@
     };
 
     this.setConf = function(conf) {
+      localStorage.setItem('conf', angular.toJson(conf));
       $rootScope.$broadcast('conf', conf);
     };
 
@@ -135,5 +150,84 @@
       localStorage.setItem('recording', status);
       this.recording = status;
     };
+
+    this.getLine = function(action) {
+
+      var line = '';
+
+      if(action.action == 'wait'){
+
+        var elm = '';
+
+        if(action.locator.type == 'xpath')
+          elm = "element(by.xpath('" + action.locator.value + "'))";
+
+        if(action.locator.type == 'css')
+          elm = "element(by.css('" + action.locator.value + "');";
+
+        line += "browser.wait(EC.presenceOf(" + elm + "), 10000);";
+
+      }
+
+      if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
+        line += "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click();";
+
+      if(action.action == 'click' && action.locator.type == 'repeater')
+        line += "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).";
+
+      if(action.action == 'sendKeys' && action.locator.type == 'model') {
+        line += "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+      }
+
+      if(action.action == 'click' && action.locator.type == 'model') {
+        line += "element(by.model('" + action.locator.value + "')).click();";
+      }
+
+      if(action.action == 'sendKeys' && action.locator.type == 'css') {
+        line += "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+      }
+
+      if(action.action == 'click' && action.type == 'button' && action.value) {
+        line += "element(by.buttonText('" + action.value + "')).click();";
+      }
+
+      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
+        line += "element(by.linkText('" + action.value + "')).click();";
+      }
+
+      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'get') {
+        line += "browser.get('" + action.locator.value + "');";
+      }
+
+      if(action.action == 'click' && action.locator.type == 'xpath') {
+        line += "element(by.xpath('" + action.locator.value + "')).click();";
+      }
+
+      if(action.action == 'click' && action.locator.type == 'id') {
+        line += "element(by.id('" + action.locator.value + "')).click();";
+      }
+
+      if(action.action == 'click' && action.locator.type == 'css') {
+        line += "element(by.css('" + action.locator.value + "')).click();";
+      }
+
+      if(action.action == 'assertion' && action.locator.type == 'bind')
+        line += "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+
+      if(action.action == 'assertion' && action.locator.type == 'id')
+        line += "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+
+      if(action.action == 'assertion' && action.locator.type == 'xpath')
+        line += "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+
+      if(action.action == 'assertion' && action.locator.type == 'css')
+        line += "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+
+      if(action.action == 'browser' && action.type == 'sleep')
+        line += "browser.sleep(" + action.value + ");";
+
+      return line;
+    };
+
   }
 })();
