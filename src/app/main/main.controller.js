@@ -463,6 +463,7 @@
     $scope.$watch('main.describe', function () {
       $log.debug('watch describe');
       localStorage.setItem('describes', angular.toJson(vm.describes));
+
     }, true);
 
     $scope.$watchCollection('main.describes', function () {
@@ -473,6 +474,14 @@
     $scope.$watch('main.spec', function () {
       $log.debug('watch spec');
       localStorage.setItem('describes', angular.toJson(vm.describes));
+
+      vm.selectedItems = $filter('filter')(vm.spec.actions, {checked: true}).length;
+
+      if(vm.selectedItems){
+        vm.showSelectedOptions = true
+      } else {
+        vm.showSelectedOptions = false;
+      }
     }, true);
 
 
