@@ -23,7 +23,6 @@
     vm.index = false;
 
     /* If first run set examples or get from local storage */
-    vm.url       = localStorage.getItem('url') ? localStorage.getItem('url') : 'http://www.protractortest.org';
     vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
     vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
     vm.session   = localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
@@ -612,7 +611,7 @@
     };
 
     vm.setSessionUrl = function () {
-      seleniumJWP.setSessionUrl(vm.url).success(function(){
+      seleniumJWP.setSessionUrl(vm.conf.baseUrl).success(function(){
         $log.debug('setSessionUrl');
         vm.getSessionUrl();
         vm.getSessionSource();
@@ -639,7 +638,13 @@
     $scope.$watchCollection('main.describes', function () {
       $log.debug('watch describes');
       localStorage.setItem('describes', angular.toJson(vm.describes));
-    });
+    }, true);
+
+    $scope.$watch('main.spec', function () {
+      $log.debug('watch spec');
+      localStorage.setItem('describes', angular.toJson(vm.describes));
+    }, true);
+
 
     $scope.$watch('main.session', function () {
       $log.debug('watch session');
