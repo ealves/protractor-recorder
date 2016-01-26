@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($scope, $routeParams, $log, $filter, $timeout, $mdToast, $location, $mdDialog, $document, socket, protractorRecServer, seleniumJWP) {
+  function MainController($rootScope, $scope, $routeParams, $log, $filter, $timeout, $mdToast, $location, $mdDialog, $document, socket, protractorRecServer, seleniumJWP) {
 
     var vm = this;
 
@@ -17,7 +17,6 @@
      *-------------------------------------------------------------------*/
 
     vm.isLoadingSession    = false;
-    vm.showConf            = $location.path() == '/conf' ? true : false;
     vm.isSnippet           = false;
     vm.showSelectedOptions = false;
     vm.index = false;
@@ -30,23 +29,6 @@
     if(vm.session.id) {
       seleniumJWP.setSession(vm.session);
     }
-
-    /**
-     * Javascript snippet to inject on session
-     */
-    vm.snippet = 'if(!document.getElementById("recorder-iframe")){' +
-      'var b=document.getElementsByTagName("body")[0];' +
-      'var i=document.createElement("iframe");' +
-      'i.id="recorder-iframe";' +
-      'i.setAttribute("style", "display:none");' +
-      'b.appendChild(i);' +
-      'var i = document.getElementById("recorder-iframe");' +
-      'var s = i.contentWindow.document.createElement("script");' +
-      's.onload=function(){' +
-        'var s = i.contentWindow.document.createElement("script");' +
-        's.src = "http://localhost:9000/snippet.js";' +
-        'i.contentWindow.document.body.appendChild(s);' +
-      '},s.src = "http://localhost:9000/socket.io-1.3.7.js",i.contentWindow.document.body.appendChild(s);}';
 
     vm.lines         = [];
     vm.describe      = {};
@@ -82,55 +64,7 @@
       };
     }
 
-    /* Spec example */
-    vm.sample = {
-      string: 'Describe Protractor Example',
-      specs: [
-        {
-          string: 'Should navigate to protractortest.org',
-          actions: [
-            {
-              type: 'a',
-              value: 'Tutorial',
-              action: 'click',
-              locator: {
-                type: 'linkText',
-                value: 'Tutorial',
-                strategy: 'link text'
-              },
-              locators: [
-                {
-                  type: 'linkText',
-                  value: 'Tutorial',
-                  strategy: 'link text'
-                },
-                {
-                  type: 'get',
-                  value: '#/tutorial'
-                }
-              ]
-            },
-            {
-              type: 'h1',
-              value: 'Tutorial',
-              action: 'assertion',
-              locator: {
-                type: 'xpath',
-                value: "//*[@id=\"tutorial\"]",
-                strategy: 'xpath'
-              },
-              locators: [
-                {
-                  type: 'id',
-                  value: 'tutorial',
-                  strategy: 'id'
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    };
+
 
     /* Base options for new spec */
     vm.blankSpec = {
@@ -152,6 +86,13 @@
       } else {
         vm.tooltipVisible = vm.isOpen;
       }
+    });
+
+    /*-------------------------------------------------------------------
+     * 		 				  BROADCAST MESSAGES
+     *-------------------------------------------------------------------*/
+    $scope.$on('conf', function(events, args) {
+      vm.conf = args;
     });
 
     /*-------------------------------------------------------------------
@@ -185,7 +126,7 @@
       $log.debug('onkeyup');
       $log.debug(data);
 
-      if(vm.conf.isRecording) {
+      if(protractorRecServer.isRecording) {
         var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
         lastAction.action = 'sendKeys';
         lastAction.value = data;
@@ -197,7 +138,7 @@
       $log.debug('onassertion');
       $log.debug(data);
 
-      if(vm.conf.isRecording && data) {
+      if(protractorRecServer.isRecording && data) {
         var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
 
         lastAction.action = 'assertion';
@@ -218,7 +159,7 @@
 
         if(vm.session.url != response.value && !vm.isSnippet) {
 
-          vm.isLoadingSession = true;
+          protractorRecServer.setLoading(true);
 
           vm.getSessionSource();
 
@@ -251,23 +192,6 @@
 
 
 
-    /*vm.setExample = function () {
-
-      if (!vm.describes.length) {
-
-        vm.describes.push(angular.copy(vm.sample));
-
-        vm.setDescribe(vm.describes[0]);
-        vm.setSpec(vm.describe.specs[0]);
-
-        vm.createSession();
-      } else {
-        vm.setDescribe(vm.describes[0]);
-        vm.setSpec(vm.describe.specs[0]);
-      }
-
-    };*/
-
     vm.newDescribe = function () {
       $log.debug('newDescribe');
 
@@ -286,7 +210,7 @@
 
     vm.setElementOnChange = function (element) {
 
-      if (vm.conf.isRecording) {
+      if (protractorRecServer.isRecording) {
 
         var target = angular.element(element.outerHTML);
 
@@ -299,7 +223,7 @@
 
     vm.setElement = function (element) {
 
-      if(vm.conf.isRecording) {
+      if(protractorRecServer.isRecording) {
         var target = angular.element(element.outerHTML);
         var parent = !element.offsetParent.outerHTML ? [] : angular.element(element.offsetParent.outerHTML);
 
@@ -593,20 +517,21 @@
 
       if(!vm.session.id) {
 
-        vm.isLoadingSession = true;
+        protractorRecServer.setLoading(true);
+
         var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
 
         seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
           seleniumJWP.setSession(response);
           vm.session.id = response.sessionId;
-          vm.conf.isRecording = true;
+          protractorRecServer.setRecording(true);
           vm.setSessionUrl();
 
         });
 
       } else {
-        vm.conf.isRecording = true;
+        protractorRecServer.setRecording(true);
       }
     };
 
@@ -723,7 +648,8 @@
           );
         }
 
-        vm.isLoadingSession = false;
+        protractorRecServer.setLoading(false);
+
         vm.isSnippet = true;
         vm.getSessionUrl();
       });
@@ -745,8 +671,8 @@
           vm.deleteSession();
         });
       } else {
-        vm.isLoadingSession = false;
-        vm.conf.isRecording = false;
+        protractorRecServer.setLoading(false);
+        protractorRecServer.setRecording(false);
       }
     };
 
@@ -786,15 +712,15 @@
       if (!vm.isSnippet && countIframe == 0) {
         vm.sessionExecute();
       } else {
-        vm.isLoadingSession = false;
+        protractorRecServer.setLoading(false);
       }
     };
 
     vm.clearSession = function(){
       vm.session = {};
       seleniumJWP.setSession();
-      vm.isLoadingSession = false;
-      vm.conf.isRecording = false;
+      protractorRecServer.setLoading(false);
+      protractorRecServer.setRecording(false);
     };
 
     vm.deleteSession = function(){
@@ -810,7 +736,7 @@
 
 
     vm.pauseRecording = function(){
-      vm.conf.isRecording = false;
+      protractorRecServer.setRecording(false);
     };
 
     var DialogSpecController = function ($scope, $mdDialog, spec, describe) {

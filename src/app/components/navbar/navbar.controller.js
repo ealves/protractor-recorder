@@ -6,7 +6,7 @@
   .controller('NavbarController', NavbarController);
 
   /** @ngInject */
-  function NavbarController($scope, $log, $location, $filter, $mdToast, $document, $routeParams, socket, protractorRecServer, seleniumJWP) {
+  function NavbarController($rootScope, $scope, $log, $location, $filter, $mdToast, $document, $routeParams, socket, protractorRecServer, seleniumJWP) {
 
     var vm = this;
 
@@ -14,9 +14,6 @@
      *              ATTRIBUTES
      *-------------------------------------------------------------------*/
 
-    vm.isLoadingSession    = false;
-    vm.showConf            = $location.path() == '/conf' ? true : false;
-    vm.isSnippet           = false;
     vm.showSelectedOptions = false;
     vm.index = false;
 
@@ -51,6 +48,34 @@
 
     vm.selectedItems = 0;
 
+    socket.on('session-disconnect', function (data) {
+
+      seleniumJWP.getSessionUrl().success(function(response){
+
+        if(vm.session.url != response.value && !vm.isSnippet) {
+
+          protractorRecServer.setLoading(true);
+
+          vm.getSessionSource();
+
+        }
+
+        vm.session.url = response.value;
+      });
+
+      //vm.isSnippet = false;
+
+
+      $log.debug('on-session-disconnect');
+      $log.debug(data);
+
+    });
+
+    socket.on('protractor-log', function (data) {
+      $log.debug('protractor-log');
+      $log.debug(data);
+    });
+
     vm.openConf = function() {
       $location.url('/conf');
     };
@@ -63,7 +88,7 @@
       if (!vm.isSnippet && countIframe == 0) {
         vm.sessionExecute();
       } else {
-        vm.isLoadingSession = false;
+        protractorRecServer.setLoading(false);
       }
     };
 
@@ -75,9 +100,6 @@
       $log.debug('getNgIncludes');
 
       var ngIncludes = vm.session.source.match(/ngInclude:\s?["|'](.*?)["|']/igm);
-
-      $log.debug(ngIncludes);
-
       var includes = [];
 
       angular.forEach(ngIncludes, function (include) {
@@ -110,8 +132,8 @@
           vm.deleteSession();
         });
       } else {
-        vm.isLoadingSession = false;
-        vm.conf.isRecording = false;
+        protractorRecServer.setLoading(false);
+        protractorRecServer.setRecording(false);
       }
     };
 
@@ -144,25 +166,27 @@
 
       if(!vm.session.id) {
 
-        vm.isLoadingSession = true;
+        protractorRecServer.setLoading(true);
+
         var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
 
         seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
           seleniumJWP.setSession(response);
           vm.session.id = response.sessionId;
-          vm.conf.isRecording = true;
+
+          protractorRecServer.setRecording(true);
+          protractorRecServer.setConf(vm.conf);
+
           vm.setSessionUrl();
-
         });
-
       } else {
-        vm.conf.isRecording = true;
+        protractorRecServer.setRecording(true);
       }
     };
 
     vm.pauseRecording = function(){
-      vm.conf.isRecording = false;
+      protractorRecServer.setRecording(false);
     };
 
     $scope.$watch('navbar.conf', function () {
@@ -185,31 +209,6 @@
       $log.debug('watch session');
       localStorage.setItem('session', angular.toJson(vm.session));
     }, true);
-
-    vm.setSpec = function (spec, index) {
-
-      $log.debug($routeParams);
-
-      $log.debug('setSpec');
-      if(vm.showConf && index == undefined) {
-        vm.showConf = true;
-        vm.spec = vm.conf.spec;
-        $location.path('/conf');
-      } else {
-        vm.spec = spec;
-        vm.showConf = false;
-
-        if($routeParams.id){
-          index = $routeParams.id;
-        }
-
-        $location.path('/spec/' + index);
-      }
-
-      angular.forEach(vm.spec.actions, function(action) {
-        action.checked = false;
-      });
-    };
 
     /**
      * Get all data bind to suggest on assertions
@@ -239,9 +238,8 @@
 
     vm.sessionExecute = function () {
 
-      seleniumJWP.sessionExecute(vm.snippet).success(function() {
+      seleniumJWP.sessionExecute(protractorRecServer.getSnippet()).success(function() {
         $log.debug('Session Executed');
-
 
         if (!vm.isSnippet) {
           $mdToast.show(
@@ -252,7 +250,8 @@
           );
         }
 
-        vm.isLoadingSession = false;
+        protractorRecServer.setLoading(false);
+
         vm.isSnippet = true;
         vm.getSessionUrl();
       });
@@ -268,8 +267,9 @@
     vm.clearSession = function(){
       vm.session = {};
       seleniumJWP.setSession();
-      vm.isLoadingSession = false;
-      vm.conf.isRecording = false;
+
+      protractorRecServer.setLoading(false);
+      protractorRecServer.setRecording(false);
     };
 
     vm.deleteSession = function(){
@@ -296,6 +296,32 @@
       });
     };
 
+    vm.setDescribe = function (describe) {
+      vm.describe = describe;
+    };
+
+    vm.setSpec = function (spec) {
+      vm.spec = spec;
+    };
+
+    vm.setExample = function () {
+
+      if (!vm.describes.length) {
+
+        vm.describes.push(angular.copy(vm.sample));
+
+        vm.setDescribe(vm.describes[0]);
+        vm.setSpec(vm.describe.specs[0]);
+
+        vm.createSession();
+      } else {
+        vm.setDescribe(vm.describes[0]);
+        vm.setSpec(vm.describe.specs[0]);
+      }
+
+    };
+
+    vm.setExample();
     vm.getCapabilities();
 
   }
