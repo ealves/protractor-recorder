@@ -84,10 +84,6 @@
       ]
     };
 
-    this.getSnippet = function() {
-      return this.snippet;
-    };
-
     this.getCapabilities = function(){
       return $http({
         method: 'GET',

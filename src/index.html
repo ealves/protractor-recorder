@@ -115,7 +115,7 @@
         </div>
       </md-toolbar>
 
-      <md-progress-linear ng-if="navbar.isLoadingSession" md-mode="indeterminate"></md-progress-linear>
+      <md-progress-linear ng-if="navbar.protractorRecServer.isLoading()" md-mode="indeterminate"></md-progress-linear>
 
       <md-content id="main" class="flex layout-column" ng-view></md-content>
 

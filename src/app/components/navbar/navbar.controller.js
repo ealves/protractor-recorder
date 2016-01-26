@@ -165,6 +165,8 @@
 
     vm.createSession = function () {
 
+      protractorRecServer.setLoading(true);
+
       if(!vm.session.id) {
         var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
 
@@ -173,7 +175,10 @@
           seleniumJWP.setSession(response);
           vm.session.id = response.sessionId;
 
+
+
           protractorRecServer.setRecording(true);
+
           protractorRecServer.setConf(vm.conf);
 
           vm.setSessionUrl();
@@ -236,7 +241,7 @@
 
     vm.sessionExecute = function () {
 
-      seleniumJWP.sessionExecute(protractorRecServer.getSnippet()).success(function() {
+      seleniumJWP.sessionExecute(protractorRecServer.snippet).success(function() {
         $log.debug('Session Executed');
 
         if (!vm.isSnippet) {
@@ -323,7 +328,7 @@
 
       if (!vm.describes.length) {
 
-        vm.describes.push(angular.copy(vm.sample));
+        vm.describes.push(angular.copy(protractorRecServer.sample));
 
         vm.setDescribe(vm.describes[0]);
         vm.setSpec(vm.describe.specs[0]);
