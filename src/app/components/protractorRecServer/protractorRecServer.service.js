@@ -159,7 +159,7 @@
 
       var line = '';
 
-      if(action.action == 'wait'){
+      if(action.action == 'wait') {
 
         var elm = '';
 
@@ -179,41 +179,32 @@
       if(action.action == 'click' && action.locator.type == 'repeater')
         line += "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).";
 
-      if(action.action == 'sendKeys' && action.locator.type == 'model') {
+      if(action.action == 'sendKeys' && action.locator.type == 'model')
         line += "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
-      }
 
-      if(action.action == 'click' && action.locator.type == 'model') {
+      if(action.action == 'click' && action.locator.type == 'model')
         line += "element(by.model('" + action.locator.value + "')).click();";
-      }
 
-      if(action.action == 'sendKeys' && action.locator.type == 'css') {
+      if(action.action == 'sendKeys' && action.locator.type == 'css')
         line += "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "');";
-      }
 
-      if(action.action == 'click' && action.type == 'button' && action.value) {
+      if(action.action == 'click' && action.type == 'button' && action.value)
         line += "element(by.buttonText('" + action.value + "')).click();";
-      }
 
-      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
+      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText')
         line += "element(by.linkText('" + action.value + "')).click();";
-      }
 
-      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'get') {
+      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'get')
         line += "browser.get('" + action.locator.value + "');";
-      }
 
-      if(action.action == 'click' && action.locator.type == 'xpath') {
+      if(action.action == 'click' && action.locator.type == 'xpath')
         line += "element(by.xpath('" + action.locator.value + "')).click();";
-      }
 
-      if(action.action == 'click' && action.locator.type == 'id') {
+      if(action.action == 'click' && action.locator.type == 'id')
         line += "element(by.id('" + action.locator.value + "')).click();";
-      }
 
-      if(action.action == 'click' && action.locator.type == 'css') {
+      if(action.action == 'click' && action.locator.type == 'css')
         line += "element(by.css('" + action.locator.value + "')).click();";
-      }
 
       if(action.action == 'assertion' && action.locator.type == 'bind')
         line += "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
