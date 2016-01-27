@@ -182,6 +182,12 @@
       if(action.action == 'sendKeys' && action.locator.type == 'model')
         line += "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
 
+      if(action.action == 'sendKeys' && action.locator.type == 'xpath')
+        line += "element(by.xpath('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+
+      if(action.action == 'sendKeys' && action.locator.type == 'id')
+        line += "element(by.id('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+
       if(action.action == 'click' && action.locator.type == 'model')
         line += "element(by.model('" + action.locator.value + "')).click();";
 
