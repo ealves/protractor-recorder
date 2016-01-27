@@ -133,6 +133,25 @@
       $rootScope.$broadcast('conf', conf);
     };
 
+    this.getConf = function() {
+      return angular.fromJson(localStorage.getItem('conf'));
+    };
+
+    this.setSpec = function(conf) {
+      localStorage.setItem('conf', angular.toJson(conf));
+      $rootScope.$broadcast('conf', conf);
+    };
+
+    this.getDescribes = function() {
+      return angular.fromJson(localStorage.getItem('describes'));
+    };
+
+    this.getSpec = function(id) {
+      var describes = angular.fromJson(localStorage.getItem('describes'));
+      id = parseInt(id);
+      return describes[0].specs[id - 1];
+    };
+
     this.isLoading = function() {
       return this.loading;
     };
@@ -174,58 +193,63 @@
       }
 
       if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
-        line += "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click();";
+        line = "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click();";
 
       if(action.action == 'click' && action.locator.type == 'repeater')
-        line += "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).";
+        line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).";
 
       if(action.action == 'sendKeys' && action.locator.type == 'model')
-        line += "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+        line = "element(by.model('" + action.locator.value + "')).sendKeys('" + action.value + "');";
 
       if(action.action == 'sendKeys' && action.locator.type == 'xpath')
-        line += "element(by.xpath('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+        line = "element(by.xpath('" + action.locator.value + "')).sendKeys('" + action.value + "');";
 
       if(action.action == 'sendKeys' && action.locator.type == 'id')
-        line += "element(by.id('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+        line = "element(by.id('" + action.locator.value + "')).sendKeys('" + action.value + "');";
 
       if(action.action == 'click' && action.locator.type == 'model')
-        line += "element(by.model('" + action.locator.value + "')).click();";
+        line = "element(by.model('" + action.locator.value + "')).click();";
 
       if(action.action == 'sendKeys' && action.locator.type == 'css')
-        line += "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "');";
+        line = "element(by.css('" + action.locator.value + "')).sendKeys('" + action.value + "');";
 
       if(action.action == 'click' && action.type == 'button' && action.value)
-        line += "element(by.buttonText('" + action.value + "')).click();";
+        line = "element(by.buttonText('" + action.value + "')).click();";
 
       if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText')
-        line += "element(by.linkText('" + action.value + "')).click();";
+        line = "element(by.linkText('" + action.value + "')).click();";
 
       if(action.action == 'click' && action.type == 'a' && action.locator.type == 'get')
-        line += "browser.get('" + action.locator.value + "');";
+        line = "browser.get('" + action.locator.value + "');";
 
       if(action.action == 'click' && action.locator.type == 'xpath')
-        line += "element(by.xpath('" + action.locator.value + "')).click();";
+        line = "element(by.xpath('" + action.locator.value + "')).click();";
 
       if(action.action == 'click' && action.locator.type == 'id')
-        line += "element(by.id('" + action.locator.value + "')).click();";
+        line = "element(by.id('" + action.locator.value + "')).click();";
 
       if(action.action == 'click' && action.locator.type == 'css')
-        line += "element(by.css('" + action.locator.value + "')).click();";
+        line = "element(by.css('" + action.locator.value + "')).click();";
 
       if(action.action == 'assertion' && action.locator.type == 'bind')
-        line += "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
 
       if(action.action == 'assertion' && action.locator.type == 'id')
-        line += "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line = "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
 
       if(action.action == 'assertion' && action.locator.type == 'xpath')
-        line += "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line = "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
 
       if(action.action == 'assertion' && action.locator.type == 'css')
-        line += "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line = "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
 
       if(action.action == 'browser' && action.type == 'sleep')
-        line += "browser.sleep(" + action.value + ");";
+        line = "browser.sleep(" + action.value + ");";
+
+      if(action.index != undefined) {
+        line = line.replace('element', 'element.all');
+        line = line.replace(')).', ')).get(' + action.index + ').');
+      }
 
       return line;
     };

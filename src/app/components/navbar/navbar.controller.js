@@ -364,6 +364,7 @@
 
       $log.debug('exportProtractor');
 
+      vm.conf = protractorRecServer.getConf();
       /* Get line to export actions in conf.js */
       vm.conf.spec.lines = [];
 
@@ -377,6 +378,7 @@
 
       });
 
+      vm.spec = protractorRecServer.getSpec($routeParams.id);
       /* Get line to export actions in spec.js */
       vm.spec.lines = [];
 
@@ -392,6 +394,8 @@
         vm.spec.lines.push(protractorRecServer.getLine(action));
 
       });
+
+      vm.describes[0].specs[0] = vm.spec;
 
       var data = {baseUrl: vm.conf.baseUrl, conf: angular.toJson(vm.conf), describe: angular.toJson(vm.describes)};
 

@@ -712,9 +712,11 @@
 
       seleniumJWP.findSessionElements(element).success(function(response) {
 
-        angular.forEach(response.value, function (value) {
+        angular.forEach(response.value, function (value, index) {
 
+          var length = response.value.length;
           var elementId = value.ELEMENT;
+          var index = index;
           $log.debug(value.ELEMENT);
 
           seleniumJWP.getSessionElementDisplayed(elementId).success(function (response) {
@@ -722,6 +724,10 @@
             $log.debug(response);
 
             if (response.value) {
+
+              if(length > 1)
+                element.index = index;
+
               vm.sessionElementExecute(elementId, element);
             }
 
@@ -819,6 +825,7 @@
 
         $log.debug(response);
 
+        vm.spec.actions[vm.index].index = element.index;
         vm.spec.actions[vm.index].executed = true;
 
         if(vm.spec.actions[vm.index + 1]) {
