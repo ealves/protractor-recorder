@@ -219,7 +219,12 @@
           vm.addElement(parent, 'button', 'click', target.text().trim(), element.xPath);
 
         } else if (target[0].tagName.match(/^input/i)) {
-          vm.addElement(target, 'input', 'click', false, element.xPath);
+
+          if(target[0].type == 'file')
+            vm.addElement(target, 'input', 'sendKeys', false, element.xPath);
+          else
+            vm.addElement(target, 'input', 'click', false, element.xPath);
+
         } else if (target[0].tagName.match(/^a/i)) {
           vm.addElement(target, 'a', 'click', target.text().trim(), element.xPath);
         } else if (element.ngRepeat) {
@@ -869,6 +874,63 @@
       angular.forEach(vm.spec.actions, function(action){
         action.executed = false;
         action.error    = false;
+      });
+    };
+
+    var DialogActionController = function ($scope, $mdDialog, index, action, actionTypes) {
+
+      var vm = this;
+
+      vm.action = action;
+      vm.actionTypes = actionTypes;
+
+      vm.hide = function() {
+        $mdDialog.hide();
+      };
+
+      vm.cancel = function() {
+        $mdDialog.cancel();
+      };
+
+      vm.saveSpec = function() {
+        $mdDialog.hide({index: index, action: vm.action});
+      };
+    };
+
+    vm.actionDialog = function(ev, index, action) {
+
+      if(action)
+        var action = angular.copy(action);
+
+      var closeTo = angular.element($document[0].getElementById('add-spec'));
+
+      $mdDialog.show({
+        controller: DialogActionController,
+        controllerAs: 'action',
+        templateUrl: 'app/main/action-dialog.html',
+        parent: angular.element($document[0].body),
+        targetEvent: ev,
+        closeTo: closeTo,
+        locals: {
+          index: index,
+          action: action,
+          actionTypes: vm.actionTypes
+        },
+        clickOutsideToClose: true
+      }).then(function(result) {
+        if(result) {
+
+          $log.debug(result.action);
+
+          vm.spec.actions[result.index] = result.action;
+          /*$filter('filter')(vm.describes[0].specs, {string: vm.spec.string})[0].string = result.spec.string;
+          vm.spec = result.spec;
+          vm.describes[0].string = result.describe.string;*/
+
+          //localStorage.setItem('describes', angular.toJson(vm.describes));
+        }
+        //angular.copy(vm.spec, spec);
+      }, function() {
       });
     };
 

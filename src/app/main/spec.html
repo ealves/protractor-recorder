@@ -7,8 +7,8 @@
           <div layout="row" flex ng-if="!main.showSelectedOptions">
             <h2>{{ main.spec.string }}</h2>
             <span flex></span>
-            <md-button id="edit-spec" aria-label="Edit Spec" ng-click="main.specDialog(main.spec)">
-              <md-icon md-svg-icon="edit"></md-icon>
+            <md-button id="add-spec" aria-label="Add action" ng-click="main.actionDialog()">
+              <md-icon md-svg-icon="add"></md-icon>
             </md-button>
 
             <md-menu md-position-mode="target-right target">
@@ -17,7 +17,10 @@
               </md-button>
               <md-menu-content width="2">
                 <md-menu-item>
-                  <md-button ng-click="ctrl.duplicateSpec($index)"><span md-menu-align-target>Duplicate</span></md-button>
+                  <md-button ng-click="main.specDialog(main.spec)"><span md-menu-align-target>Edit Spec</span></md-button>
+                </md-menu-item>
+                <md-menu-item>
+                  <md-button ng-click="main.duplicateSpec($index)"><span md-menu-align-target>Duplicate</span></md-button>
                 </md-menu-item>
                 <md-menu-item>
                   <md-button ng-click="main.removeSpec($index)"><span md-menu-align-target>Remove</span></md-button>
@@ -53,7 +56,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed, 'error': action.error}">
+              <tr ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed, 'error': action.error}" ng-click="main.actionDialog($event, $index, action)">
                 <td>
                   <md-checkbox ng-click="main.toggleAction(action)" ng-model="action.checked" aria-label="Checkbox $index"></md-checkbox>
                 </td>
@@ -73,9 +76,10 @@
                   <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
                 </td>
                 <td>
-                  <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+                  <!--<md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
                     <input type="text" ng-model="action.value" placeholder="Value">
-                  </md-input-container>
+                  </md-input-container>-->
+                  {{ action.value }}
                 </td>
                 <td style="text-align: right;">
                   <md-menu md-position-mode="target-right target">
