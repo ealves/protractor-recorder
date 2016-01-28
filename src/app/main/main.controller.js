@@ -861,10 +861,7 @@
                   .hideDelay(3000)
           );
 
-          angular.forEach(vm.spec.actions, function(action){
-            action.executed = false;
-          });
-
+          vm.clearRunTestResult();
         }
 
       });
@@ -886,7 +883,7 @@
       vm.actionTypes = actionTypes;
       vm.locatorsTypes = locatorsTypes;
 
-      vm.strategies = ['id', ''];
+      vm.strategies = ['class name', 'css selector', 'id', 'name', 'link text', 'partial link text', 'tag name', 'xpath'];
 
       vm.hide = function() {
         $mdDialog.hide();

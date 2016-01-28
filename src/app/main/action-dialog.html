@@ -18,8 +18,9 @@
         </md-input-container>
 
         <div ng-if="action.action.locators">
-          <md-input-container ng-if="action.action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
-                              class="md-block">
+          <md-input-container ng-if="action.action.locators.length > 1" style="padding-bottom: 5px;"
+                              >
+            <label>Locator</label>
             <md-select style="max-width: 225px" aria-label="Locator {{ locator.value }}"
                        ng-model="action.action.locator"
                        ng-model-options="{trackBy: '$value.value'}">
@@ -28,10 +29,17 @@
               </md-option>
             </md-select>
           </md-input-container>
+
+          <md-input-container class="md-block">
+            <label>Locator value</label>
+            <input type="text" ng-model="action.action.locator.value">
+          </md-input-container>
+
         </div>
 
         <div ng-if="!action.action.locators">
-          <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+          <md-input-container style="padding-bottom: 5px;">
+            <label>Locator type</label>
             <md-select style="max-width: 225px" aria-label="Action Type {{ locatorType }}"
                        ng-model="action.action.locator.type">
               <md-option ng-value="locatorType" ng-repeat="locatorType in action.locatorsTypes">
@@ -45,7 +53,8 @@
             <input type="text" ng-model="action.action.locator.value">
           </md-input-container>
 
-          <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+          <md-input-container style="padding-bottom: 5px;">
+            <label>Strategy</label>
             <md-select style="max-width: 225px" aria-label="{{ strategy }}"
                        ng-model="action.action.locator.strategy">
               <md-option ng-value="strategy" ng-repeat="strategy in action.strategies">
