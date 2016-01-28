@@ -17,16 +17,34 @@
           <input type="text" ng-model="action.action.type">
         </md-input-container>
 
-        <md-input-container ng-if="action.action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
-                            class="md-block">
-          <md-select style="max-width: 225px" aria-label="Locator {{ locator.value }}"
-                     ng-model="action.action.locator"
-                     ng-model-options="{trackBy: '$value.value'}">
-            <md-option ng-value="locator" ng-repeat="locator in action.action.locators">
-              {{ locator.value }}
-            </md-option>
-          </md-select>
-        </md-input-container>
+        <div ng-if="action.action.locators">
+          <md-input-container ng-if="action.action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
+                              class="md-block">
+            <md-select style="max-width: 225px" aria-label="Locator {{ locator.value }}"
+                       ng-model="action.action.locator"
+                       ng-model-options="{trackBy: '$value.value'}">
+              <md-option ng-value="locator" ng-repeat="locator in action.action.locators">
+                {{ locator.value }}
+              </md-option>
+            </md-select>
+          </md-input-container>
+        </div>
+
+        <div ng-if="!action.action.locators">
+          <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+            <md-select style="max-width: 225px" aria-label="Action Type {{ locatorType }}"
+                       ng-model="action.action.locator.type">
+              <md-option ng-value="locatorType" ng-repeat="locatorType in action.locatorsTypes">
+                {{ locatorType }}
+              </md-option>
+            </md-select>
+          </md-input-container>
+
+          <md-input-container class="md-block">
+            <label>Locator Value</label>
+            <input type="text" ng-model="action.action.locator.value">
+          </md-input-container>
+        </div>
 
         <md-input-container class="md-block">
           <label>Value</label>

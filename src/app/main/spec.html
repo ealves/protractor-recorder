@@ -63,7 +63,7 @@
                 <td><md-icon ng-if="action.breakpoint" style="color:#9b1b1d" md-svg-icon="record"></md-icon><b>{{ action.action }}</b></td>
                 <td>{{ action.type }}</td>
                 <td>
-                  <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
+                  <!--<md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
                                       class="md-block">
                     <md-select style="max-width: 225px" aria-label="Locator {{ locator.value }}"
                                ng-model="action.locator"
@@ -73,7 +73,8 @@
                       </md-option>
                     </md-select>
                   </md-input-container>
-                  <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
+                  <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>-->
+                  {{ action.locator.value }}
                 </td>
                 <td>
                   <!--<md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">

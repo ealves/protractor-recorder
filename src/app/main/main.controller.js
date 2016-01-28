@@ -16,7 +16,8 @@
      * 		 				 	ATTRIBUTES
      *-------------------------------------------------------------------*/
 
-    vm.actionTypes = ['click', 'sendKeys', 'wait', 'browser'];
+    vm.actionTypes   = ['click', 'sendKeys', 'wait', 'browser'];
+    vm.locatorsTypes = ['model', 'repeater', 'buttonText', 'css', 'linkText', 'get', 'id', 'xpath'];
 
     vm.isSnippet           = false;
     vm.showSelectedOptions = false;
@@ -877,12 +878,13 @@
       });
     };
 
-    var DialogActionController = function ($scope, $mdDialog, index, action, actionTypes) {
+    var DialogActionController = function ($scope, $mdDialog, index, action, actionTypes, locatorsTypes) {
 
       var vm = this;
 
-      vm.action = action;
+      vm.action = action ? action : {};
       vm.actionTypes = actionTypes;
+      vm.locatorsTypes = locatorsTypes;
 
       vm.hide = function() {
         $mdDialog.hide();
@@ -914,7 +916,8 @@
         locals: {
           index: index,
           action: action,
-          actionTypes: vm.actionTypes
+          actionTypes: vm.actionTypes,
+          locatorsTypes: vm.locatorsTypes
         },
         clickOutsideToClose: true
       }).then(function(result) {
@@ -922,14 +925,11 @@
 
           $log.debug(result.action);
 
-          vm.spec.actions[result.index] = result.action;
-          /*$filter('filter')(vm.describes[0].specs, {string: vm.spec.string})[0].string = result.spec.string;
-          vm.spec = result.spec;
-          vm.describes[0].string = result.describe.string;*/
-
-          //localStorage.setItem('describes', angular.toJson(vm.describes));
+          if(result.index != undefined)
+            vm.spec.actions[result.index] = result.action;
+          else
+            vm.spec.actions.push(result.action);
         }
-        //angular.copy(vm.spec, spec);
       }, function() {
       });
     };
