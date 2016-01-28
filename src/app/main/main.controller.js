@@ -886,6 +886,8 @@
       vm.actionTypes = actionTypes;
       vm.locatorsTypes = locatorsTypes;
 
+      vm.strategies = ['id', ''];
+
       vm.hide = function() {
         $mdDialog.hide();
       };
@@ -925,10 +927,12 @@
 
           $log.debug(result.action);
 
-          if(result.index != undefined)
+          if(result.index != undefined) {
             vm.spec.actions[result.index] = result.action;
-          else
+          } else {
+            result.action.locators = [{type: result.action.locator.type, value: result.action.locator.value, strategy: result.action.locator.strategy}];
             vm.spec.actions.push(result.action);
+          }
         }
       }, function() {
       });

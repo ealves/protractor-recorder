@@ -44,6 +44,15 @@
             <label>Locator Value</label>
             <input type="text" ng-model="action.action.locator.value">
           </md-input-container>
+
+          <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
+            <md-select style="max-width: 225px" aria-label="{{ strategy }}"
+                       ng-model="action.action.locator.strategy">
+              <md-option ng-value="strategy" ng-repeat="strategy in action.strategies">
+                {{ strategy }}
+              </md-option>
+            </md-select>
+          </md-input-container>
         </div>
 
         <md-input-container class="md-block">
