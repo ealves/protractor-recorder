@@ -758,14 +758,14 @@
 
       element.keys = action.value;
 
-      if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
+      /*if(action.action == 'click' && action.type == 'a' && action.locator.type == 'linkText') {
         element.using      = 'link text';
         element.value      = action.value;
         element.action     = 'click';
 
         $log.debug(element);
         return element;
-      }
+      }*/
 
       if(action.action == 'sendKeys') {
 
