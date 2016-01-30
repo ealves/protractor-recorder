@@ -141,6 +141,8 @@
         $log.debug('setSessionUrl');
         vm.getSessionUrl();
         vm.getSessionSource();
+      }).error(function(response){
+        $log.debug(response);
       });
     };
 
@@ -148,6 +150,8 @@
       seleniumJWP.getSessionUrl().success(function(response){
         $log.debug('getSessionUrl');
         vm.session.url = response.value;
+      }).error(function(response){
+        $log.debug(response);
       });
     };
 
@@ -157,6 +161,8 @@
 
       protractorRecServer.runProtractor().success(function(response){
         $log.debug('Test finished');
+        $log.debug(response);
+      }).error(function(response){
         $log.debug(response);
       });
     };
@@ -177,6 +183,8 @@
           protractorRecServer.setConf(vm.conf);
 
           vm.setSessionUrl();
+        }).error(function(response){
+          $log.debug(response);
         });
       } else {
         protractorRecServer.setRecording(true);
@@ -252,6 +260,8 @@
 
         vm.isSnippet = true;
         vm.getSessionUrl();
+      }).error(function(response){
+        $log.debug(response);
       });
 
     };
@@ -387,6 +397,8 @@
             .position('bottom left')
             .hideDelay(3000)
         );
+      }).error(function(response){
+        $log.debug(response);
       });
     };
 

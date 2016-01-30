@@ -140,6 +140,8 @@
           vm.getSessionSource();
         }
         vm.session.url = response.value;
+      }).error(function(response){
+        $log.debug(response);
       });
 
       $log.debug('on-session-disconnect');
@@ -338,6 +340,8 @@
       protractorRecServer.runProtractor().success(function(response){
         $log.debug('Test finished');
         $log.debug(response);
+      }).error(function(response){
+        $log.debug(response);
       });
     };
 
@@ -390,6 +394,8 @@
                 .position('bottom left')
                 .hideDelay(3000)
         );
+      }).error(function(response){
+        $log.debug(response);
       });
     };
 
@@ -424,6 +430,8 @@
           protractorRecServer.setRecording(true);
           vm.setSessionUrl();
 
+        }).error(function(response){
+          $log.debug(response);
         });
 
       } else {
@@ -436,6 +444,8 @@
         $log.debug('setSessionUrl');
         vm.getSessionUrl();
         vm.getSessionSource();
+      }).error(function(response){
+        $log.debug(response);
       });
     };
 
@@ -443,6 +453,8 @@
       seleniumJWP.getSessionUrl().success(function(response){
         $log.debug('getSessionUrl');
         vm.session.url = response.value;
+      }).error(function(response){
+        $log.debug(response);
       });
     };
 
@@ -558,6 +570,8 @@
 
         vm.isSnippet = true;
         vm.getSessionUrl();
+      }).error(function(response){
+        $log.debug(response);
       });
 
     };
@@ -604,6 +618,8 @@
           protractorRecServer.getHtmlSource({url: vm.url, include: include}).success(function(response){
             vm.session.source += response;
             vm.getAllDataBind();
+          }).error(function(response){
+            $log.debug(response);
           });
         }
         includes.push(include);
@@ -724,7 +740,9 @@
               vm.sessionElementExecute(elementId, element);
             }
 
-          })
+          }).error(function(response){
+            $log.debug(response);
+          });
 
         });
 
@@ -851,6 +869,8 @@
           vm.clearRunTestResult();
         }
 
+      }).error(function(response){
+        $log.debug(response);
       });
 
     };
