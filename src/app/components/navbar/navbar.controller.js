@@ -66,8 +66,7 @@
         vm.session.url = response.value;
       }).error(function(response){
         $log.debug(response);
-        seleniumJWP.setSession();
-        protractorRecServer.setSession();
+        vm.deleteSession();
       });
 
       protractorRecServer.setSnippet(false);
@@ -265,7 +264,7 @@
     vm.clearSession = function(){
       vm.session = {};
       seleniumJWP.setSession();
-
+      protractorRecServer.setSession();
       protractorRecServer.setLoading(false);
       protractorRecServer.setRecording(false);
     };

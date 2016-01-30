@@ -631,30 +631,6 @@
       }
     };
 
-    vm.clearSession = function(){
-      vm.session = {};
-      seleniumJWP.setSession();
-      protractorRecServer.setSession();
-      protractorRecServer.setLoading(false);
-      protractorRecServer.setRecording(false);
-    };
-
-    vm.deleteSession = function(){
-      seleniumJWP.deleteSession().success(function() {
-        $log.debug('Session Deleted');
-        vm.clearSession();
-      }).error(function(response){
-        $log.debug(response);
-        vm.clearSession();
-      });
-    };
-
-
-
-    vm.pauseRecording = function(){
-      protractorRecServer.setRecording(false);
-    };
-
     var DialogSpecController = function ($scope, $mdDialog, spec, describe) {
 
       var vm = this;
