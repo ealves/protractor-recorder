@@ -133,25 +133,6 @@
 
     });
 
-    /*socket.on('session-disconnect', function (data) {
-
-      seleniumJWP.getSessionUrl().success(function(response){
-
-        if(vm.session.url != response.value && !vm.isSnippet) {
-
-          protractorRecServer.setLoading(true);
-          vm.getSessionSource();
-        }
-        vm.session.url = response.value;
-      }).error(function(response){
-        $log.debug(response);
-      });
-
-      $log.debug('on-session-disconnect');
-      $log.debug(data);
-
-    });*/
-
     socket.on('protractor-log', function (data) {
       $log.debug('protractor-log');
       $log.debug(data);
@@ -402,6 +383,9 @@
 
     vm.runFromHere = function(index) {
 
+      if(protractorRecServer.isRecording())
+        protractorRecServer.setRecording(false);
+      
       vm.index = index;
       var element = vm.getElementAction(vm.spec.actions[index]);
       vm.getSessionElementId(element);
@@ -478,8 +462,14 @@
     $scope.$watch('main.spec', function () {
       $log.debug('watch spec');
 
-      localStorage.setItem('conf', angular.toJson(vm.conf));
-      localStorage.setItem('describes', angular.toJson(vm.describes));
+      if($routeParams.id) {
+        var id = parseInt($routeParams.id);
+        vm.describes[0].specs[id - 1] = vm.spec;
+        localStorage.setItem('describes', angular.toJson(vm.describes));
+      } else {
+        vm.conf.spec = vm.spec;
+        localStorage.setItem('conf', angular.toJson(vm.conf));
+      }
 
       vm.selectedItems = $filter('filter')(vm.spec.actions, {checked: true}).length;
 
