@@ -60,6 +60,8 @@
         }
 
         vm.session.url = response.value;
+      }).error(function(response){
+        $log.debug(response);
       });
 
       //vm.isSnippet = false;
@@ -110,6 +112,8 @@
           protractorRecServer.getHtmlSource({url: vm.url, include: include}).success(function(response){
             vm.session.source += response;
             vm.getAllDataBind();
+          }).error(function(response){
+            $log.debug(response);
           });
         }
         includes.push(include);
