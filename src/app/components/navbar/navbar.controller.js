@@ -178,6 +178,7 @@
     vm.createSession = function () {
 
       if(!vm.session.id) {
+        protractorRecServer.setSnippet(false);
         protractorRecServer.setLoading(true);
         var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
 
@@ -265,8 +266,6 @@
       vm.session = {};
       seleniumJWP.setSession();
       protractorRecServer.setSession();
-      protractorRecServer.setLoading(false);
-      protractorRecServer.setRecording(false);
     };
 
     vm.deleteSession = function(){

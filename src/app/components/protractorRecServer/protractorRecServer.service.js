@@ -215,6 +215,7 @@
       if(session == undefined) {
         session = {};
         this.setRecording(false);
+        this.setSnippet(false);
       }
       localStorage.setItem('session', angular.toJson(session));
       $rootScope.$broadcast('session', session);

@@ -516,6 +516,7 @@
           if (action.checked)
             vm.spec.actions.splice(i, 1);
         }
+        vm.selectAll = false;
       }
     };
 
@@ -567,6 +568,24 @@
         $log.debug(response);
       });
 
+    };
+
+    vm.clearSession = function(){
+      vm.session = {};
+      seleniumJWP.setSession();
+      protractorRecServer.setSession();
+      protractorRecServer.setLoading(false);
+      protractorRecServer.setRecording(false);
+    };
+
+    vm.deleteSession = function(){
+      seleniumJWP.deleteSession().success(function() {
+        $log.debug('Session Deleted');
+        vm.clearSession();
+      }).error(function(response){
+        $log.debug(response);
+        vm.clearSession();
+      });
     };
 
     vm.getSessionSource = function () {
@@ -910,7 +929,7 @@
       });
     };
 
-    vm.getSessionSource();
+    //vm.getSessionSource();
 
   }
 

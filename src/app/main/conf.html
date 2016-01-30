@@ -50,6 +50,13 @@
 
             </div>
           </div>
+          <div ng-if="main.showSelectedOptions" layout="row" flex>
+            <h4>{{ main.selectedItems }} {{ main.selectedItems == 1 ? 'item' : 'items' }} selected</h4>
+            <span flex></span>
+            <md-button aria-label="Remove Actions" ng-click="main.removeActions()">
+              <md-icon md-svg-icon="delete"></md-icon>
+            </md-button>
+          </div>
         </div>
           <div layout="row" layout-align="center start" flex>
             <md-whiteframe layout-margin layout="column" flex class="md-whiteframe-1dp">
