@@ -162,11 +162,6 @@
       return this.getDescribes()[id - 1];
     };
 
-    this.setSession = function(session) {
-      localStorage.setItem('session', angular.toJson(session));
-      $rootScope.$broadcast('session', session);
-    };
-
     this.getSession = function() {
       return localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
     };
@@ -216,6 +211,14 @@
         return snippet == 'true' ? true : false;
     };
 
+    this.setSession = function(session) {
+      if(session == undefined) {
+        session = {};
+        this.setRecording(false);
+      }
+      localStorage.setItem('session', angular.toJson(session));
+      $rootScope.$broadcast('session', session);
+    };
 
     this.getLine = function(action) {
 

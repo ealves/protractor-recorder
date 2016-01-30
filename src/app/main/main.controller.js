@@ -385,7 +385,7 @@
 
       if(protractorRecServer.isRecording())
         protractorRecServer.setRecording(false);
-      
+
       vm.index = index;
       var element = vm.getElementAction(vm.spec.actions[index]);
       vm.getSessionElementId(element);
