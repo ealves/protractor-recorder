@@ -57,7 +57,7 @@
                 <thead>
                 <tr>
                   <th>
-                    <md-checkbox ng-click="main.toggleAll()" ng-model="main.selectAll" aria-label="Checkbox 1">
+                    <md-checkbox ng-click="main.toggleAll();$event.stopPropagation()" ng-model="main.selectAll" aria-label="Checkbox 1">
                     </md-checkbox>
                   </th>
                   <th>Action</th>
@@ -68,29 +68,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed, 'error': action.error}">
+                <tr ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed, 'error': action.error}" ng-click="main.actionDialog($event, $index, action)">
                   <td>
-                    <md-checkbox ng-click="main.toggleAction(action)" ng-model="action.checked" aria-label="Checkbox $index"></md-checkbox>
+                    <md-checkbox ng-click="main.toggleAction(action);$event.stopPropagation()" ng-model="action.checked" aria-label="Checkbox $index"></md-checkbox>
                   </td>
                   <td><md-icon ng-if="action.breakpoint" style="color:#9b1b1d" md-svg-icon="record"></md-icon><b>{{ action.action }}</b></td>
                   <td>{{ action.type }}</td>
                   <td>
-                    <md-input-container ng-if="action.locators.length > 1" style="padding-bottom: 5px;" md-no-float
-                                        class="md-block">
-                      <md-select style="max-width: 225px" aria-label="Locator {{ locator.value }}"
-                                 ng-model="action.locator"
-                                 ng-model-options="{trackBy: '$value.value'}">
-                        <md-option ng-value="locator" ng-repeat="locator in action.locators">
-                          {{ locator.value }}
-                        </md-option>
-                      </md-select>
-                    </md-input-container>
-                    <span ng-if="action.locators.length == 1">{{ action.locators[0].type }} - {{ action.locators[0].value }}</span>
+                    {{ action.locator.value }}
                   </td>
                   <td>
-                    <md-input-container style="padding-bottom: 5px;" md-no-float class="md-block">
-                      <input type="text" ng-model="action.value" placeholder="Value">
-                    </md-input-container>
+                    {{ action.value }}
                   </td>
                   <td style="text-align: right;">
                     <md-menu md-position-mode="target-right target">
@@ -115,9 +103,6 @@
                         </md-menu-item>
                       </md-menu-content>
                     </md-menu>
-                    <!--<md-button aria-label="Delete action" ng-click="main.removeAction($index)">
-                      <md-icon md-svg-icon="close"></md-icon>
-                    </md-button>-->
                   </td>
                 </tr>
                 </tbody>

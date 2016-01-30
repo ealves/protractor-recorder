@@ -11,12 +11,13 @@
     .service('protractorRecServer', protractorRecServer);
 
   /** @ngInject */
-  function protractorRecServer($rootScope, $http) {
+  function protractorRecServer($rootScope, $http, $location) {
 
     this.serverUrl = 'http://localhost:9000/';
 
-    this.loading = false;
-    this.recording = false;
+    this.spec = {};
+    this.describes = [];
+    this.describe = {};
 
     /**
      * Javascript snippet to inject on session
@@ -134,44 +135,68 @@
     };
 
     this.getConf = function() {
-      return angular.fromJson(localStorage.getItem('conf'));
+      return localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : {};
     };
 
-    this.setSpec = function(conf) {
-      localStorage.setItem('conf', angular.toJson(conf));
-      $rootScope.$broadcast('conf', conf);
+    this.setSpec = function(spec) {
+      this.spec = spec;
+      $rootScope.$broadcast('spec', spec);
+    };
+
+    this.setDescribe = function(describe) {
+      this.describe = describe;
+      $rootScope.$broadcast('describe', describe);
     };
 
     this.getDescribes = function() {
-      return angular.fromJson(localStorage.getItem('describes'));
+      return localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
+    };
+
+    this.setDescribes = function(describe) {
+      localStorage.setItem('describe', angular.toJson(describe));
+      $rootScope.$broadcast('describe', describe);
+    };
+
+    this.getDescribe = function(id) {
+      id = parseInt(id);
+      return this.getDescribes()[id - 1];
+    };
+
+    this.getSession = function() {
+      return localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
     };
 
     this.getSpec = function(id) {
-      var describes = angular.fromJson(localStorage.getItem('describes'));
-      id = parseInt(id);
-      return describes[0].specs[id - 1];
-    };
 
-    this.isLoading = function() {
-      return this.loading;
+      if(id == undefined && $location.path() == '/conf') {
+        return this.getConf().spec;
+      }
+      id = parseInt(id);
+      return this.getDescribe(1).specs[id - 1];
     };
 
     this.setLoading = function(status) {
       if(typeof status == 'string')
         status == 'true' ? true : false;
       localStorage.setItem('loading', status);
-      this.loading = status;
     };
 
-    this.isRecording = function() {
-      return this.recording;
+    this.isLoading = function() {
+      var loading = localStorage.getItem('loading') != undefined ? localStorage.getItem('loading') : false;
+      if(typeof loading == 'string')
+        return loading == 'true' ? true : false;
     };
 
     this.setRecording = function(status) {
       if(typeof status == 'string')
         status = status == 'true' ? true : false;
       localStorage.setItem('recording', status);
-      this.recording = status;
+    };
+
+    this.isRecording = function() {
+      var recording = localStorage.getItem('recording') != undefined ? localStorage.getItem('recording') : false;
+      if(typeof recording == 'string')
+        return recording == 'true' ? true : false;
     };
 
     this.getLine = function(action) {
@@ -253,6 +278,5 @@
 
       return line;
     };
-
   }
 })();

@@ -10,47 +10,38 @@
 
     var vm = this;
 
-    $log.debug($location.path());
+    vm.protractorRecServer = protractorRecServer;
 
     /*-------------------------------------------------------------------
      * 		 				 	ATTRIBUTES
      *-------------------------------------------------------------------*/
 
-    vm.actionTypes   = ['click', 'sendKeys', 'wait', 'browser'];
-    vm.locatorsTypes = ['model', 'repeater', 'buttonText', 'css', 'linkText', 'get', 'id', 'xpath'];
+    vm.conf      = protractorRecServer.getConf();
+    vm.describes = protractorRecServer.getDescribes();
+    vm.session   = protractorRecServer.getSession();
+
+    vm.spec = {};
+    vm.spec.actions = [];
 
     vm.isSnippet           = false;
     vm.showSelectedOptions = false;
     vm.index = false;
-
-    /* If first run set examples or get from local storage */
-    vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
-    vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
-    vm.session   = localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
 
     if(vm.session.id) {
       seleniumJWP.setSession(vm.session);
     }
 
     vm.lines         = [];
-    vm.describe      = {};
-    vm.spec          = [];
+    vm.describe      = protractorRecServer.getDescribe(1);
     vm.dataBind      = [];
 
     vm.selectedItems = 0;
 
-    if($location.path() == '/conf') {
-
-      vm.spec = vm.conf.spec;
-
-    } else if($routeParams.id) {
-
-      var index = parseInt($routeParams.id) - 1;
-      vm.spec = vm.describes[0].specs[index];
-
+    if($routeParams.id) {
+      vm.spec = protractorRecServer.getSpec($routeParams.id);
+    } else {
+      vm.spec = protractorRecServer.getSpec();
     }
-
-
 
     /* Base options for new spec */
     vm.blankSpec = {
@@ -146,16 +137,10 @@
         if(vm.session.url != response.value && !vm.isSnippet) {
 
           protractorRecServer.setLoading(true);
-
           vm.getSessionSource();
-
         }
-
         vm.session.url = response.value;
       });
-
-      //vm.isSnippet = false;
-
 
       $log.debug('on-session-disconnect');
       $log.debug(data);
@@ -479,6 +464,7 @@
 
     $scope.$watch('main.spec', function () {
       $log.debug('watch spec');
+
       localStorage.setItem('describes', angular.toJson(vm.describes));
 
       vm.selectedItems = $filter('filter')(vm.spec.actions, {checked: true}).length;
@@ -722,7 +708,8 @@
 
           var length = response.value.length;
           var elementId = value.ELEMENT;
-          var index = index;
+          var indexValue = index;
+
           $log.debug(value.ELEMENT);
 
           seleniumJWP.getSessionElementDisplayed(elementId).success(function (response) {
@@ -732,7 +719,7 @@
             if (response.value) {
 
               if(length > 1)
-                element.index = index;
+                element.index = indexValue;
 
               vm.sessionElementExecute(elementId, element);
             }
@@ -875,15 +862,15 @@
       });
     };
 
-    var DialogActionController = function ($scope, $mdDialog, index, action, actionTypes, locatorsTypes) {
+    var DialogActionController = function ($scope, $mdDialog, index, action) {
 
       var vm = this;
 
       vm.action = action ? action : {};
-      vm.actionTypes = actionTypes;
-      vm.locatorsTypes = locatorsTypes;
 
-      vm.strategies = ['class name', 'css selector', 'id', 'name', 'link text', 'partial link text', 'tag name', 'xpath'];
+      vm.actionTypes   = ['assertion', 'get', 'click', 'sendKeys', 'wait', 'browser'];
+      vm.locatorsTypes = ['model', 'repeater', 'buttonText', 'css', 'linkText', 'get', 'id', 'xpath'];
+      vm.strategies    = ['class name', 'css selector', 'id', 'name', 'link text', 'partial link text', 'tag name', 'xpath'];
 
       vm.hide = function() {
         $mdDialog.hide();
@@ -901,7 +888,7 @@
     vm.actionDialog = function(ev, index, action) {
 
       if(action)
-        var action = angular.copy(action);
+        var actionCopy = angular.copy(action);
 
       var closeTo = angular.element($document[0].getElementById('add-spec'));
 
@@ -914,9 +901,7 @@
         closeTo: closeTo,
         locals: {
           index: index,
-          action: action,
-          actionTypes: vm.actionTypes,
-          locatorsTypes: vm.locatorsTypes
+          action: actionCopy
         },
         clickOutsideToClose: true
       }).then(function(result) {

@@ -11,6 +11,7 @@
     var vm = this;
 
     vm.protractorRecServer = protractorRecServer;
+
     /*-------------------------------------------------------------------
      *              ATTRIBUTES
      *-------------------------------------------------------------------*/
@@ -20,33 +21,9 @@
 
     vm.capabilities  = [];
 
-    /* If first run set examples or get from local storage */
-    vm.conf      = localStorage.getItem('conf') ? angular.fromJson(localStorage.getItem('conf')) : false;
-    vm.describes = localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
-    vm.session   = localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
-
-    vm.loading   = localStorage.getItem('loading') != undefined ? localStorage.getItem('loading') : false;
-    vm.recording = localStorage.getItem('recording') != undefined ? localStorage.getItem('recording') : false;
-
-    protractorRecServer.setLoading(vm.loading);
-    protractorRecServer.setRecording(vm.recording);
-
-    /**
-     * Javascript snippet to inject on session
-     */
-    vm.snippet = 'if(!document.getElementById("recorder-iframe")){' +
-      'var b=document.getElementsByTagName("body")[0];' +
-      'var i=document.createElement("iframe");' +
-      'i.id="recorder-iframe";' +
-      'i.setAttribute("style", "display:none");' +
-      'b.appendChild(i);' +
-      'var i = document.getElementById("recorder-iframe");' +
-      'var s = i.contentWindow.document.createElement("script");' +
-      's.onload=function(){' +
-      'var s = i.contentWindow.document.createElement("script");' +
-      's.src = "http://localhost:9000/snippet.js";' +
-      'i.contentWindow.document.body.appendChild(s);' +
-      '},s.src = "http://localhost:9000/socket.io-1.3.7.js",i.contentWindow.document.body.appendChild(s);}';
+    vm.conf      = protractorRecServer.getConf();
+    vm.describes = protractorRecServer.getDescribes();
+    vm.session   = protractorRecServer.getSession();
 
     vm.lines         = [];
     vm.describe      = {};
@@ -349,14 +326,15 @@
         vm.describes.push(angular.copy(protractorRecServer.specSample));
         vm.conf = angular.copy(protractorRecServer.confSample);
 
-        vm.setDescribe(vm.describes[0]);
-        vm.setSpec(vm.describe.specs[0]);
+        protractorRecServer.setDescribe(vm.describes[0]);
+        protractorRecServer.setSpec(protractorRecServer.describe.specs[0]);
 
         vm.createSession();
-      } else {
-        vm.setDescribe(vm.describes[0]);
-        vm.setSpec(vm.describe.specs[0]);
-      }
+
+      } /*else {
+        protractorRecServer.setDescribe(vm.describes[0]);
+        protractorRecServer.setSpec(vm.describe.specs[0]);
+      }*/
 
     };
 

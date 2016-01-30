@@ -90,7 +90,7 @@
                 <thead>
                 <tr>
                   <th>
-                    <md-checkbox ng-click="main.toggleAll()" ng-model="main.selectAll" aria-label="Checkbox 1">
+                    <md-checkbox ng-click="main.toggleAll();$event.stopPropagation()" ng-model="main.selectAll" aria-label="Checkbox 1">
                     </md-checkbox>
                   </th>
                   <th>Action</th>
@@ -148,9 +148,6 @@
                         </md-menu-item>
                       </md-menu-content>
                     </md-menu>
-                    <!--<md-button aria-label="Delete action" ng-click="main.removeAction($index)">
-                      <md-icon md-svg-icon="close"></md-icon>
-                    </md-button>-->
                   </td>
                 </tr>
                 </tbody>
