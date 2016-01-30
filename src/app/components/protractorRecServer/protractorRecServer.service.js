@@ -162,6 +162,11 @@
       return this.getDescribes()[id - 1];
     };
 
+    this.setSession = function(session) {
+      localStorage.setItem('session', angular.toJson(session));
+      $rootScope.$broadcast('session', session);
+    };
+
     this.getSession = function() {
       return localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
     };
@@ -198,6 +203,19 @@
       if(typeof recording == 'string')
         return recording == 'true' ? true : false;
     };
+
+    this.setSnippet = function(status) {
+      if(typeof status == 'string')
+        status = status == 'true' ? true : false;
+      localStorage.setItem('snippet', status);
+    };
+
+    this.hasSnippet = function() {
+      var snippet = localStorage.getItem('snippet') != undefined ? localStorage.getItem('snippet') : false;
+      if(typeof snippet == 'string')
+        return snippet == 'true' ? true : false;
+    };
+
 
     this.getLine = function(action) {
 

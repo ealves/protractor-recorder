@@ -23,7 +23,6 @@
     vm.spec = {};
     vm.spec.actions = [];
 
-    vm.isSnippet           = false;
     vm.showSelectedOptions = false;
     vm.index = false;
 
@@ -72,6 +71,10 @@
       vm.conf = args;
     });
 
+    $scope.$on('session', function(events, args) {
+      vm.session = args;
+    });
+
     /*-------------------------------------------------------------------
      * 		 				  SOCKET ON
      *-------------------------------------------------------------------*/
@@ -80,7 +83,7 @@
      */
 
     socket.on('onsnippet', function(){
-       vm.isSnippet = true;
+      protractorRecServer.setSnippet(true);
     });
 
     socket.on('click', function (data) {
@@ -130,7 +133,7 @@
 
     });
 
-    socket.on('session-disconnect', function (data) {
+    /*socket.on('session-disconnect', function (data) {
 
       seleniumJWP.getSessionUrl().success(function(response){
 
@@ -147,7 +150,7 @@
       $log.debug('on-session-disconnect');
       $log.debug(data);
 
-    });
+    });*/
 
     socket.on('protractor-log', function (data) {
       $log.debug('protractor-log');
@@ -162,8 +165,6 @@
         vm.conf.capabilities.splice(index, 1);
       }
     };
-
-
 
     vm.newDescribe = function () {
       $log.debug('newDescribe');
@@ -477,6 +478,7 @@
     $scope.$watch('main.spec', function () {
       $log.debug('watch spec');
 
+      localStorage.setItem('conf', angular.toJson(vm.conf));
       localStorage.setItem('describes', angular.toJson(vm.describes));
 
       vm.selectedItems = $filter('filter')(vm.spec.actions, {checked: true}).length;
@@ -557,7 +559,7 @@
         $log.debug('Session Executed');
 
 
-        if (!vm.isSnippet) {
+        if (!protractorRecServer.hasSnippet()) {
           $mdToast.show(
               $mdToast.simple()
                   .content('Session ready to record!')
@@ -567,9 +569,10 @@
         }
 
         protractorRecServer.setLoading(false);
+        protractorRecServer.setSnippet(true);
 
-        vm.isSnippet = true;
         vm.getSessionUrl();
+
       }).error(function(response){
         $log.debug(response);
       });
@@ -631,7 +634,7 @@
       var countIframe = vm.session.source.match(/recorder-iframe/);
       countIframe != null ? countIframe.length : countIframe = 0;
 
-      if (!vm.isSnippet && countIframe == 0) {
+      if (!protractorRecServer.hasSnippet() && countIframe == 0) {
         vm.sessionExecute();
       } else {
         protractorRecServer.setLoading(false);
@@ -641,6 +644,7 @@
     vm.clearSession = function(){
       vm.session = {};
       seleniumJWP.setSession();
+      protractorRecServer.setSession();
       protractorRecServer.setLoading(false);
       protractorRecServer.setRecording(false);
     };

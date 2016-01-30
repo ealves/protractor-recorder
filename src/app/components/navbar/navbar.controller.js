@@ -44,6 +44,10 @@
       vm.conf = args;
     });
 
+    $scope.$on('session', function(events, args) {
+      vm.session = args;
+    });
+
     /*-------------------------------------------------------------------
      * 		 				  SOCKET ON
      *-------------------------------------------------------------------*/
@@ -51,7 +55,7 @@
 
       seleniumJWP.getSessionUrl().success(function(response){
 
-        if(vm.session.url != response.value && !vm.isSnippet) {
+        if(vm.session.url != response.value && !protractorRecServer.hasSnippet()) {
 
           protractorRecServer.setLoading(true);
 
@@ -62,10 +66,11 @@
         vm.session.url = response.value;
       }).error(function(response){
         $log.debug(response);
+        seleniumJWP.setSession();
+        protractorRecServer.setSession();
       });
 
-      //vm.isSnippet = false;
-
+      protractorRecServer.setSnippet(false);
 
       $log.debug('on-session-disconnect');
       $log.debug(data);
@@ -86,7 +91,7 @@
       var countIframe = vm.session.source.match(/recorder-iframe/);
       countIframe != null ? countIframe.length : countIframe = 0;
 
-      if (!vm.isSnippet && countIframe == 0) {
+      if (!protractorRecServer.hasSnippet() && countIframe == 0) {
         vm.sessionExecute();
       } else {
         protractorRecServer.setLoading(false);
@@ -180,10 +185,12 @@
         seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
           seleniumJWP.setSession(response);
+
+          vm.session = response;
           vm.session.id = response.sessionId;
 
+          protractorRecServer.setSession(vm.session);
           protractorRecServer.setRecording(true);
-
           protractorRecServer.setConf(vm.conf);
 
           vm.setSessionUrl();
@@ -198,27 +205,6 @@
     vm.pauseRecording = function(){
       protractorRecServer.setRecording(false);
     };
-
-    $scope.$watch('navbar.conf', function () {
-      $log.debug('watch conf');
-      localStorage.setItem('conf', angular.toJson(vm.conf));
-    }, true);
-
-    $scope.$watch('navbar.describe', function () {
-      $log.debug('watch describe');
-      localStorage.setItem('describes', angular.toJson(vm.describes));
-
-    }, true);
-
-    $scope.$watchCollection('navbar.describes', function () {
-      $log.debug('watch describes');
-      localStorage.setItem('describes', angular.toJson(vm.describes));
-    });
-
-    $scope.$watch('navbar.session', function () {
-      $log.debug('watch session');
-      localStorage.setItem('session', angular.toJson(vm.session));
-    }, true);
 
     /**
      * Get all data bind to suggest on assertions
@@ -251,7 +237,7 @@
       seleniumJWP.sessionExecute(protractorRecServer.snippet).success(function() {
         $log.debug('Session Executed');
 
-        if (!vm.isSnippet) {
+        if (!protractorRecServer.hasSnippet()) {
           $mdToast.show(
             $mdToast.simple()
               .content('Session ready to record!')
@@ -261,8 +247,8 @@
         }
 
         protractorRecServer.setLoading(false);
+        protractorRecServer.setSnippet(true);
 
-        vm.isSnippet = true;
         vm.getSessionUrl();
       }).error(function(response){
         $log.debug(response);
@@ -345,11 +331,7 @@
 
         vm.createSession();
 
-      } /*else {
-        protractorRecServer.setDescribe(vm.describes[0]);
-        protractorRecServer.setSpec(vm.describe.specs[0]);
-      }*/
-
+      }
     };
 
     vm.exportProtractor = function () {
