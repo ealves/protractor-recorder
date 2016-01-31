@@ -239,6 +239,9 @@
 
       }
 
+      if(action.locator.type == 'xpath')
+        var locator = "element(by.xpath('" + action.locator.value + "'))";
+
       if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
         line = "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click();";
 
@@ -292,6 +295,25 @@
 
       if(action.action == 'browser' && action.type == 'sleep')
         line = "browser.sleep(" + action.value + ");";
+
+      if(action.action == 'click' && action.type == 'canvas') {
+        action.value = action.value.split('x');
+        line = "browser.actions().mouseMove(element(by.xpath('" + action.locator.value + "')), {x: " + action.value [0] + ", y: " + action.value[1] + "}).click().perform();";
+      }
+
+      if(action.action.match(/[mouseDown|mouseMove|mouseUp]/)) {
+        action.value = action.value.split('x');
+
+        line = "browser.actions()." + action.action + "(";
+
+        if(locator)
+          line += "element(by.xpath('" + action.locator.value + "')), ";
+
+        line += "{x: " + action.value [0] + ", y: " + action.value[1] + "}";
+
+        if(action.value)
+          line += ").click().perform();";
+      }
 
       if(action.index != undefined) {
         line = line.replace('element', 'element.all');

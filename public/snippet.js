@@ -1,6 +1,11 @@
 var socket = io('http://localhost:9000');
 socket.emit('onsnippet', 'ip');
+var x = 0;
+var y = 0;
 parent.document.body.addEventListener('mousedown', function (event) {
+  x = event.x;
+  y = event.y;
+  console.log(x + 'x' + y);
   var ngRepeats = [];
   var xPath = getPathTo(event.target);
   getNgRepeat(event.target, ngRepeats);
@@ -8,7 +13,8 @@ parent.document.body.addEventListener('mousedown', function (event) {
   var element = {
       xPath: xPath,
       outerHTML: event.target.outerHTML,
-      offsetParent: {'outerHTML': offsetParent}
+      offsetParent: {'outerHTML': offsetParent},
+      mouseCoordinates: [x, y]
   };
   if(ngRepeats)
     element.ngRepeat = ngRepeats[ngRepeats.length-1];
@@ -29,6 +35,7 @@ parent.document.body.addEventListener('change', function (event) {
   socket.emit('onchange', element);
 });
 parent.document.body.addEventListener('mouseup', function (event) {
+  console.log('mouseup');
   if (parent.window.getSelection && parent.window.getSelection.toString() != '') {
     if(parent.window.getSelection().toString().length) {
       socket.emit('onassertion', parent.window.getSelection().toString());
@@ -38,6 +45,28 @@ parent.document.body.addEventListener('mouseup', function (event) {
       socket.emit('onassertion', parent.document.selection.createRange().text);
     }
   }
+  if (event.x != x && event.y != y) {
+    console.log('else');
+    console.log(event.x + 'x' + event.y);
+    socket.emit('onmousemove', {start: [x, y], end: [event.x, event.y]});
+  }
+});
+parent.document.body.addEventListener('ondragover', function (event) {
+  console.log('dragover');
+  console.log(event);
+});
+parent.document.body.addEventListener('ondragleave', function (event) {
+  console.log('dragleave');
+  console.log(event);
+});
+parent.document.body.addEventListener('ondragstart', function(event) {
+  console.log('dragstart');
+});
+parent.document.body.addEventListener('ondragend', function(event) {
+  console.log('dragend');
+});
+parent.document.body.addEventListener('ondrop', function(event) {
+  console.log('drop');
 });
 function getNgRepeat(element, ngs) {
   var ix = 0;

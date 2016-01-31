@@ -208,6 +208,10 @@
 
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
 
+        } else if(target[0].tagName.match(/^canvas/i)){
+          $log.debug('canvas');
+          value = element.mouseCoordinates[0] + 'x' + element.mouseCoordinates[1];
+          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
         } else if(!target[0].tagName.match(/^select/i)){
           value = target.text() ? target.text().trim() : false;
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
@@ -549,7 +553,6 @@
       seleniumJWP.sessionExecute(protractorRecServer.snippet).success(function() {
         $log.debug('Session Executed');
 
-
         if (!protractorRecServer.hasSnippet()) {
           $mdToast.show(
               $mdToast.simple()
@@ -559,8 +562,9 @@
           );
         }
 
-        protractorRecServer.setLoading(false);
         protractorRecServer.setSnippet(true);
+
+        protractorRecServer.setLoading(false);
 
         vm.getSessionUrl();
 
@@ -643,7 +647,7 @@
       var countIframe = vm.session.source.match(/recorder-iframe/);
       countIframe != null ? countIframe.length : countIframe = 0;
 
-      if (!protractorRecServer.hasSnippet() && countIframe == 0) {
+      if (!protractorRecServer.hasSnippet() || countIframe == 0) {
         vm.sessionExecute();
       } else {
         protractorRecServer.setLoading(false);
@@ -929,7 +933,7 @@
       });
     };
 
-    //vm.getSessionSource();
+    vm.getSessionSource();
 
   }
 
