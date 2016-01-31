@@ -125,9 +125,7 @@
         lastAction.value = data.trim();
 
         vm.dataBind.forEach(function (data) {
-
           lastAction.locators.push(data);
-
         });
       }
 
@@ -137,10 +135,11 @@
       $log.debug('mousemove');
       $log.debug(data);
 
-      if(protractorRecServer.isRecording() && data) {
+      var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
+      if(protractorRecServer.isRecording() && data && lastAction.action != 'assertion') {
 
         vm.setElement(data);
-        vm.spec.actions[vm.spec.actions.length - 1].type = 'mouseUp';
+        lastAction.type = 'mouseUp';
       }
     });
 

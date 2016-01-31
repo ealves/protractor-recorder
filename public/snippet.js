@@ -55,6 +55,8 @@ parent.document.body.addEventListener('mouseup', function (event) {
     };
     socket.emit('onmousemove', element);
   }
+  parent.document.getSelection().removeAllRanges();
+  parent.window.getSelection().removeAllRanges();
 });
 function getNgRepeat(element, ngs) {
   var ix = 0;
