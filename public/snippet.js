@@ -3,8 +3,8 @@ socket.emit('onsnippet', 'ip');
 var x = 0;
 var y = 0;
 parent.document.body.addEventListener('mousedown', function (event) {
-  x = event.x;
-  y = event.y;
+  x = event.clientX;
+  y = event.clientY;
   var ngRepeats = [];
   var xPath = getPathTo(event.target);
   getNgRepeat(event.target, ngRepeats);
@@ -44,14 +44,14 @@ parent.document.body.addEventListener('mouseup', function (event) {
       socket.emit('onassertion', parent.document.selection.createRange().text);
     }
   }
-  if (event.x != x && event.y != y) {
+  if (event.clientX != x && event.clientY != y) {
     var xPath = getPathTo(event.target);
     var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : event.target.parentNode;
     var element = {
       xPath: xPath,
       outerHTML: event.target.outerHTML,
       offsetParent: {'outerHTML': offsetParent},
-      mouseCoordinates: [event.x, event.y]
+      mouseCoordinates: [event.clientX, event.clientY]
     };
     socket.emit('onmousemove', element);
   }

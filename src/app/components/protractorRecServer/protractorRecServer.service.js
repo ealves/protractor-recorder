@@ -23,18 +23,21 @@
      * Javascript snippet to inject on session
      */
     this.snippet = 'if(!document.getElementById("recorder-iframe")){' +
-      'var b=document.getElementsByTagName("body")[0];' +
-      'var i=document.createElement("iframe");' +
-      'i.id="recorder-iframe";' +
-      'i.setAttribute("style", "display:none");' +
-      'b.appendChild(i);' +
-      'var i = document.getElementById("recorder-iframe");' +
-      'var s = i.contentWindow.document.createElement("script");' +
-      's.onload=function(){' +
-      'var s = i.contentWindow.document.createElement("script");' +
-      's.src = "http://localhost:9000/snippet.js";' +
-      'i.contentWindow.document.body.appendChild(s);' +
-      '},s.src = "http://localhost:9000/socket.io-1.3.7.js",i.contentWindow.document.body.appendChild(s);}';
+        'var b=document.getElementsByTagName("body")[0];' +
+        'var i = document.createElement("iframe");' +
+        'i.onload = function(){' +
+            'var s = i.contentWindow.document.createElement("script");' +
+            's.src = "http://localhost:9000/socket.io-1.3.7.js";' +
+            's.onload=function(){' +
+              'var s = i.contentWindow.document.createElement("script");' +
+              's.src = "http://localhost:9000/snippet.js";' +
+              'i.contentWindow.document.body.appendChild(s);' +
+            '};' +
+            'i.contentWindow.document.body.appendChild(s);' +
+        '};' +
+        'i.id="recorder-iframe";' +
+        'i.setAttribute("style", "display:none");' +
+        'b.appendChild(i);}';
 
     /* Conf example */
     this.confSample = {

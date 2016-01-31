@@ -57,17 +57,16 @@
 
       seleniumJWP.getSessionUrl().success(function(response){
 
-        if(vm.session.url != response.value) {
+        if(vm.session.url != response.value || !protractorRecServer.hasSnippet()) {
 
           protractorRecServer.setLoading(true);
 
           vm.getSessionSource();
 
-        } else if(!protractorRecServer.hasSnippet()) {
-          vm.verifySnippet();
         }
 
         vm.session.url = response.value;
+
       }).error(function(response){
         $log.debug(response);
         vm.deleteSession();
@@ -182,7 +181,7 @@
       if(!vm.session.id) {
         protractorRecServer.setSnippet(false);
         protractorRecServer.setLoading(true);
-        var options = {'desiredCapabilities': {'browserName': 'chrome', acceptSSlCerts: true}};
+        var options = {'desiredCapabilities': {'browserName': 'firefox', acceptSSlCerts: true}};
 
         seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
