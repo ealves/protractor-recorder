@@ -53,14 +53,18 @@
      *-------------------------------------------------------------------*/
     socket.on('session-disconnect', function (data) {
 
+      protractorRecServer.setSnippet(false);
+
       seleniumJWP.getSessionUrl().success(function(response){
 
-        if(vm.session.url != response.value && !protractorRecServer.hasSnippet()) {
+        if(vm.session.url != response.value) {
 
           protractorRecServer.setLoading(true);
 
           vm.getSessionSource();
 
+        } else if(!protractorRecServer.hasSnippet()) {
+          vm.verifySnippet();
         }
 
         vm.session.url = response.value;
@@ -68,8 +72,6 @@
         $log.debug(response);
         vm.deleteSession();
       });
-
-      protractorRecServer.setSnippet(false);
 
       $log.debug('on-session-disconnect');
       $log.debug(data);
