@@ -75,6 +75,14 @@ io.on('connection', function(socket){
 
   });
 
+  socket.on('onmousemove', function (data) {
+    console.log('onmousemove');
+    console.log(data);
+
+    io.emit('mousemove', data);
+
+  });
+
   socket.on('disconnect', function(){
     console.log('user disconnected');
 

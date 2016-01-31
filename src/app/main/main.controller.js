@@ -133,6 +133,17 @@
 
     });
 
+    socket.on('mousemove', function (data) {
+      $log.debug('mousemove');
+      $log.debug(data);
+
+      if(protractorRecServer.isRecording() && data) {
+
+        vm.setElement(data);
+        vm.spec.actions[vm.spec.actions.length - 1].type = 'mouseUp';
+      }
+    });
+
     socket.on('protractor-log', function (data) {
       $log.debug('protractor-log');
       $log.debug(data);
@@ -208,11 +219,13 @@
 
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value.trim(), element.xPath);
 
-        } else if(target[0].tagName.match(/^canvas/i)){
+        } else if(target[0].tagName.match(/^canvas/i)) {
           $log.debug('canvas');
           value = element.mouseCoordinates[0] + 'x' + element.mouseCoordinates[1];
-          vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
-        } else if(!target[0].tagName.match(/^select/i)){
+          vm.addElement(target, 'mouseMove', 'browser', value, element.xPath);
+          vm.spec.actions.push({action: 'browser', type: 'mouseDown', value: false});
+
+        } else if(!target[0].tagName.match(/^select/i)) {
           value = target.text() ? target.text().trim() : false;
           vm.addElement(target, target[0].tagName.toLowerCase(), 'click', value, element.xPath);
         }
@@ -881,6 +894,7 @@
 
       vm.action = action ? action : {};
 
+      //'mouseMove', 'mouseDown', 'mouseUp', 'doubleClick'
       vm.actionTypes   = ['assertion', 'get', 'click', 'sendKeys', 'wait', 'browser'];
       vm.locatorsTypes = ['model', 'repeater', 'buttonText', 'css', 'linkText', 'get', 'id', 'xpath'];
       vm.strategies    = ['class name', 'css selector', 'id', 'name', 'link text', 'partial link text', 'tag name', 'xpath'];
@@ -925,7 +939,8 @@
           if(result.index != undefined) {
             vm.spec.actions[result.index] = result.action;
           } else {
-            result.action.locators = [{type: result.action.locator.type, value: result.action.locator.value, strategy: result.action.locator.strategy}];
+            if(result.action.locator)
+              result.action.locators = [{type: result.action.locator.type, value: result.action.locator.value, strategy: result.action.locator.strategy}];
             vm.spec.actions.push(result.action);
           }
         }

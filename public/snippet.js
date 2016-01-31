@@ -5,7 +5,6 @@ var y = 0;
 parent.document.body.addEventListener('mousedown', function (event) {
   x = event.x;
   y = event.y;
-  console.log(x + 'x' + y);
   var ngRepeats = [];
   var xPath = getPathTo(event.target);
   getNgRepeat(event.target, ngRepeats);
@@ -46,27 +45,16 @@ parent.document.body.addEventListener('mouseup', function (event) {
     }
   }
   if (event.x != x && event.y != y) {
-    console.log('else');
-    console.log(event.x + 'x' + event.y);
-    socket.emit('onmousemove', {start: [x, y], end: [event.x, event.y]});
+    var xPath = getPathTo(event.target);
+    var offsetParent = event.target.offsetParent ? event.target.offsetParent.outerHTML : event.target.parentNode;
+    var element = {
+      xPath: xPath,
+      outerHTML: event.target.outerHTML,
+      offsetParent: {'outerHTML': offsetParent},
+      mouseCoordinates: [event.x, event.y]
+    };
+    socket.emit('onmousemove', element);
   }
-});
-parent.document.body.addEventListener('ondragover', function (event) {
-  console.log('dragover');
-  console.log(event);
-});
-parent.document.body.addEventListener('ondragleave', function (event) {
-  console.log('dragleave');
-  console.log(event);
-});
-parent.document.body.addEventListener('ondragstart', function(event) {
-  console.log('dragstart');
-});
-parent.document.body.addEventListener('ondragend', function(event) {
-  console.log('dragend');
-});
-parent.document.body.addEventListener('ondrop', function(event) {
-  console.log('drop');
 });
 function getNgRepeat(element, ngs) {
   var ix = 0;
