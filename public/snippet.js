@@ -38,10 +38,14 @@ parent.document.body.addEventListener('mouseup', function (event) {
   if (parent.window.getSelection && parent.window.getSelection.toString() != '') {
     if(parent.window.getSelection().toString().length) {
       socket.emit('onassertion', parent.window.getSelection().toString());
+      parent.document.getSelection().removeAllRanges();
+      parent.window.getSelection().removeAllRanges();
     }
   } else if (parent.document.selection && parent.document.selection.createRange().text != '') {
     if(parent.document.selection.createRange().text.length) {
       socket.emit('onassertion', parent.document.selection.createRange().text);
+      parent.document.getSelection().removeAllRanges();
+      parent.window.getSelection().removeAllRanges();
     }
   }
   if (event.clientX != x && event.clientY != y) {
@@ -55,8 +59,6 @@ parent.document.body.addEventListener('mouseup', function (event) {
     };
     socket.emit('onmousemove', element);
   }
-  parent.document.getSelection().removeAllRanges();
-  parent.window.getSelection().removeAllRanges();
 });
 function getNgRepeat(element, ngs) {
   var ix = 0;
@@ -97,6 +99,7 @@ function getPathTo(element) {
     return '';
   }
 }
+/*
 socket.on('execute', function(data){
 
   var element = '';
@@ -117,4 +120,4 @@ socket.on('execute', function(data){
     element.value = data.keys;
   }
 
-});
+});*/

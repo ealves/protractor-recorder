@@ -86,6 +86,11 @@
       $location.url('/conf');
     };
 
+    $scope.$watch('navbar.conf', function () {
+      $log.debug('watch conf');
+      localStorage.setItem('conf', angular.toJson(vm.conf));
+    }, true);
+
     vm.verifySnippet = function(){
 
       var countIframe = vm.session.source.match(/recorder-iframe/);
