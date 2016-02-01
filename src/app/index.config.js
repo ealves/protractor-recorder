@@ -49,6 +49,7 @@
         .icon('delete', 'assets/svg/ic_delete_24px.svg', 24)
         .icon('edit', 'assets/svg/ic_edit_24px.svg', 24)
         .icon('email', 'assets/svg/ic_email_24px.svg'        , 24)
+        .icon('info', 'assets/svg/ic_info_24px.svg'        , 24)
         .icon('file_download', 'assets/svg/ic_file_download_24px.svg', 24)
         .icon('list', 'assets/svg/ic_list_24px.svg'        , 24)
         .icon('home', 'assets/svg/ic_home_24px.svg', 24)

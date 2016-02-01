@@ -68,10 +68,17 @@
       </div>
       <span flex></span>
 
-      <md-subheader class="md-no-sticky">Drivers</md-subheader>
+      <md-subheader class="md-no-sticky">
+        Drivers
+        <md-icon md-svg-icon="info" style="width: 17px; height: 17px;">
+          <md-tooltip md-direction="right">
+            Record on first selected and export selected
+          </md-tooltip>
+        </md-icon>
+      </md-subheader>
       <md-divider></md-divider>
       <md-list>
-        <md-list-item ng-click="navbar.setSpec(spec)" ng-repeat="capability in navbar.capabilities | orderBy: 'driver'">
+        <md-list-item ng-repeat="capability in navbar.capabilities | orderBy: 'driver'">
           <img ng-src="/assets/images/{{ capability.driver }}.png" style="width:30px;margin-right: 10px">
           <p>{{ capability.driver }}</p>
           <md-checkbox ng-change="navbar.setCapabilities(capability)" class="md-secondary" ng-model="capability.checked"></md-checkbox>

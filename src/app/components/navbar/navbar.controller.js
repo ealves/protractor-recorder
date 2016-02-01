@@ -181,7 +181,13 @@
       if(!vm.session.id) {
         protractorRecServer.setSnippet(false);
         protractorRecServer.setLoading(true);
-        var options = {'desiredCapabilities': {'browserName': 'firefox', acceptSSlCerts: true}};
+
+        var sortedDrivers = vm.conf.capabilities.sort();
+        var browserName = sortedDrivers[0];
+        if(browserName === 'chromedriver')
+          browserName = 'chrome';
+
+        var options = {'desiredCapabilities': {'browserName': browserName, acceptSSlCerts: true}};
 
         seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
@@ -284,7 +290,7 @@
       protractorRecServer.getCapabilities().success(function(response){
         vm.capabilities = response;
         vm.capabilities.forEach(function(capability){
-          if(!vm.conf.capabilities.indexOf(capability.driver)){
+          if(vm.conf.capabilities.indexOf(capability.driver) != -1){
             capability.checked = true;
           }
         });
@@ -385,6 +391,15 @@
       }).error(function(response){
         $log.debug(response);
       });
+    };
+
+    vm.setCapabilities = function(capability) {
+      if(capability.checked)
+        vm.conf.capabilities.push(capability.driver);
+      else
+        delete vm.conf.capabilities[vm.conf.capabilities.indexOf(capability.driver)];
+      vm.conf.capabilities = vm.conf.capabilities.filter(Boolean);
+      protractorRecServer.setConf(vm.conf);
     };
 
     vm.setExample();
