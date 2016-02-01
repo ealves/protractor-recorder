@@ -827,6 +827,10 @@
 
     };
 
+    vm.socketElementExecute = function(element) {
+      socket.emit('execute', element);
+    };
+
     vm.sessionElementExecute = function(elementId, element){
 
       $log.debug('sessionElementExecute');
@@ -836,6 +840,8 @@
       if(element.action == 'value'){
         data.value = [element.keys];
       }
+
+      //vm.socketElementExecute(element);
 
       seleniumJWP.sessionElementExecute(elementId, element, data).success(function(response) {
 

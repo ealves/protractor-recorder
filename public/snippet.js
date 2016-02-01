@@ -97,3 +97,24 @@ function getPathTo(element) {
     return '';
   }
 }
+socket.on('execute', function(data){
+
+  var element = '';
+
+  if(data.using == 'css selector') {
+    element = parent.document.getElementById(data.value);
+  }
+
+  if(data.using == 'css selector') {
+    element = parent.document.querySelector(data.value);
+  }
+
+  if(data.action == 'click') {
+    element.click();
+  }
+
+  if(data.keys && data.action != 'click') {
+    element.value = data.keys;
+  }
+
+});

@@ -88,6 +88,12 @@ io.on('connection', function(socket){
 
     io.emit('session-disconnect', 'session');
   });
+
+  socket.on('execute', function(data){
+    console.log('execute');
+    io.emit('execute', data);
+  });
+
 });
 
 app.get('/', function (req, res) {
