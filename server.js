@@ -163,10 +163,18 @@ app.post('/export', function(req, res){
              "  specs: ['spec.js'],\r\n";
 
   if(conf.capabilities.length == 1) {
+
+    if(conf.capabilities[0] === 'chromedriver')
+      conf.capabilities[0] = 'chrome';
+
     confOutput += "  capabilities: {browserName: '" + conf.capabilities[0] + "'},\r\n";
   } else {
     confOutput += "  multiCapabilities: [";
     conf.capabilities.forEach(function(capability){
+
+      if(capability === 'chromedriver')
+        capability = 'chrome';
+
       confOutput += "{browserName: '" + capability + "'}, ";
     });
     confOutput += "],\r\n";
@@ -208,7 +216,7 @@ app.post('/export', function(req, res){
   describe[0].specs.forEach(function(spec){
     output += "  it('" + spec.string + "', function(){\r\n\r\n";
 
-    if(spec.lines){  
+    if(spec.lines){
       spec.lines.forEach(function(line, index){
 
         if(line.slice(-1) == ';')
