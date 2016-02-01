@@ -154,8 +154,19 @@ app.post('/export', function(req, res){
 
   confOutput += "  seleniumAddress: '" + conf.seleniumAddress + "',\r\n" +
              "  baseUrl: '" + baseUrl + "',\r\n" +
-             "  specs: ['spec.js'],\r\n" +
-             "  onPrepare: function(){\r\n";
+             "  specs: ['spec.js'],\r\n";
+
+  if(conf.capabilities.length == 1) {
+    confOutput += "  capabilities: {browserName: '" + conf.capabilities[0] + "'},\r\n";
+  } else {
+    confOutput += "  multiCapabilities: [";
+    conf.capabilities.forEach(function(capability){
+      confOutput += "{browserName: '" + capability + "'}, ";
+    });
+    confOutput += "],\r\n";
+  }
+
+  confOutput += "  onPrepare: function(){\r\n";
 
   if(conf.maximize)
     confOutput += "    browser.driver.manage().window().maximize();\r\n";
