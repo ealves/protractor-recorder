@@ -245,9 +245,6 @@
       if(action.locator && action.locator.type == 'xpath')
         var locator = "element(by.xpath('" + action.locator.value + "'))";
 
-      if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
-        line = "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click();";
-
       if(action.action == 'click' && action.locator.type == 'repeater')
         line = "element(by.repeater('" + action.locator.value + "').row(" + action.value + ")).";
 
@@ -324,6 +321,9 @@
         line = line.replace('element', 'element.all');
         line = line.replace(')).', ')).get(' + action.index + ').');
       }
+
+      if(action.type == 'select' && action.action == 'click' && action.locator.type == 'model')
+        line = "element(by.model('" + action.locator.value + "')).$('[value=\"" + action.value + "\"]').click();";
 
       return line;
     };

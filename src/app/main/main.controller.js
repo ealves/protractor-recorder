@@ -136,7 +136,7 @@
       $log.debug(data);
 
       var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
-      if(protractorRecServer.isRecording() && data && lastAction.action != 'assertion') {
+      if(protractorRecServer.isRecording() && data && lastAction.action != 'assertion' && lastAction.type != 'select') {
 
         vm.setElement(data);
         lastAction.type = 'mouseUp';
