@@ -6,7 +6,7 @@
     .controller('NavbarController', NavbarController);
 
   /** @ngInject */
-  function NavbarController($rootScope, $scope, $log, $location, $filter, $mdToast, $document, $routeParams, socket, protractorRecServer, seleniumJWP) {
+  function NavbarController($scope, $log, $location, $filter, $mdToast, $routeParams, socket, protractorRecServer, seleniumJWP) {
 
     var vm = this;
 
@@ -15,6 +15,8 @@
     /*-------------------------------------------------------------------
      *              ATTRIBUTES
      *-------------------------------------------------------------------*/
+
+    vm.title = 'Conf.js';
 
     vm.showSelectedOptions = false;
     vm.index = false;
@@ -31,6 +33,10 @@
     vm.dataBind      = [];
 
     vm.selectedItems = 0;
+
+    $scope.$on('navbar:title', function(events, args){
+      vm.title = args;
+    });
 
     /* Configuration example */
     if(!vm.conf) {
@@ -83,6 +89,7 @@
     });
 
     vm.openConf = function() {
+      vm.title = 'Conf.js';
       $location.url('/conf');
     };
 
@@ -331,11 +338,16 @@
 
     vm.setExample = function () {
 
+      $log.debug('setExample');
+
+      protractorRecServer.setConf(protractorRecServer.confSample);
+
       if (!vm.describes.length) {
 
         vm.describes.push(angular.copy(protractorRecServer.specSample));
         vm.conf = angular.copy(protractorRecServer.confSample);
 
+        protractorRecServer.setDescribes(vm.describes);
         protractorRecServer.setDescribe(vm.describes[0]);
         protractorRecServer.setSpec(protractorRecServer.describe.specs[0]);
 

@@ -155,9 +155,9 @@
       return localStorage.getItem('describes') ? angular.fromJson(localStorage.getItem('describes')) : [];
     };
 
-    this.setDescribes = function(describe) {
-      localStorage.setItem('describe', angular.toJson(describe));
-      $rootScope.$broadcast('describe', describe);
+    this.setDescribes = function(describes) {
+      localStorage.setItem('describes', angular.toJson(describes));
+      $rootScope.$broadcast('describes', describes);
     };
 
     this.getDescribe = function(id) {

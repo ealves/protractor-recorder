@@ -6,7 +6,7 @@
       .controller('MainController', MainController);
 
   /** @ngInject */
-  function MainController($rootScope, $scope, $routeParams, $log, $filter, $timeout, $mdToast, $location, $mdDialog, $document, socket, protractorRecServer, seleniumJWP) {
+  function MainController($rootScope, $scope, $routeParams, $log, $filter, $timeout, $mdToast, $mdDialog, $document, socket, protractorRecServer, seleniumJWP) {
 
     var vm = this;
 
@@ -37,6 +37,9 @@
     vm.selectedItems = 0;
 
     if($routeParams.id) {
+
+      $rootScope.$broadcast('navbar:title', 'Spec ' + $routeParams.id);
+
       vm.spec = protractorRecServer.getSpec($routeParams.id);
     } else {
       vm.spec = protractorRecServer.getSpec();
@@ -482,6 +485,9 @@
         var id = parseInt($routeParams.id);
         vm.describes[0].specs[id - 1] = vm.spec;
         localStorage.setItem('describes', angular.toJson(vm.describes));
+
+
+
       } else {
         vm.conf.spec = vm.spec;
         localStorage.setItem('conf', angular.toJson(vm.conf));
