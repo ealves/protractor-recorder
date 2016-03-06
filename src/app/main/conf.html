@@ -73,8 +73,8 @@
                   <th></th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed, 'error': action.error}" ng-click="main.actionDialog($event, $index, action)">
+                <tbody sv-root sv-part="main.spec.actions">
+                <tr sv-element="opts" ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed, 'error': action.error}" ng-click="main.actionDialog($event, $index, action)">
                   <td>
                     <md-checkbox ng-click="main.toggleAction(action);$event.stopPropagation()" ng-model="action.checked" aria-label="Checkbox $index"></md-checkbox>
                   </td>
