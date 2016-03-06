@@ -82,7 +82,7 @@
       $log.debug('protractor-log');
       $log.debug(data);
 
-      if(data === 'Started') {
+      if(data.match(/Started/ig)) {
         protractorRecServer.setLoading(false);
       }
     });
