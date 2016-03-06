@@ -1,52 +1,98 @@
-# Protractor Recorder (Under Development)
-A web interface to record users actions and export to Protractor.
+# Protractor Recorder
+A web interface to record interactions and export to Protractor.
+
+# Demonstration
+
+Example with more three interactions. This demo shows assertive with failure and success, after editing the value inside last action.  
+
+![Alt Text](https://raw.githubusercontent.com/ealves/protractor-recorder/master/docs/demos/protractor-recorder-demostration.gif)
+
+## Features
+
+#### General options
+
+- Base URL;
+- Run speed;
+- List of available drivers;
+
+#### Record
+
+- Clicks on elements;
+- Send keys to inputs;
+- Assertions with mouse selection;
+- Mouse moves;
+- Duplicate actions;
+- Drag and drop actions to reorder;
+- Run actions while recording with 'Run from here' option.
+
+#### Export
+
+- Selenium Address;
+- Window maximize;
+- Tests with login pages;
 
 ## Dependencies
 
-- NodeJs;
-- Npm;
-- Bower;
-- Gulp;
-- Protractor.
+- NodeJs 4.x;
+- Npm 2.x;
+- Bower 1.x;
+- Gulp 3.x;
+- Protractor 3.x.
 
 ## Getting Started
 
-After clone this repository and installed Protractor, execute the following commands to install npm and bower dependencies.
+After install all dependencies successfully, clone this repository and change directory to 'protractor-recorder':
+
+``` shell
+$ git clone https://github.com/ealves/protractor-recorder.git
+```
+``` shell
+$ cd protractor-recorder
+```
+
+Execute the following commands to install npm and bower dependencies to Protractor Recorder:
 
 ``` shell
 $ npm install
 ```
-
 ``` shell
 $ bower install
 ```
 
-#### Node Server
+## Running Protractor Recorder
 
-- The node server is used to control the messages flow from socket, on root folder, run:
+Now you will need run three different process, following the order:
+
+#### #1 - Selenium Webdriver Manager
+
+- First, check for new install or updates and start selenium with Protractor Webdriver Manager:
+
+``` shell
+$ webdriver-manager update
+```
+``` shell
+$ webdriver-manager start
+```
+
+#### #2 - Node Server
+
+- Node server is used to control the messages flow from socket, run:
 
 ``` shell
 $ node server.js
 ```
 
-#### Web Interface
+#### #3 - Angular Material Interface
 
-- To start the Angular Material web interface, run:
+- Start the Angular Material web interface with sample example, run:
 
 ``` shell
 $ gulp serve
-```
-
-#### Selenium
-
-- To start the Selenium run:
-
-``` shell
-$ webdriver-manager start
 ```
 
 ## Usage
 
 - Access http://localhost:3000;
 - Enter a url base and click on 'Record' to start recording
-- After end up your test flow click on 'Export Protractor' to export conf.js and spec.js inside the folder public/exports.
+- After end up your test flow on Selenium browser's session, click on 'Export' to export conf.js and spec.js inside folder public/exports.
+- Click on 'Run' to see your test running with a new Selenium session.
