@@ -11,8 +11,8 @@ var express = require('express'),
  exec       = require('child_process').exec;
 
 var exportsDirectory = __dirname + '/public/exports';
-var confFile = exportsDirectory + '/conf.js';
-var specFile = exportsDirectory + '/spec.js';
+var confFile         = exportsDirectory + '/conf.js';
+var specFile         = exportsDirectory + '/spec.js';
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -100,10 +100,6 @@ io.on('connection', function(socket){
 
 });
 
-app.get('/', function (req, res) {
- res.send('ok');
-});
-
 app.get('/run', function(req, res){
 
   if (!fs.existsSync(confFile)){
@@ -116,8 +112,9 @@ app.get('/run', function(req, res){
     console.log(data);
     io.emit('protractor-log', data);
   });
-
-  res.send('run');
+  var message = 'Running protractor ' + confFile;
+  console.log(message);
+  res.send(message);
 });
 
 app.get('/webdriver-manager/:command', function(req, res){
@@ -160,7 +157,7 @@ app.post('/export', function(req, res){
     fs.mkdirSync(exportsDirectory);
   }
 
-  var conf = JSON.parse(req.body.conf);
+  var conf     = JSON.parse(req.body.conf);
   var describe = JSON.parse(req.body.describe);
   var baseUrl  = req.body.baseUrl;
   //var onPrepare = JSON.parse(req.body.onPrepare);
@@ -272,7 +269,9 @@ app.post('/export', function(req, res){
       console.log(err);
     }
     console.log('Spec.js saved successfully!');
-    res.send('Files exported successfully!');
+    var message = 'Files exported to ' + exportsDirectory;
+    console.log(message);
+    res.send(message);
   });
 
 

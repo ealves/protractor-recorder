@@ -6,7 +6,7 @@
     .controller('NavbarController', NavbarController);
 
   /** @ngInject */
-  function NavbarController($scope, $log, $location, $filter, $mdToast, $routeParams, socket, protractorRecServer, seleniumJWP) {
+  function NavbarController($scope, $log, $location, $filter, $mdToast, $routeParams, $timeout, socket, protractorRecServer, seleniumJWP) {
 
     var vm = this;
 
@@ -186,7 +186,16 @@
 
       protractorRecServer.runProtractor().success(function(response){
         $log.debug(response);
-        $log.debug('Test finished');
+
+        $timeout(function(){
+          $mdToast.show(
+            $mdToast.simple()
+              .content(response)
+              .position('bottom left')
+              .hideDelay(3000)
+          );
+        }, 1500);
+
       }).error(function(response){
 
         protractorRecServer.setLoading(false);
