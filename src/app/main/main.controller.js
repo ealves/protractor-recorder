@@ -146,11 +146,6 @@
       }
     });
 
-    socket.on('protractor-log', function (data) {
-      $log.debug('protractor-log');
-      $log.debug(data);
-    });
-
     vm.setCapabilities = function(capability) {
       if(capability.checked){
         vm.conf.capabilities.push(capability.driver);
@@ -334,70 +329,8 @@
 
     };
 
-    vm.runTest = function () {
-
-      $log.debug('runTest');
-
-      protractorRecServer.runProtractor().success(function(response){
-        $log.debug('Test finished');
-        $log.debug(response);
-      }).error(function(response){
-        $log.debug(response);
-      });
-    };
-
     vm.removeSpec = function (index) {
       vm.describe.specs.splice(index, 1);
-    };
-
-    vm.exportProtractor = function () {
-
-      $log.debug('exportProtractor');
-
-      /* Get line to export actions in conf.js */
-      vm.conf.spec.lines = [];
-
-      angular.forEach(vm.conf.spec.actions, function (action) {
-
-        if(action.breakpoint) {
-          vm.conf.spec.lines('    browser.pause();');
-        }
-
-        vm.conf.spec.lines.push(vm.getLine(action));
-
-      });
-
-      /* Get line to export actions in spec.js */
-      vm.spec.lines = [];
-
-      if($filter('filter')(vm.spec.actions, {action: 'wait'}).length != 0)
-        vm.spec.lines.push('    var EC = protractor.ExpectedConditions;');
-
-      angular.forEach(vm.spec.actions, function (action) {
-
-        if(action.breakpoint) {
-          vm.spec.lines.push('browser.pause();');
-        }
-
-        vm.spec.lines.push(vm.getLine(action));
-
-      });
-
-      var data = {baseUrl: vm.url, conf: angular.toJson(vm.conf), describe: angular.toJson(vm.describes)};
-
-      protractorRecServer.exportProtractor(data).success(function(response){
-        $log.debug('Exported');
-        $log.debug(response);
-
-        $mdToast.show(
-            $mdToast.simple()
-                .content('File exported!')
-                .position('bottom left')
-                .hideDelay(3000)
-        );
-      }).error(function(response){
-        $log.debug(response);
-      });
     };
 
     vm.runFromHere = function(index) {

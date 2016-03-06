@@ -86,6 +86,10 @@
     socket.on('protractor-log', function (data) {
       $log.debug('protractor-log');
       $log.debug(data);
+
+      if(data === 'Started') {
+        protractorRecServer.setLoading(false);
+      }
     });
 
     vm.openConf = function() {
@@ -181,9 +185,11 @@
       $log.debug('runTest');
 
       protractorRecServer.runProtractor().success(function(response){
-        $log.debug('Test finished');
         $log.debug(response);
+        $log.debug('Test finished');
       }).error(function(response){
+
+        protractorRecServer.setLoading(false);
         $log.debug(response);
       });
     };
@@ -356,9 +362,11 @@
       }
     };
 
-    vm.exportProtractor = function () {
+    vm.exportProtractor = function (run) {
 
       $log.debug('exportProtractor');
+
+      protractorRecServer.setLoading(true);
 
       vm.conf = protractorRecServer.getConf();
       /* Get line to export actions in conf.js */
@@ -401,12 +409,28 @@
 
         $mdToast.show(
           $mdToast.simple()
-            .content('File exported!')
+            .content(response)
             .position('bottom left')
             .hideDelay(3000)
         );
+
+        if(run) {
+          vm.runTest();
+        } else {
+          protractorRecServer.setLoading(false);
+        }
+
       }).error(function(response){
         $log.debug(response);
+
+        protractorRecServer.setLoading(false);
+
+        $mdToast.show(
+          $mdToast.simple()
+            .content(response)
+            .position('bottom left')
+            .hideDelay(3000)
+        );
       });
     };
 

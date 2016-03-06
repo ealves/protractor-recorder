@@ -103,11 +103,11 @@
         <div class="md-toolbar-tools">
           <h2>{{ navbar.title }}</h2>
           <span class="flex"></span>
-          <md-button style="color:#000" class="md-raised" ng-click="navbar.exportProtractor()">
+          <md-button style="color:#000" class="md-raised" ng-click="navbar.exportProtractor(false)">
             <md-icon style="color:#000" md-svg-icon="file_download"></md-icon>
             Export
           </md-button>
-          <md-button style="color:#000" class="md-raised" ng-click="navbar.runTest()">
+          <md-button style="color:#000" class="md-raised" ng-click="navbar.exportProtractor(true)">
             <md-icon style="color:#000" md-svg-icon="play_circle"></md-icon>
             Run
           </md-button>

@@ -7,8 +7,12 @@ var express = require('express'),
  http       = require('http').Server(app),
  io         = require('socket.io')(http),
  fs         = require('fs'),
- request    = require("request"),
+ request    = require('request'),
  exec       = require('child_process').exec;
+
+var exportsDirectory = __dirname + '/public/exports';
+var confFile = exportsDirectory + '/conf.js';
+var specFile = exportsDirectory + '/spec.js';
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -102,7 +106,11 @@ app.get('/', function (req, res) {
 
 app.get('/run', function(req, res){
 
-  var runProcess = exec('protractor ' + __dirname + '/public/exports/conf.js');
+  if (!fs.existsSync(confFile)){
+    fs.mkdirSync(exportsDirectory);
+  }
+
+  var runProcess = exec('protractor ' + confFile);
 
   runProcess.stdout.on('data', function(data){
     console.log(data);
@@ -139,7 +147,7 @@ app.post('/html', function(req, res){
   var include = req.body.include;
 
   request({
-    uri: url + '/' + include,
+    uri: url + '/' + include
   }, function(error, response, body) {
     res.send(body);
   });
@@ -147,6 +155,10 @@ app.post('/html', function(req, res){
 });
 
 app.post('/export', function(req, res){
+
+  if (!fs.existsSync(exportsDirectory)){
+    fs.mkdirSync(exportsDirectory);
+  }
 
   var conf = JSON.parse(req.body.conf);
   var describe = JSON.parse(req.body.describe);
@@ -204,11 +216,12 @@ app.post('/export', function(req, res){
   confOutput += "  }\r\n}";
 
   // Update conf.js to run with protractor
-  fs.writeFile(__dirname + '/public/exports/conf.js', confOutput, function(err) {
+  fs.writeFile(confFile, confOutput, function(err) {
     if(err) {
-      return console.log(err);
+      res.status(500).send(err);
+      console.log(err);
     }
-    console.log("The file conf.js was saved!");
+    console.log('Conf.js saved successfully!');
   });
 
   var output = "describe('" + describe[0].string + "', function(){\r\n\r\n";
@@ -219,10 +232,14 @@ app.post('/export', function(req, res){
     if(spec.lines){
       spec.lines.forEach(function(line, index){
 
-        if(line.slice(-1) == ';')
-          output += line + '\r\n    ';
-        else
+        if(line.slice(-1) == ';') {
+          if(index == 0)
+            output += '    ' + line + '\r\n    ';
+          else
+            output += line + '\r\n    ';
+        } else {
           output += line;
+        }
 
         /*if(lastAction != null && lastAction.locator && lastAction.locator.type == 'repeater') {
 
@@ -246,15 +263,19 @@ app.post('/export', function(req, res){
 
   output += '});\r\n';
 
+  //console.log(output);
+
   // Update spec to run with protractor
-  fs.writeFile(__dirname + '/public/exports/spec.js', output, function(err) {
+  fs.writeFile(specFile, output, function(err) {
     if(err) {
-      return console.log(err);
+      res.status(500).send(err);
+      console.log(err);
     }
-    console.log("The file spec.js was saved!");
+    console.log('Spec.js saved successfully!');
+    res.send('Files exported successfully!');
   });
 
-  res.send('ok');
+
 });
 
 http.listen(9000, function () {
