@@ -38,11 +38,6 @@
       vm.title = args;
     });
 
-    /* Configuration example */
-    if(!vm.conf) {
-      protractorRecServer.setConf(protractorRecServer.confSample);
-    }
-
     /*-------------------------------------------------------------------
      * 		 				  BROADCAST MESSAGES
      *-------------------------------------------------------------------*/
@@ -355,7 +350,9 @@
 
       $log.debug('setExample');
 
-      protractorRecServer.setConf(protractorRecServer.confSample);
+      if(angular.equals(vm.conf, {})){
+        protractorRecServer.setConf(protractorRecServer.confSample);
+      }
 
       if (!vm.describes.length) {
 
