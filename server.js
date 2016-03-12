@@ -191,6 +191,9 @@ app.post('/export', function(req, res){
 
   confOutput += "  onPrepare: function(){\r\n";
 
+  if(conf.ignoreSynchronization)
+    confOutput += "    browser.ignoreSynchronization = true;\r\n";
+
   if(conf.maximize)
     confOutput += "    browser.driver.manage().window().maximize();\r\n";
 
