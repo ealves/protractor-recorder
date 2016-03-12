@@ -5,33 +5,36 @@
   <div flex layout="row">
 
     <div flex layout-padding layout="column">
-      <md-content md-scroll-y md-scroll-x class="flex layout-column">
+      <md-content class="flex layout-column">
         <div>
 
           <div layout="row">
+            <div flex layout="column">
 
-            <div flex>
               <md-input-container class="md-block">
                 <label>Selenium Address</label>
                 <input type="text" ng-model="main.conf.seleniumAddress" placeholder="Selenium url">
               </md-input-container>
-            </div>
-          </div>
 
-          <div layout="row">
-            <div flex layout="column">
+
               <md-input-container class="md-block">
-                <md-checkbox aria-label="Jasmine" ng-model="main.conf.jasmine">Framework Jasmine 2</md-checkbox>
+                <md-checkbox aria-label="Jasmine" ng-model="main.conf.jasmine">Jasmine 2</md-checkbox>
               </md-input-container>
+
+              <md-input-container class="md-block">
+                <md-checkbox aria-label="Ignore Synchronization" ng-model="main.conf.ignoreSynchronization">Ignore Synchronization</md-checkbox>
+              </md-input-container>
+
+            </div>
+
+            <div flex layout="column">
 
               <md-input-container class="md-block">
                 <md-checkbox aria-label="Login page" ng-model="main.conf.login">Login page
                   <md-tooltip md-direction="right">This option force wait page login redirect</md-tooltip>
                 </md-checkbox>
               </md-input-container>
-            </div>
 
-            <div flex layout="column">
               <md-input-container class="md-block">
                 <md-checkbox aria-label="Window maximize" ng-model="main.conf.maximize">Window maximize</md-checkbox>
               </md-input-container>
