@@ -8,10 +8,10 @@
 
   angular
     .module('protractorRec')
-    .service('protractorRecServer', protractorRecServer);
+    .service('protractorRecServer', protractorRecServerFactory);
 
   /** @ngInject */
-  function protractorRecServer($rootScope, $http, $location) {
+  function protractorRecServerFactory($rootScope, $http, $location) {
 
     this.serverUrl = 'http://localhost:9000/';
 
@@ -51,6 +51,7 @@
         ]
       }
     };
+
 
     /* Spec example */
     this.specSample = {
@@ -328,4 +329,5 @@
       return line;
     };
   }
+
 })();

@@ -8,10 +8,10 @@
 
   angular
       .module('protractorRec')
-      .service('seleniumJWP', seleniumJWP);
+      .service('seleniumJWP', seleniumJWPFactory);
 
   /** @ngInject */
-  function seleniumJWP($http) {
+  function seleniumJWPFactory($http) {
 
     this.domain  = 'http://localhost';
     this.port    = '4444';
@@ -117,4 +117,5 @@
     this.setConfigUrl();
 
   }
+
 })();
