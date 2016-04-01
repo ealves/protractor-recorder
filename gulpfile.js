@@ -1,29 +1,30 @@
-/**
- *  Welcome to your gulpfile!
- *  The gulp tasks are splitted in several files in the gulp directory
- *  because putting all here was really too long
- */
+var gulp       = require('gulp'),
+    livereload = require('gulp-livereload'),
+    server     = require('./server.js');
 
-'use strict';
+// gulp.task('css', function(){
+//   gulp.src('css/*.css').pipe(livereload());
+// });
+function notifyLiveReload(event) {
+  var fileName = require('path').relative(__dirname, event.path);
 
-var gulp = require('gulp');
-var wrench = require('wrench');
+  tinylr.changed({
+    body: {
+      files: [fileName]
+    }
+  });
+}
 
-/**
- *  This will load all js or coffee files in the gulp directory
- *  in order to load all gulp tasks
- */
-wrench.readdirSyncRecursive('./gulp').filter(function(file) {
-  return (/\.(js|coffee)$/i).test(file);
-}).map(function(file) {
-  require('./gulp/' + file);
+gulp.task('watch', function(){
+  gulp.watch('app/*.html', notifyLiveReload);
+  gulp.watch('assets/js/*.js', notifyLiveReload);
+  gulp.watch('assets/css/*.css', notifyLiveReload);
 });
 
-
-/**
- *  Default task clean temporaries directories and launch the
- *  main optimization build task
- */
-gulp.task('default', ['clean'], function () {
-  gulp.start('build');
+var tinylr;
+gulp.task('livereload', function() {
+  tinylr = require('tiny-lr')();
+    tinylr.listen(35729);
 });
+
+gulp.task('default', ['express', 'livereload', 'watch']);

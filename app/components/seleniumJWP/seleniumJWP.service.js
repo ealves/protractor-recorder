@@ -7,7 +7,7 @@
   'use strict';
 
   angular
-      .module('protractorRec')
+      .module('protractorRecorder')
       .service('seleniumJWP', seleniumJWPFactory);
 
   /** @ngInject */

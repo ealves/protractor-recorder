@@ -3,10 +3,10 @@
   'use strict';
 
   angular
-    .module('protractorRec')
+    .module('protractorRecorder', ['ngRoute', 'ngMaterial', 'angular-sortable-view'])
     .config(config).factory('socket', function ($rootScope) {
 
-        var socket = io('http://localhost:9000');
+        var socket = io('//localhost:4000');
         return {
           on: function (eventName, callback) {
             socket.on(eventName, function () {
@@ -30,7 +30,24 @@
       });
 
   /** @ngInject */
-  function config($logProvider, $mdThemingProvider, $mdIconProvider) {
+  function config($logProvider, $routeProvider, $mdThemingProvider, $mdIconProvider) {
+
+    $routeProvider
+      .when('/conf', {
+        templateUrl: 'main/conf.html',
+        controller: 'MainController',
+        controllerAs: 'main'
+      })
+      .when('/spec/:id', {
+        templateUrl: 'main/spec.html',
+        controller: 'MainController',
+        controllerAs: 'main'
+      })
+      .otherwise({
+        redirectTo: '/conf'
+      });
+
+
     // Enable log
     $logProvider.debugEnabled(true);
 
@@ -78,7 +95,6 @@
         .icon('stop', 'assets/svg/ic_stop_24px.svg', 24)
         .icon('save', 'assets/svg/ic_save_24px.svg', 24)
         .icon('record', 'assets/svg/ic_fiber_manual_record_24px.svg', 24);
-
 
   }
 

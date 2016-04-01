@@ -7,13 +7,13 @@
   'use strict';
 
   angular
-    .module('protractorRec')
+    .module('protractorRecorder')
     .service('protractorRecServer', protractorRecServerFactory);
 
   /** @ngInject */
   function protractorRecServerFactory($rootScope, $http, $location) {
 
-    this.serverUrl = 'http://localhost:9000/';
+    this.serverUrl = '//localhost:4000/';
 
     this.spec = {};
     this.describes = [];
@@ -27,10 +27,10 @@
         'var i = document.createElement("iframe");' +
         'i.onload = function(){' +
             'var s = i.contentWindow.document.createElement("script");' +
-            's.src = "http://localhost:9000/socket.io-1.3.7.js";' +
+            's.src = "' + this.serverUrl + 'socket.io/socket.io.js";' +
             's.onload=function(){' +
               'var s = i.contentWindow.document.createElement("script");' +
-              's.src = "http://localhost:9000/snippet.js";' +
+              's.src = "' + this.serverUrl + 'app/assets/js/snippet.js";' +
               'i.contentWindow.document.body.appendChild(s);' +
             '};' +
             'i.contentWindow.document.body.appendChild(s);' +

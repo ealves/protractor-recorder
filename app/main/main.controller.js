@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-      .module('protractorRec')
+      .module('protractorRecorder')
       .controller('MainController', MainController);
 
   /** @ngInject */
@@ -635,7 +635,7 @@
       $mdDialog.show({
         controller: DialogSpecController,
         controllerAs: 'spec',
-        templateUrl: 'app/main/spec-dialog.html',
+        templateUrl: 'main/spec-dialog.html',
         parent: angular.element($document[0].body),
         targetEvent: ev,
         closeTo: closeTo,
@@ -866,7 +866,7 @@
       $mdDialog.show({
         controller: DialogActionController,
         controllerAs: 'action',
-        templateUrl: 'app/main/action-dialog.html',
+        templateUrl: 'main/action-dialog.html',
         parent: angular.element($document[0].body),
         targetEvent: ev,
         closeTo: closeTo,

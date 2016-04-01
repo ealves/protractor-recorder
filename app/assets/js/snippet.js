@@ -1,4 +1,4 @@
-var socket = io('http://localhost:9000');
+var socket = io('http://localhost:4000');
 socket.emit('onsnippet', 'ip');
 var x = 0;
 var y = 0;

@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('protractorRec')
+    .module('protractorRecorder')
     .controller('NavbarController', NavbarController);
 
   /** @ngInject */
