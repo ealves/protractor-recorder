@@ -120,7 +120,7 @@
     this.exportProtractor = function(data) {
       return $http({
         method: 'POST',
-        url: 'http://localhost:9000/export',
+        url: this.serverUrl + 'export',
         data: data
       })
     };
