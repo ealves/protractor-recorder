@@ -6,4 +6,5 @@ coverage/
 .tmp/
 public/exports
 dist/
+exports/
 *.log
