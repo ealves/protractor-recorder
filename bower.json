@@ -2,12 +2,12 @@
   "name": "protractorRecorder",
   "version": "0.0.1",
   "dependencies": {
-    "angular-animate": "~1.4.2",
-    "angular-sanitize": "~1.4.2",
-    "angular-messages": "~1.4.2",
-    "angular-aria": "~1.4.2",
-    "angular-route": "~1.4.2",
-    "angular-material": "~0.11.2",
+    "angular-animate": "~1.5.3",
+    "angular-sanitize": "~1.5.3",
+    "angular-messages": "~1.5.3",
+    "angular-aria": "~1.5.3",
+    "angular-route": "~1.5.3",
+    "angular-material": "~1.0.7",
     "angular-sortable-view": "~0.0.15",
     "animate.css": "~3.4.0",
     "angular": "~1.5.3"
@@ -16,6 +16,6 @@
     "angular-mocks": "~1.4.2"
   },
   "resolutions": {
-    "angular": "~1.4.2"
+    "angular": "~1.5.3"
   }
 }
