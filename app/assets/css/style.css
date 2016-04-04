@@ -24,7 +24,7 @@
   font-feature-settings: 'liga';
 }
 
-html {
+html, body {
   font-family: Roboto, serif;
 }
 
