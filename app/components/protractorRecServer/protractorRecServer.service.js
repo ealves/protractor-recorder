@@ -283,16 +283,16 @@
         line = "element(by.css('" + action.locator.value + "')).click();";
 
       if(action.action == 'assertion' && action.locator.type == 'bind')
-        line = "expect(element(by.binding('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line = "element(by.binding('" + action.locator.value + "')).getText().then(function(value){expect(value).toBe('" + action.value + "');});";
 
       if(action.action == 'assertion' && action.locator.type == 'id')
-        line = "expect(element(by.id('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line = "element(by.id('" + action.locator.value + "')).getText().then(function(value){expect(value).toBe('" + action.value + "');});";
 
       if(action.action == 'assertion' && action.locator.type == 'xpath')
-        line = "expect(element(by.xpath('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line = "element(by.xpath('" + action.locator.value + "')).getText().then(function(value){expect(value).toBe('" + action.value + "');});";
 
       if(action.action == 'assertion' && action.locator.type == 'css')
-        line = "expect(element(by.css('" + action.locator.value + "')).getText()).toBe('" + action.value + "');";
+        line = "element(by.css('" + action.locator.value + "')).getText().then(function(value){expect(value).toBe('" + action.value + "');});";
 
       if(action.action == 'browser' && action.type == 'sleep')
         line = "browser.sleep(" + action.value + ");";
