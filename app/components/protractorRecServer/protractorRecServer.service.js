@@ -237,7 +237,7 @@
           elm = "element(by.xpath('" + action.locator.value + "'))";
 
         if(action.locator.type == 'css')
-          elm = "element(by.css('" + action.locator.value + "');";
+          elm = "element(by.css('" + action.locator.value + "'))";
 
         line += "browser.wait(EC.presenceOf(" + elm + "), 10000);";
 
