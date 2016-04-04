@@ -36,8 +36,18 @@ gulp.task('express', function() {
 
   io.on('connection', function(socket) {
 
-    //console.log(socket.id);
+    console.log(socket.id);
     //console.log(socket);
+
+    socket.on('joinroom', function(room) {
+      console.log('joinroom: ' + room);
+        socket.join(room);
+    });
+
+    socket.on('leaveroom', function(room) {
+       console.log('leaveroom: ' + room);
+        socket.leave(room);
+    });
 
     console.log('a user connected');
 

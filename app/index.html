@@ -42,6 +42,19 @@
           <label>Run speed</label>
           <input ng-model="navbar.conf.runSpeed" type="number" placeholder="Milliseconds">
         </md-input-container>
+
+        <md-input-container class="md-block" style="padding-bottom: 0px;">
+          <label>Room</label>
+          <input ng-model="navbar.conf.room" type="text" placeholder="Room">
+        </md-input-container>
+
+        <md-button class="md-primary md-raised" ng-click="navbar.joinRoom()">
+          Join
+        </md-button>
+
+        <md-button class="md-primary md-raised" ng-click="navbar.leaveRoom()">
+          Leave
+        </md-button>
       </div>
       <md-list>
         <md-list-item ng-click="navbar.openConf()" aria-label="Conf">

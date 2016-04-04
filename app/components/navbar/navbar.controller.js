@@ -87,6 +87,16 @@
       }
     });
 
+    vm.joinRoom = function(){
+      $log.debug('connectRoom');
+      socket.emit('joinroom', vm.conf.room);
+    };
+
+    vm.leaveRoom = function(room){
+      $log.debug('disconnectRoom');
+      socket.emit('leaveroom', vm.conf.room);
+    };
+
     vm.openConf = function() {
       vm.title = 'Conf.js';
       $location.url('/conf');
