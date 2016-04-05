@@ -19,6 +19,8 @@
     this.describes = [];
     this.describe = {};
 
+    this.room = 'room1';
+
     /**
      * Javascript snippet to inject on session
      */

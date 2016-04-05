@@ -42,6 +42,7 @@ gulp.task('express', function() {
     socket.on('joinroom', function(room) {
       console.log('joinroom: ' + room);
         socket.join(room);
+        io.emit('joined_channel', room);
     });
 
     socket.on('leaveroom', function(room) {
@@ -51,11 +52,12 @@ gulp.task('express', function() {
 
     console.log('a user connected');
 
-    socket.on('onclick', function(data) {
+    socket.on('onclick', function(room, data) {
       console.log('onclick');
+      console.log(room);
       console.log(data);
 
-      io.emit('click', data);
+      io.to(room).emit('click', data);
 
     });
 

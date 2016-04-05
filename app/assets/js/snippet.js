@@ -1,5 +1,17 @@
 var socket = io('http://localhost:4000');
 socket.emit('onsnippet', 'ip');
+
+var room = 'room1';
+socket.emit('joinroom', room, function(){
+  console.log('joinroom');
+  //socket.to(room).emit('test', {foo:'bar'});
+});
+
+socket.on('joined_channel', function(data){
+    console.log('joined channel', data);
+    alert('joined: ' + data);
+});
+
 var x = 0;
 var y = 0;
 parent.document.body.addEventListener('mousedown', function (event) {
@@ -17,7 +29,9 @@ parent.document.body.addEventListener('mousedown', function (event) {
   };
   if(ngRepeats)
     element.ngRepeat = ngRepeats[ngRepeats.length-1];
-  socket.emit('onclick', element);
+  socket.emit('onclick', room, element);
+  //socket.broadcast.to('room1', element);
+  //socket.to('room1').emit('test', 'data');
 });
 parent.document.body.addEventListener('keyup', function (event) {
   socket.emit('onkeyup', event.target.value);
