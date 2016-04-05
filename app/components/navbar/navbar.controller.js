@@ -153,8 +153,14 @@
         seleniumJWP.getSessionSource().success(function(response) {
           vm.session.source = response.value;
           if(response.value) {
+
+            /* SAVE SOCKET ROOM WITH SELENIUM SESSION ID VALUE */
+            protractorRecServer.setSocketRoom(vm.session.id);
+            vm.joinRoom(vm.session.id); // Join to room
+
             vm.getNgIncludes();
             vm.verifySnippet();
+
           }
         }).error(function(response){
           $log.debug(response);
@@ -209,6 +215,14 @@
       });
     };
 
+    vm.addSessionCookie = function() {
+      seleniumJWP.sessionAddCookie('socketRoom', vm.session.id).success(function(response){
+        $log.debug(response);
+      }).error(function(response){
+        $log.debug(response);
+      });
+    };
+
     vm.createSession = function () {
 
       if(!vm.session.id) {
@@ -231,11 +245,7 @@
           vm.session = response;
           vm.session.id = response.sessionId;
 
-          /* SAVE SOCKET ROOM WITH SELENIUM SESSION ID VALUE */
-          protractorRecServer.setSocketRoom(vm.session.id);
-          vm.joinRoom(vm.session.id); // Join to room
-          // Set cookie socketRoom
-          seleniumJWP.sessionAddCookie('socketRoom', vm.session.id);
+
 
           protractorRecServer.setSession(vm.session);
           protractorRecServer.setRecording(true);
@@ -282,6 +292,8 @@
     };
 
     vm.sessionExecute = function () {
+
+      protractorRecServer.snippet += 'localStorage.setItem("socketRoom", "' + vm.session.id + '");';
 
       seleniumJWP.sessionExecute(protractorRecServer.snippet).success(function() {
         $log.debug('Session Executed');

@@ -13,33 +13,32 @@
   /** @ngInject */
   function protractorRecServerFactory($rootScope, $http, $location) {
 
-    this.serverUrl = '//localhost:4000/';
+    this.serverUrl = $location.protocol() + '://' + $location.host() + ':' + $location.port();
 
     this.spec = {};
     this.describes = [];
     this.describe = {};
 
-    this.room = 'room1';
-
     /**
      * Javascript snippet to inject on session
      */
-    this.snippet = 'if(!document.getElementById("recorder-iframe")){' +
+    this.snippet = 'localStorage.setItem("protractorServer", "' + this.serverUrl + '");' +
+      'if(!document.getElementById("recorder-iframe")){' +
         'var b=document.getElementsByTagName("body")[0];' +
         'var i = document.createElement("iframe");' +
         'i.onload = function(){' +
             'var s = i.contentWindow.document.createElement("script");' +
-            's.src = "' + this.serverUrl + 'socket.io/socket.io.js";' +
+            's.src = "' + this.serverUrl + '/socket.io/socket.io.js";' +
             's.onload=function(){' +
               'var s = i.contentWindow.document.createElement("script");' +
-              's.src = "' + this.serverUrl + 'app/assets/js/snippet.js";' +
+              's.src = "' + this.serverUrl + '/app/assets/js/snippet.js";' +
               'i.contentWindow.document.body.appendChild(s);' +
             '};' +
             'i.contentWindow.document.body.appendChild(s);' +
         '};' +
         'i.id="recorder-iframe";' +
         'i.setAttribute("style", "display:none");' +
-        'b.appendChild(i);}';
+        'b.appendChild(i);};';
 
     /* Conf example */
     this.confSample = {
@@ -108,21 +107,21 @@
     this.getCapabilities = function(){
       return $http({
         method: 'GET',
-        url: this.serverUrl + 'webdriver-manager/status'
+        url: this.serverUrl + '/webdriver-manager/status'
       });
     };
 
     this.runProtractor = function() {
       return $http({
         method: 'GET',
-        url: this.serverUrl + 'run'
+        url: this.serverUrl + '/run'
       });
     };
 
     this.exportProtractor = function(data) {
       return $http({
         method: 'POST',
-        url: this.serverUrl + 'export',
+        url: this.serverUrl + '/export',
         data: data
       })
     };
@@ -130,7 +129,7 @@
     this.getHtmlSource = function(data) {
       return $http({
         method: 'POST',
-        url: this.serverUrl + 'html',
+        url: this.serverUrl + '/html',
         data: data
       });
     };

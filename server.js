@@ -61,63 +61,63 @@ gulp.task('express', function() {
 
     });
 
-    socket.on('onchange', function(data) {
+    socket.on('onchange', function(room, data) {
       console.log('onchange');
       console.log(data);
 
-      io.emit('change', data);
+      io.to(room).emit('change', data);
 
     });
 
-    socket.on('onkeyup', function(data) {
+    socket.on('onkeyup', function(room, data) {
       console.log('onkeyup');
       console.log(data);
 
-      io.emit('keyup', data);
+      io.to(room).emit('keyup', data);
 
     });
 
-    socket.on('onfocus', function(data) {
+    socket.on('onfocus', function(room, data) {
       console.log('onkeyup');
       console.log(data);
 
-      io.emit('focus', data);
+      io.to(room).emit('focus', data);
 
     });
 
-    socket.on('onassertion', function(data) {
+    socket.on('onassertion', function(room, data) {
       console.log('onassertion');
       console.log(data);
 
-      io.emit('assertion', data);
+      io.to(room).emit('assertion', data);
 
     });
 
-    socket.on('onunload', function(data) {
+    socket.on('onunload', function(room, data) {
       console.log('onunload');
       console.log(data);
 
-      io.emit('unload', data);
+      io.to(room).emit('unload', data);
 
     });
 
-    socket.on('onmousemove', function(data) {
+    socket.on('onmousemove', function(room, data) {
       console.log('onmousemove');
       console.log(data);
 
-      io.emit('mousemove', data);
+      io.to(room).emit('mousemove', data);
 
     });
 
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function(room) {
       console.log('user disconnected');
 
-      io.emit('session-disconnect', 'session');
+      io.to(room).emit('session-disconnect', 'session');
     });
 
-    socket.on('execute', function(data) {
+    socket.on('execute', function(room, data) {
       console.log('execute');
-      io.emit('execute', data);
+      io.to(room).emit('execute', data);
     });
 
   });

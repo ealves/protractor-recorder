@@ -1,18 +1,9 @@
-if (document.cookie) {
-    var socketRoom = document.cookie.split('=')[1];
-    alert(socketRoom);
-}
-var socket = io('http://localhost:4000');
-socket.emit('onsnippet', 'ip');
-
+var protractorServer = localStorage.getItem('protractorServer');
+var socket = io(protractorServer);
+var socketRoom = localStorage.getItem('socketRoom');
 socket.emit('joinroom', socketRoom, function(){
   console.log('joinroom');
   //socket.to(room).emit('test', {foo:'bar'});
-});
-
-socket.on('joined_channel', function(data){
-    console.log('joined channel', data);
-    alert('joined: ' + data);
 });
 
 var x = 0;
@@ -35,7 +26,7 @@ parent.document.body.addEventListener('mousedown', function (event) {
   socket.emit('onclick', socketRoom, element);
 });
 parent.document.body.addEventListener('keyup', function (event) {
-  socket.emit('onkeyup', event.target.value);
+  socket.emit('onkeyup', socketRoom, event.target.value);
 });
 parent.document.body.addEventListener('change', function (event) {
   var xPath = getPathTo(event.target);
@@ -46,19 +37,19 @@ parent.document.body.addEventListener('change', function (event) {
     offsetParent: {'outerHTML': offsetParent},
     value: event.target.value
   };
-  socket.emit('onchange', element);
+  socket.emit('onchange', socketRoom, element);
 });
 parent.document.body.addEventListener('mouseup', function (event) {
   console.log('mouseup');
   if (parent.window.getSelection && parent.window.getSelection.toString() != '') {
     if(parent.window.getSelection().toString().length) {
-      socket.emit('onassertion', parent.window.getSelection().toString());
+      socket.emit('onassertion', socketRoom, parent.window.getSelection().toString());
       parent.document.getSelection().removeAllRanges();
       parent.window.getSelection().removeAllRanges();
     }
   } else if (parent.document.selection && parent.document.selection.createRange().text != '') {
     if(parent.document.selection.createRange().text.length) {
-      socket.emit('onassertion', parent.document.selection.createRange().text);
+      socket.emit('onassertion', socketRoom, parent.document.selection.createRange().text);
       parent.document.getSelection().removeAllRanges();
       parent.window.getSelection().removeAllRanges();
     }
@@ -72,7 +63,7 @@ parent.document.body.addEventListener('mouseup', function (event) {
       offsetParent: {'outerHTML': offsetParent},
       mouseCoordinates: [event.clientX, event.clientY]
     };
-    socket.emit('onmousemove', element);
+    socket.emit('onmousemove', socketRoom, element);
   }
 });
 function getNgRepeat(element, ngs) {

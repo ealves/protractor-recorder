@@ -6,7 +6,7 @@
     .module('protractorRecorder', ['ngRoute', 'ngMaterial', 'angular-sortable-view'])
     .config(config).factory('socket', function ($rootScope) {
 
-        var socket = io.connect('//localhost:4000');
+        var socket = io();
         return {
           on: function (eventName, callback) {
             socket.on(eventName, function () {
