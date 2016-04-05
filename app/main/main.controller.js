@@ -146,6 +146,11 @@
       }
     });
 
+    vm.joinRoom = function(room){
+      $log.debug('connectRoom');
+      socket.emit('joinroom', room);
+    };
+
     vm.setCapabilities = function(capability) {
       if(capability.checked){
         vm.conf.capabilities.push(capability.driver);
@@ -546,6 +551,9 @@
     vm.getSessionSource = function () {
 
       if (vm.session.id) {
+
+        vm.joinRoom(vm.session.id);
+
         seleniumJWP.getSessionSource().success(function(response) {
           vm.session.source = response.value;
           if(response.value) {

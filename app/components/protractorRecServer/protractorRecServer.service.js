@@ -172,6 +172,10 @@
       return localStorage.getItem('session') ? angular.fromJson(localStorage.getItem('session')) : {};
     };
 
+    this.getSocketRoom = function() {
+      return localStorage.getItem('socketRoom') ? angular.fromJson(localStorage.getItem('socketRoom')) : null;
+    };
+
     this.getSpec = function(id) {
 
       if(id == undefined && $location.path() == '/conf') {
@@ -225,6 +229,10 @@
       }
       localStorage.setItem('session', angular.toJson(session));
       $rootScope.$broadcast('session', session);
+    };
+
+    this.setSocketRoom = function(socketRoom) {
+      localStorage.setItem('socketRoom', socketRoom);
     };
 
     this.getLine = function(action) {

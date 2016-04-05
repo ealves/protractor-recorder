@@ -1,8 +1,11 @@
+if (document.cookie) {
+    var socketRoom = document.cookie.split('=')[1];
+    alert(socketRoom);
+}
 var socket = io('http://localhost:4000');
 socket.emit('onsnippet', 'ip');
 
-var room = 'room1';
-socket.emit('joinroom', room, function(){
+socket.emit('joinroom', socketRoom, function(){
   console.log('joinroom');
   //socket.to(room).emit('test', {foo:'bar'});
 });
@@ -29,9 +32,7 @@ parent.document.body.addEventListener('mousedown', function (event) {
   };
   if(ngRepeats)
     element.ngRepeat = ngRepeats[ngRepeats.length-1];
-  socket.emit('onclick', room, element);
-  //socket.broadcast.to('room1', element);
-  //socket.to('room1').emit('test', 'data');
+  socket.emit('onclick', socketRoom, element);
 });
 parent.document.body.addEventListener('keyup', function (event) {
   socket.emit('onkeyup', event.target.value);

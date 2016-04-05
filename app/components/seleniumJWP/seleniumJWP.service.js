@@ -107,6 +107,14 @@
       });
     };
 
+    this.sessionAddCookie = function(name, value){
+      return $http({
+        method: 'POST',
+        url: this.url + 'session/' + this.session.id + '/cookie',
+        data: {cookie: {name: name, value: value}}
+      });
+    };
+
     this.deleteSession = function(){
       return $http({
         method: 'DELETE',

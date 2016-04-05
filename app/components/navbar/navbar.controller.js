@@ -53,7 +53,7 @@
      * 		 				  SOCKET ON
      *-------------------------------------------------------------------*/
     socket.on('session-disconnect', function (data) {
-
+      $log.debug('session-disconnect');
       protractorRecServer.setSnippet(false);
 
       seleniumJWP.getSessionUrl().success(function(response){
@@ -87,14 +87,14 @@
       }
     });
 
-    vm.joinRoom = function(){
+    vm.joinRoom = function(room){
       $log.debug('connectRoom');
-      socket.emit('joinroom', vm.conf.room);
+      socket.emit('joinroom', room);
     };
 
     vm.leaveRoom = function(room){
       $log.debug('disconnectRoom');
-      socket.emit('leaveroom', vm.conf.room);
+      socket.emit('leaveroom', room);
     };
 
     vm.openConf = function() {
@@ -147,6 +147,7 @@
     };
 
     vm.getSessionSource = function () {
+      $log.debug('getSessionSource');
 
       if (vm.session.id) {
         seleniumJWP.getSessionSource().success(function(response) {
@@ -223,16 +224,25 @@
 
         seleniumJWP.newSession(options).success(function(response){
           $log.debug('Session Created');
+
+          /* SET ACTIVE SESSION */
           seleniumJWP.setSession(response);
 
           vm.session = response;
           vm.session.id = response.sessionId;
+
+          /* SAVE SOCKET ROOM WITH SELENIUM SESSION ID VALUE */
+          protractorRecServer.setSocketRoom(vm.session.id);
+          vm.joinRoom(vm.session.id); // Join to room
+          // Set cookie socketRoom
+          seleniumJWP.sessionAddCookie('socketRoom', vm.session.id);
 
           protractorRecServer.setSession(vm.session);
           protractorRecServer.setRecording(true);
           protractorRecServer.setConf(vm.conf);
 
           vm.setSessionUrl();
+
         }).error(function(response){
           $log.debug(response);
         });
