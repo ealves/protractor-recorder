@@ -122,6 +122,13 @@
       })
     };
 
+    this.isSeleniumRunning = function(){
+      return $http({
+        method: 'GET',
+        url: this.url
+      });
+    };
+
     this.setConfigUrl();
 
   }

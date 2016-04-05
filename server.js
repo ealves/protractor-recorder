@@ -143,21 +143,29 @@ gulp.task('express', function() {
 
     var command = req.params.command;
 
+    var response = null;
+
     exec('webdriver-manager ' + command, function(error, stdout, stderr) {
 
       var stdout = stdout.split('\n');
 
-      var drivers = [{
-        driver: 'firefox'
-      }];
-      stdout.forEach(function(driver) {
-        if (driver.match(/is up to date/i) && driver.match(/chrome|firefox|ie/i))
-          drivers.push({
-            driver: driver.match(/(\w+)/)[0]
-          });
-      });
+      if(command === 'status') {
+        var drivers = [{
+          driver: 'firefox'
+        }];
 
-      res.send(drivers);
+        stdout.forEach(function(driver) {
+          console.log(driver);
+          if (driver.match(/(is up to date|versions availible)/i) && driver.match(/chrome|firefox|ie/i))
+            drivers.push({
+              driver: driver.match(/(\w+)/)[0]
+            });
+        });
+
+        response = drivers;
+      }
+
+      res.send(response);
 
     });
 

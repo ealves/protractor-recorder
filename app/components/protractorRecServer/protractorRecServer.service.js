@@ -111,6 +111,15 @@
       });
     };
 
+    this.startWebdriver = function(){
+      return $http({
+        method: 'GET',
+        url: this.serverUrl + '/webdriver-manager/start'
+      });
+    };
+
+    
+
     this.runProtractor = function() {
       return $http({
         method: 'GET',
