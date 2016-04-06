@@ -113,14 +113,25 @@
 
       if(protractorRecServer.isRecording()) {
 
-        if(data.keyCode.toString().match(/^(1|9|2)(3|7|8)?$/) != null) {
-          vm.addModifierKey(data.keyCode);
-        } else if(angular.isDefined(lastAction)){
+        var target = angular.element(data.element.outerHTML);
 
-          if(lastAction.type === 'input') {
-            lastAction.action = 'sendKeys';
-            lastAction.value = data.value;
-          }
+        $log.debug(target);
+
+        if(data.keyCode.toString().match(/^(1|9|2)(3|7|8)?$/) != null && target[0].tagName != 'INPUT') {
+          vm.addModifierKey(data.keyCode);
+        }
+        else if(angular.isDefined(lastAction) && data.keyCode != 9){
+
+            if(lastAction.type === 'input') {
+              lastAction.action = 'sendKeys';
+              lastAction.value = data.value;
+            }
+        }
+
+        if(target[0].tagName === 'INPUT' && data.keyCode === 9) {
+          vm.setElement(data.element);
+          var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
+          lastAction.action = 'sendKeys';
         }
       }
 

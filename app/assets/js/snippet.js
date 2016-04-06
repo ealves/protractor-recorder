@@ -8,7 +8,7 @@ socket.emit('joinroom', socketRoom, function(){
 
 var x = 0;
 var y = 0;
-parent.document.body.addEventListener('mousedown', function (event) {
+function getElement(event) {
   x = event.clientX;
   y = event.clientY;
   var ngRepeats = [];
@@ -23,10 +23,13 @@ parent.document.body.addEventListener('mousedown', function (event) {
   };
   if(ngRepeats)
     element.ngRepeat = ngRepeats[ngRepeats.length-1];
-  socket.emit('onclick', socketRoom, element);
+  return element;
+}
+parent.document.body.addEventListener('mousedown', function (event) {
+  socket.emit('onclick', socketRoom, getElement(event));
 });
 parent.document.body.addEventListener('keyup', function (event) {
-  socket.emit('onkeyup', socketRoom, {keyCode: event.keyCode, value: event.target.value});
+  socket.emit('onkeyup', socketRoom, {keyCode: event.keyCode, element: getElement(event), value: event.target.value});
 });
 parent.document.body.addEventListener('change', function (event) {
   var xPath = getPathTo(event.target);
