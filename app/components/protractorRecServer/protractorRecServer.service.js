@@ -118,7 +118,7 @@
       });
     };
 
-    
+
 
     this.runProtractor = function() {
       return $http({
@@ -319,6 +319,9 @@
         action.value = action.value.split('x');
         line = "browser.actions().mouseMove(element(by.xpath('" + action.locator.value + "')), {x: " + action.value [0] + ", y: " + action.value[1] + "}).click().perform();";
       }
+
+      if(action.action == 'browser' && action.type == 'modifier')
+        line = "browser.actions().sendKeys(" + action.value + ").perform();";
 
       if(action.type.match(/(mouseDown|mouseMove|mouseUp)/)) {
 

@@ -109,10 +109,19 @@
       $log.debug('onkeyup');
       $log.debug(data);
 
+      var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
+
       if(protractorRecServer.isRecording()) {
-        var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
-        lastAction.action = 'sendKeys';
-        lastAction.value = data;
+
+        if(data.keyCode.toString().match(/^(1|9|2)(3|7|8)?$/) != null) {
+          vm.addModifierKey(data.keyCode);
+        } else if(angular.isDefined(lastAction)){
+
+          if(lastAction.type === 'input') {
+            lastAction.action = 'sendKeys';
+            lastAction.value = data.value;
+          }
+        }
       }
 
     });
@@ -189,6 +198,7 @@
       }
     };
 
+    // TODO: Refactor
     vm.setElement = function (element) {
 
       if(protractorRecServer.isRecording()) {
@@ -234,6 +244,7 @@
       }
     };
 
+    // TODO: Refactor
     vm.addElement = function (element, type, actionType, value, xPath, repeater) {
 
       var locators = [];
@@ -306,6 +317,39 @@
 
       //vm.getSessionUrl();
 
+    };
+
+    vm.addModifierKey = function(keyCode) {
+
+      var key;
+
+      switch (keyCode) {
+        case 9:
+          key = 'TAB';
+          break;
+        case 13:
+          key = 'ENTER';
+          break;
+        case 17:
+          key = 'CONTROL';
+          break;
+        case 18:
+          key = 'ALT';
+          break;
+        case 27:
+          key = 'ESCAPE';
+          break;
+        default:
+
+      }
+
+      var action = {
+        type: 'modifier',
+        value: 'protractor.Key.' + key,
+        action: 'browser'
+      };
+
+      vm.spec.actions.push(action);
     };
 
     /**

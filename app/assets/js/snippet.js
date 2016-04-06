@@ -26,7 +26,7 @@ parent.document.body.addEventListener('mousedown', function (event) {
   socket.emit('onclick', socketRoom, element);
 });
 parent.document.body.addEventListener('keyup', function (event) {
-  socket.emit('onkeyup', socketRoom, event.target.value);
+  socket.emit('onkeyup', socketRoom, {keyCode: event.keyCode, value: event.target.value});
 });
 parent.document.body.addEventListener('change', function (event) {
   var xPath = getPathTo(event.target);
