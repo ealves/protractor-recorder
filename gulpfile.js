@@ -17,7 +17,7 @@ function notifyLiveReload(event) {
 
 gulp.task('watch', function(){
   gulp.watch('app/*.html', notifyLiveReload);
-  gulp.watch('assets/js/*.js', notifyLiveReload);
+  gulp.watch('app/**/*.js', notifyLiveReload);
   gulp.watch('assets/css/*.css', notifyLiveReload);
 });
 

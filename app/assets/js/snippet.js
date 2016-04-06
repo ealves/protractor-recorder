@@ -1,10 +1,7 @@
 var protractorServer = localStorage.getItem('protractorServer');
 var socket = io(protractorServer);
 var socketRoom = localStorage.getItem('socketRoom');
-socket.emit('joinroom', socketRoom, function(){
-  console.log('joinroom');
-  //socket.to(room).emit('test', {foo:'bar'});
-});
+socket.emit('joinroom', socketRoom);
 
 var x = 0;
 var y = 0;
