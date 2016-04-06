@@ -11,15 +11,16 @@ gulp.task('express', function() {
     request = require('request'),
     exec = require('child_process').exec,
     port = 4000,
-    exportsDirectory = __dirname + '/exports';
+    exportsDirectory = __dirname + '/exports',
     specFile = exportsDirectory + '/spec.js',
     confFile = exportsDirectory + '/conf.js',
+    rooms = [];
 
-  app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
+    app.use(function(req, res, next) {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+    });
 
   app.use(bodyParser.json()); // support json encoded bodies
   app.use(bodyParser.urlencoded({
@@ -40,14 +41,20 @@ gulp.task('express', function() {
     //console.log(socket);
 
     socket.on('joinroom', function(room) {
+
+      console.log(socket.id);
       console.log('joinroom: ' + room);
-        socket.join(room);
-        io.emit('joined_channel', room);
+      socket.join(room);
+
+      rooms.push({id: room, sockets: [socket.id]});
+
+      io.to(room).emit('joined_channel', room);
+
     });
 
     socket.on('leaveroom', function(room) {
-       console.log('leaveroom: ' + room);
-        socket.leave(room);
+      console.log('leaveroom: ' + room);
+      socket.leave(room);
     });
 
     console.log('a user connected');
@@ -109,10 +116,17 @@ gulp.task('express', function() {
 
     });
 
-    socket.on('disconnect', function(room) {
+    socket.on('disconnect', function() {
       console.log('user disconnected');
+      console.log(socket.id);
 
-      io.to(room).emit('session-disconnect', 'session');
+      rooms.forEach(function(room){
+        console.log(room.id);
+        if(room.sockets.indexOf(socket.id) != -1) {
+          io.to(room.id).emit('session-disconnect', 'session');
+        }
+      });
+
     });
 
     socket.on('execute', function(room, data) {
@@ -149,13 +163,13 @@ gulp.task('express', function() {
 
       var stdout = stdout.split('\n');
 
-      if(command === 'status') {
+      if (command === 'status') {
         var drivers = [{
           driver: 'firefox'
         }];
 
         stdout.forEach(function(driver) {
-          console.log(driver);
+          //console.log(driver);
           if (driver.match(/(is up to date|versions availible)/i) && driver.match(/chrome|firefox|ie/i))
             drivers.push({
               driver: driver.match(/(\w+)/)[0]

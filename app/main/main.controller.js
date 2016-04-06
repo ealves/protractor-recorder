@@ -118,10 +118,23 @@
 
         if (keyCodeArray.indexOf(data.keyCode) != -1) {
 
-          if (target[0].tagName === 'INPUT' && data.keyCode === 9) {
-            vm.setElement(data.element);
-            var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
-            lastAction.action = 'sendKeys';
+          if (target[0].tagName === 'INPUT') {
+
+            if(data.keyCode === 9) {
+              vm.setElement(data.element);
+              var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
+              lastAction.action = 'sendKeys';
+            } else if(data.keyCode === 16 && angular.isDefined(lastAction)) {
+
+              if (lastAction.type === 'input') {
+                lastAction.action = 'sendKeys';
+                lastAction.value = data.value;
+              }
+
+            } else {
+              vm.addModifierKey(data.keyCode);
+            }
+
           } else {
             vm.addModifierKey(data.keyCode);
           }
