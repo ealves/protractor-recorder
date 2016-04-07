@@ -38,65 +38,7 @@
             </md-button>
           </div>
         </div>
-        <div layout="row" layout-align="center start" flex>
-          <md-whiteframe layout-margin layout="column" flex class="md-whiteframe-1dp">
-
-            <table class="table table-hover table-mc-light-blue ng-scope">
-              <thead>
-              <tr>
-                <th>
-                  <md-checkbox ng-click="main.toggleAll();$event.stopPropagation()" ng-model="main.selectAll" aria-label="Checkbox 1">
-                  </md-checkbox>
-                </th>
-                <th>Action</th>
-                <th>Type</th>
-                <th>Locators</th>
-                <th>Value</th>
-                <th></th>
-              </tr>
-              </thead>
-              <tbody sv-root sv-part="main.spec.actions">
-              <tr sv-element="opts"
-                  ng-repeat="action in main.spec.actions track by $index" ng-class="{'executed': action.executed, 'error': action.error}" ng-click="main.actionDialog($event, $index, action)">
-                <td>
-                  <md-checkbox ng-click="main.toggleAction(action);$event.stopPropagation()" ng-model="action.checked" aria-label="Checkbox $index"></md-checkbox>
-                </td>
-                <td><md-icon ng-if="action.breakpoint" style="color:#9b1b1d" md-svg-icon="record"></md-icon><b>{{ action.action }}</b></td>
-                <td>{{ action.type }}</td>
-                <td style="word-break: break-all;">
-                  {{ action.locator.value }}
-                </td>
-                <td>
-                  {{ action.value }}
-                </td>
-                <td style="text-align: right;">
-                  <md-menu md-position-mode="target-right target">
-                    <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                      <md-icon md-menu-origin md-svg-icon="more_horiz"></md-icon>
-                    </md-button>
-                    <md-menu-content width="2">
-                      <md-menu-item>
-                        <md-button ng-click="main.runFromHere($index)"><span md-menu-align-target>Run from here</span></md-button>
-                      </md-menu-item>
-                      <md-menu-item>
-                        <md-button ng-click="main.toggleBreakPoint($index)"><span md-menu-align-target>{{ action.breakpoint ? 'Remove' : 'Add' }} breakpoint</span></md-button>
-                      </md-menu-item>
-                      <md-menu-item>
-                        <md-button ng-click="main.addBrowserSleep($index)"><span md-menu-align-target>Force wait</span></md-button>
-                      </md-menu-item>
-                      <md-menu-item>
-                        <md-button ng-click="main.duplicateActions($index)"><span md-menu-align-target>Duplicate</span></md-button>
-                      </md-menu-item>
-                      <md-menu-item>
-                        <md-button ng-click="main.removeActions($index)"><span md-menu-align-target>Remove</span></md-button>
-                      </md-menu-item>
-                    </md-menu-content>
-                  </md-menu>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </md-whiteframe>
+        <div layout="row" layout-align="center start" flex ng-include src="'main/table.html'">
         </div>
       </md-content>
     </div>

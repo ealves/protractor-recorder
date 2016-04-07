@@ -16,9 +16,9 @@ function notifyLiveReload(event) {
 }
 
 gulp.task('watch', function(){
-  gulp.watch('app/*.html', notifyLiveReload);
+  gulp.watch('app/**/*.html', notifyLiveReload);
   gulp.watch('app/**/*.js', notifyLiveReload);
-  gulp.watch('assets/css/*.css', notifyLiveReload);
+  gulp.watch('app/assets/css/*.css', notifyLiveReload);
 });
 
 var tinylr;
