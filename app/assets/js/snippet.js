@@ -42,13 +42,13 @@ parent.document.body.addEventListener('change', function (event) {
 parent.document.body.addEventListener('mouseup', function (event) {
   console.log('mouseup');
   if (parent.window.getSelection && parent.window.getSelection.toString() != '') {
-    if(parent.window.getSelection().toString().length) {
+    if(parent.window.getSelection().toString().length && event.target.tagName != "INPUT") {
       socket.emit('onassertion', socketRoom, parent.window.getSelection().toString());
       parent.document.getSelection().removeAllRanges();
       parent.window.getSelection().removeAllRanges();
     }
   } else if (parent.document.selection && parent.document.selection.createRange().text != '') {
-    if(parent.document.selection.createRange().text.length) {
+    if(parent.document.selection.createRange().text.length && event.target.tagName != "INPUT") {
       socket.emit('onassertion', socketRoom, parent.document.selection.createRange().text);
       parent.document.getSelection().removeAllRanges();
       parent.window.getSelection().removeAllRanges();

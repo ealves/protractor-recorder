@@ -129,6 +129,13 @@
       });
     };
 
+    this.sessionWindowMaximize = function(){
+      return $http({
+        method: 'POST',
+        url: this.url + 'session/' + this.session.id + '/window/maximize'
+      });
+    }
+
     this.setConfigUrl();
 
   }

@@ -120,11 +120,11 @@
 
           if (target[0].tagName === 'INPUT') {
 
-            if(data.keyCode === 9) {
+            if (data.keyCode === 9) {
               vm.setElement(data.element);
               var lastAction = vm.spec.actions[vm.spec.actions.length - 1];
               lastAction.action = 'sendKeys';
-            } else if(data.keyCode === 16 && angular.isDefined(lastAction)) {
+            } else if (data.keyCode === 16 && angular.isDefined(lastAction)) {
 
               if (lastAction.type === 'input') {
                 lastAction.action = 'sendKeys';
@@ -139,7 +139,7 @@
             vm.addModifierKey(data.keyCode);
           }
 
-        } else if(angular.isDefined(lastAction)) {
+        } else if (angular.isDefined(lastAction)) {
 
           if (lastAction.type === 'input') {
             lastAction.action = 'sendKeys';
@@ -471,8 +471,27 @@
         protractorRecServer.setRecording(false);
 
       vm.index = index;
-      var element = vm.getElementAction(vm.spec.actions[index]);
-      vm.getSessionElementId(element);
+
+      var time = vm.conf.runSpeed ? vm.conf.runSpeed : 0;
+      var line = vm.spec.actions[index];
+
+      if (typeof line.value === 'number' && line.action == 'wait' || line.type == 'sleep') {
+
+        $timeout(function() {
+          line.executed = true;
+          vm.runFromHere(vm.index + 1);
+        }, line.value);
+
+      } else if (line.type == 'row') {
+
+        vm.runFromHere(vm.index + 1);
+
+      } else {
+
+        var element = vm.getElementAction(vm.spec.actions[index]);
+        vm.getSessionElementId(element);
+
+      }
 
     };
 
@@ -810,6 +829,12 @@
 
       seleniumJWP.findSessionElements(element).success(function(response) {
 
+        $log.debug('findSessionElements');
+        $log.debug(response);
+
+        // IF ELEMENT WAS NOT FOUND EXECUTE SAME ACTION AGAIN
+        if(response.value.length == 0) vm.runFromHere(vm.index);
+
         angular.forEach(response.value, function(value, index) {
 
           var length = response.value.length;
@@ -820,6 +845,7 @@
 
           seleniumJWP.getSessionElementDisplayed(elementId).success(function(response) {
 
+            $log.debug('getSessionElementDisplayed');
             $log.debug(response);
 
             if (response.value) {
@@ -827,7 +853,15 @@
               if (length > 1)
                 element.index = indexValue;
 
-              vm.sessionElementExecute(elementId, element);
+              if (element.action === 'wait') {
+                vm.spec.actions[vm.index].executed = true;
+                $timeout(function(){
+                  vm.runFromHere(vm.index + 1);
+                }, 1000);
+
+              } else {
+                vm.sessionElementExecute(elementId, element);
+              }
             }
 
           }).error(function(response) {
@@ -879,7 +913,7 @@
 
       }
 
-      if (action.action == 'click') {
+      if (action.action == 'click' || action.action == 'wait') {
 
         // Priority to use locator xpath
         var locator = $filter('filter')(action.locators, {
@@ -890,7 +924,7 @@
 
           element.using = locator.strategy;
           element.value = locator.value;
-          element.action = 'click';
+          element.action = action.action;
 
         } else {
 
@@ -900,7 +934,7 @@
 
               element.using = locator.strategy;
               element.value = locator.value;
-              element.action = 'click';
+              element.action = action.action;
             }
           });
 
@@ -939,7 +973,7 @@
 
         if (vm.spec.actions[vm.index + 1]) {
 
-          if (vm.spec.actions[vm.index + 1].action == 'wait' || vm.spec.actions[vm.index + 1].type == 'sleep') {
+          if (typeof vm.spec.actions[vm.index + 1].value === 'number' && vm.spec.actions[vm.index + 1].action == 'wait' || vm.spec.actions[vm.index + 1].type == 'sleep') {
 
             $timeout(function() {
               vm.spec.actions[vm.index + 1].executed = true;

@@ -253,13 +253,15 @@
           vm.session = response;
           vm.session.id = response.sessionId;
 
-
-
           protractorRecServer.setSession(vm.session);
           protractorRecServer.setRecording(true);
           protractorRecServer.setConf(vm.conf);
 
           vm.setSessionUrl();
+
+          if(vm.conf.maximize) {
+            seleniumJWP.sessionWindowMaximize();
+          }
 
         }).error(function(response) {
           $log.debug(response);
