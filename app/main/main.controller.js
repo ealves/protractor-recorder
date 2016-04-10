@@ -833,7 +833,18 @@
         $log.debug(response);
 
         // IF ELEMENT WAS NOT FOUND EXECUTE SAME ACTION AGAIN
-        if(response.value.length == 0) vm.runFromHere(vm.index);
+        if (response.value.length == 0) {
+
+          // Increase counter
+          vm.spec.actions[vm.index].runningCount = vm.spec.actions[vm.index].runningCount ? vm.spec.actions[vm.index].runningCount++ : 1;
+
+          // Execute time is less than 30, try running again or stop with error
+          if (vm.spec.actions[vm.index].runningCount < 30) {
+            vm.runFromHere(vm.index);
+          } else {
+            vm.spec.actions[vm.index].error = true;
+          }
+        }
 
         angular.forEach(response.value, function(value, index) {
 
@@ -855,7 +866,7 @@
 
               if (element.action === 'wait') {
                 vm.spec.actions[vm.index].executed = true;
-                $timeout(function(){
+                $timeout(function() {
                   vm.runFromHere(vm.index + 1);
                 }, 1000);
 
