@@ -10,7 +10,7 @@ gulp.task('express', function() {
     fs = require('fs'),
     request = require('request'),
     exec = require('child_process').exec,
-    port = 4000,
+    port = 3000,
     exportsDirectory = __dirname + '/exports',
     specFile = exportsDirectory + '/spec.js',
     confFile = exportsDirectory + '/conf.js',
