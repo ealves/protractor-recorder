@@ -1,43 +1,44 @@
 <div class="layout-column flex">
   <div flex layout="row">
     <div flex layout-padding layout="column">
-      <md-content class="flex layout-column">
-        <div ng-if="!main.showConf" layout="row">
-          <div layout="row" flex ng-if="!main.showSelectedOptions">
-            <h2>{{ main.spec.string }}</h2>
-            <span flex></span>
-            <md-button id="add-spec" aria-label="Add action" ng-click="main.actionDialog()">
-              <md-icon md-svg-icon="add"></md-icon>
-            </md-button>
+      <div ng-if="!main.showConf">
+        <div layout="row" flex ng-if="!main.showSelectedOptions">
+          <h2>{{ main.spec.string }}</h2>
+          <span flex></span>
+          <md-button id="add-spec" aria-label="Add action" ng-click="main.actionDialog()">
+            <md-icon md-svg-icon="add"></md-icon>
+          </md-button>
 
-            <md-menu md-position-mode="target-right target">
-              <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                <md-icon md-menu-origin md-svg-icon="more_horiz"></md-icon>
-              </md-button>
-              <md-menu-content width="2">
-                <md-menu-item>
-                  <md-button ng-click="main.specDialog(main.spec)"><span md-menu-align-target>Edit Spec</span></md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="main.duplicateSpec($index)"><span md-menu-align-target>Duplicate</span></md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="main.removeSpec($index)"><span md-menu-align-target>Remove</span></md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="main.clearRunTestResult()"><span md-menu-align-target>Clear Results</span></md-button>
-                </md-menu-item>
-              </md-menu-content>
-            </md-menu>
-          </div>
-          <div ng-if="main.showSelectedOptions" layout="row" flex>
-            <h4>{{ main.selectedItems }} {{ main.selectedItems == 1 ? 'item' : 'items' }} selected</h4>
-            <span flex></span>
-            <md-button aria-label="Remove Actions" ng-click="main.removeActions()">
-              <md-icon md-svg-icon="delete"></md-icon>
+          <md-menu md-position-mode="target-right target" style="line-height: 50px;">
+            <md-button aria-label="Open demo menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+              <md-icon md-menu-origin md-svg-icon="more_horiz"></md-icon>
             </md-button>
-          </div>
+            <md-menu-content width="2">
+              <md-menu-item>
+                <md-button ng-click="main.specDialog(main.spec)"><span md-menu-align-target>Edit Spec</span></md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-click="main.duplicateSpec($index)"><span md-menu-align-target>Duplicate</span></md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-click="main.removeSpec($index)"><span md-menu-align-target>Remove</span></md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-click="main.clearRunTestResult()"><span md-menu-align-target>Clear Results</span></md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
         </div>
+        <div ng-if="main.showSelectedOptions" layout="row" flex>
+          <h4>{{ main.selectedItems }} {{ main.selectedItems == 1 ? 'item' : 'items' }} selected</h4>
+          <span flex></span>
+          <md-button aria-label="Remove Actions" ng-click="main.removeActions()">
+            <md-icon md-svg-icon="delete"></md-icon>
+          </md-button>
+        </div>
+      </div>
+      <md-content class="flex layout-column">
+
         <div layout="row" layout-align="center start" flex ng-include src="'main/table.html'">
         </div>
       </md-content>
