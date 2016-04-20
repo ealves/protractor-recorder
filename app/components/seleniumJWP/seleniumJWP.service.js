@@ -115,6 +115,14 @@
       });
     };
 
+    this.sessionAddLocalStorage = function(name, value){
+      return $http({
+        method: 'POST',
+        url: this.url + 'session/' + this.session.id + '/local_storage',
+        data: {key: name, value: value}
+      });
+    };
+
     this.deleteSession = function(){
       return $http({
         method: 'DELETE',

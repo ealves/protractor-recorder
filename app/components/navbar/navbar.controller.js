@@ -257,6 +257,12 @@
           protractorRecServer.setRecording(true);
           protractorRecServer.setConf(vm.conf);
 
+          seleniumJWP.sessionAddLocalStorage('protractorServer', protractorRecServer.serverUrl).success(function(response){
+            $log.debug(response);
+          }).error(function(response){
+            $log.debug(response);
+          });
+
           vm.setSessionUrl();
 
           if(vm.conf.maximize) {
@@ -306,7 +312,9 @@
 
     vm.sessionExecute = function() {
 
-      protractorRecServer.snippet += 'localStorage.setItem("socketRoom", "' + vm.session.id + '");';
+      seleniumJWP.sessionAddLocalStorage('socketRoom', vm.session.id).success(function() {
+        $log.debug('sessionAddLocalStorage');
+      });
 
       seleniumJWP.sessionExecute(protractorRecServer.snippet).success(function() {
         $log.debug('Session Executed');

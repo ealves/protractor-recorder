@@ -22,8 +22,7 @@
     /**
      * Javascript snippet to inject on session
      */
-    this.snippet = 'localStorage.setItem("protractorServer", "' + this.serverUrl + '");' +
-      'if(!document.getElementById("recorder-iframe")){' +
+    this.snippet = 'if(!document.getElementById("recorder-iframe")){' +
         'var b=document.getElementsByTagName("body")[0];' +
         'var i = document.createElement("iframe");' +
         'i.onload = function(){' +
@@ -117,8 +116,6 @@
         url: this.serverUrl + '/webdriver-manager/start'
       });
     };
-
-
 
     this.runProtractor = function() {
       return $http({
