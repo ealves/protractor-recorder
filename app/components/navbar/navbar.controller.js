@@ -442,15 +442,18 @@
       });
 
       vm.spec = protractorRecServer.getSpec($routeParams.id);
+
       /* Get line to export actions in spec.js */
       vm.spec.lines = [];
 
-      if ($filter('filter')(vm.spec.actions, {
+      var actions = vm.describes[0].specs[0].actions;
+
+      if ($filter('filter')(actions, {
           action: 'wait'
         }).length != 0)
-        vm.spec.lines.push('    var EC = protractor.ExpectedConditions;');
+        vm.spec.lines.push('var EC = protractor.ExpectedConditions;');
 
-      angular.forEach(vm.spec.actions, function(action) {
+      angular.forEach(actions, function(action) {
 
         if (action.breakpoint) {
           vm.spec.lines.push('browser.pause();');
@@ -460,7 +463,7 @@
 
       });
 
-      vm.describes[0].specs[0] = vm.spec;
+      vm.describes[0].specs[0].lines = vm.spec.lines;
 
       var data = {
         baseUrl: vm.conf.baseUrl,

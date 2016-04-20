@@ -273,10 +273,13 @@ gulp.task('express', function() {
     var output = "describe('" + describe[0].string + "', function(){\r\n\r\n";
 
     describe[0].specs.forEach(function(spec) {
+
       output += "  it('" + spec.string + "', function(){\r\n\r\n";
 
       if (spec.lines) {
         spec.lines.forEach(function(line, index) {
+
+          //console.log(line);
 
           if (line.slice(-1) == ';') {
             if (index == 0)
