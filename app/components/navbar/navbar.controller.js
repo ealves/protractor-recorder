@@ -179,6 +179,13 @@
     vm.setSessionUrl = function() {
       seleniumJWP.setSessionUrl(vm.conf.baseUrl).success(function() {
         $log.debug('setSessionUrl');
+
+        seleniumJWP.sessionAddLocalStorage('protractorServer', protractorRecServer.serverUrl).success(function(response){
+          $log.debug(response);
+        }).error(function(response){
+          $log.debug(response);
+        });
+        
         vm.getSessionUrl();
         vm.getSessionSource();
       }).error(function(response) {
@@ -257,11 +264,7 @@
           protractorRecServer.setRecording(true);
           protractorRecServer.setConf(vm.conf);
 
-          seleniumJWP.sessionAddLocalStorage('protractorServer', protractorRecServer.serverUrl).success(function(response){
-            $log.debug(response);
-          }).error(function(response){
-            $log.debug(response);
-          });
+
 
           vm.setSessionUrl();
 

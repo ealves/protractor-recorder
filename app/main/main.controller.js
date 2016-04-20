@@ -385,8 +385,10 @@
 
       vm.spec.actions.push(action);
 
-      var mainContent = angular.element($document[0].querySelector('#main'));
-      mainContent[0].scrollTop = mainContent[0].scrollHeight;
+      $timeout(function(){
+        var mainContent = angular.element($document[0].querySelector('#table'));
+        mainContent[0].scrollTop = mainContent[0].scrollHeight;
+      });
 
       vm.getSessionUrl();
 
