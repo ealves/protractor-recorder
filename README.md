@@ -81,7 +81,7 @@ $ gulp
 
 ## Usage
 
-- Access http://localhost:3000/app
+- Access http://localhost:3002/app
 - Enter a url base and click on 'Record' to start recording
 - After end up your test flow on Selenium browser's session, click on 'Export' to export conf.js and spec.js inside folder public/exports.
 - Click on 'Run' to see your test running with a new Selenium session.
