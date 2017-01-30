@@ -16,12 +16,17 @@
      * 		 				 	ATTRIBUTES
      *-------------------------------------------------------------------*/
 
+    /* Base options for new spec */
+    vm.blankSpec = {
+      string: '',
+      actions: []
+    };
+
     vm.conf = protractorRecServer.getConf();
     vm.describes = protractorRecServer.getDescribes();
     vm.session = protractorRecServer.getSession();
 
-    vm.spec = {};
-    vm.spec.actions = [];
+    vm.spec = angular.copy(vm.blankSpec);
 
     vm.showSelectedOptions = false;
     vm.index = false;
@@ -36,24 +41,63 @@
 
     vm.selectedItems = 0;
 
-    if ($routeParams.id) {
 
-      $rootScope.$broadcast('navbar:title', 'Spec ' + $routeParams.id);
+    init();
 
-      vm.spec = protractorRecServer.getSpec($routeParams.id);
-    } else {
-      vm.spec = protractorRecServer.getSpec();
-    }
-
-    /* Base options for new spec */
-    vm.blankSpec = {
-      string: '',
-      actions: []
-    };
 
     vm.hidden = false;
     vm.isOpen = false;
     vm.hover = false;
+
+    vm.joinRoom = joinRoom;
+    vm.setCapabilities = setCapabilities;
+    vm.newDescribe = newDescribe;
+    vm.setSpec = setSpec;
+    vm.addSpec = addSpec;
+    vm.setDescribe = setDescribe;
+    vm.setElementOnChange = setElementOnChange;
+    vm.setElement = setElement;
+    vm.addElement = addElement;
+    vm.addModifierKey = addModifierKey;
+    vm.getAllDataBind = getAllDataBind;
+    vm.removeSpec = removeSpec;
+    vm.runFromHere = runFromHere;
+    vm.setActionLocator = setActionLocator;
+    vm.getAttr = getAttr;
+    vm.createSession = createSession;
+    vm.setSessionUrl = setSessionUrl;
+    vm.getSessionUrl = getSessionUrl;
+    vm.toggleAll = toggleAll;
+    vm.toggleAction = toggleAction;
+    vm.removeActions = removeActions;
+    vm.duplicateActions = duplicateActions;
+    vm.toggleBreakPoint = toggleBreakPoint;
+    vm.addBrowserSleep = addBrowserSleep;
+    vm.sessionExecute = sessionExecute;
+    vm.clearSession = clearSession;
+    vm.deleteSession = deleteSession;
+    vm.getNgIncludes = getNgIncludes;
+    vm.verifySnippet = verifySnippet;
+    vm.getSessionSource = getSessionSource;
+    vm.specDialog = specDialog;
+    vm.getSessionElementId = getSessionElementId;
+    vm.getElementAction = getElementAction;
+    vm.socketElementExecute = socketElementExecute;
+    vm.sessionElementExecute = sessionElementExecute;
+    vm.clearRunTestResult = clearRunTestResult;
+    vm.actionDialog = actionDialog;
+
+    function init() {
+      setSpec((function() {
+        if ($routeParams.id) {
+          $rootScope.$broadcast('navbar:title', 'Spec ' + $routeParams.id);
+
+          return protractorRecServer.getSpec($routeParams.id);
+        } else {
+          return protractorRecServer.getSpec();
+        }
+      })());
+    }
 
     // On opening, add a delayed property which shows tooltips after the speed dial has opened
     // so that they have the proper position; if closing, immediately hide the tooltips
@@ -179,12 +223,61 @@
       }
     });
 
-    vm.joinRoom = function(room) {
+    $scope.$watch('main.conf', function() {
+      $log.debug('watch conf');
+      localStorage.setItem('conf', angular.toJson(vm.conf));
+    }, true);
+
+    $scope.$watch('main.describe', function() {
+      $log.debug('watch describe');
+      localStorage.setItem('describes', angular.toJson(vm.describes));
+
+    }, true);
+
+    $scope.$watchCollection('main.describes', function() {
+      $log.debug('watch describes');
+      localStorage.setItem('describes', angular.toJson(vm.describes));
+    }, true);
+
+    $scope.$watch('main.spec', function() {
+      $log.debug('watch spec');
+
+      if ($routeParams.id) {
+        var id = parseInt($routeParams.id);
+        vm.describes[0].specs[id - 1] = vm.spec;
+        localStorage.setItem('describes', angular.toJson(vm.describes));
+
+
+
+      } else {
+        vm.conf.spec = vm.spec;
+        localStorage.setItem('conf', angular.toJson(vm.conf));
+      }
+
+      vm.selectedItems = $filter('filter')(vm.spec.actions, {
+        checked: true
+      }).length;
+
+      if (vm.selectedItems) {
+        vm.showSelectedOptions = true
+      } else {
+        vm.showSelectedOptions = false;
+      }
+    }, true);
+
+
+    $scope.$watch('main.session', function() {
+      $log.debug('watch session');
+      localStorage.setItem('session', angular.toJson(vm.session));
+    }, true);
+
+
+    function joinRoom(room) {
       $log.debug('connectRoom');
       socket.emit('joinroom', room);
     };
 
-    vm.setCapabilities = function(capability) {
+    function setCapabilities(capability) {
       if (capability.checked) {
         vm.conf.capabilities.push(capability.driver);
       } else {
@@ -193,23 +286,27 @@
       }
     };
 
-    vm.newDescribe = function() {
+    // TODO
+    function newDescribe() {
       $log.debug('newDescribe');
-
     };
 
-    vm.addSpec = function() {
+    function setSpec(spec) {
+      vm.spec = spec;
+    }
+
+    function addSpec() {
       $log.debug('addSpec');
 
       vm.describe.specs.push(angular.copy(vm.blankSpec));
       vm.setSpec(vm.describe.specs[vm.describe.specs.length - 1]);
-    };
+    }
 
-    vm.setDescribe = function(describe) {
+    function setDescribe(describe) {
       vm.describe = describe;
-    };
+    }
 
-    vm.setElementOnChange = function(element) {
+    function setElementOnChange(element) {
 
       if (protractorRecServer.isRecording()) {
 
@@ -223,7 +320,7 @@
     };
 
     // TODO: Refactor
-    vm.setElement = function(element) {
+    function setElement(element) {
 
       if (protractorRecServer.isRecording()) {
         var target = angular.element(element.outerHTML);
@@ -273,7 +370,7 @@
     };
 
     // TODO: Refactor
-    vm.addElement = function(element, type, actionType, value, xPath, repeater) {
+    function addElement(element, type, actionType, value, xPath, repeater) {
 
       var locators = [];
 
@@ -398,7 +495,7 @@
 
     };
 
-    vm.addModifierKey = function(keyCode) {
+    function addModifierKey(keyCode) {
 
       var key;
 
@@ -437,7 +534,7 @@
     /**
      * Get all data bind to suggest on assertions
      */
-    vm.getAllDataBind = function() {
+    function getAllDataBind() {
 
       $log.debug('getAllDataBind');
 
@@ -463,11 +560,11 @@
 
     };
 
-    vm.removeSpec = function(index) {
+    function removeSpec(index) {
       vm.describe.specs.splice(index, 1);
     };
 
-    vm.runFromHere = function(index) {
+    function runFromHere(index) {
 
       if (protractorRecServer.isRecording())
         protractorRecServer.setRecording(false);
@@ -497,17 +594,18 @@
 
     };
 
-    vm.setActionLocator = function(action) {
+    // TODO
+    function setActionLocator(action) {
       $log.debug(action);
     };
 
-    vm.getAttr = function(attr, elem) {
+    function getAttr(attr, elem) {
       if (elem.attr(attr))
         return elem.attr(attr);
       return false;
     };
 
-    vm.createSession = function() {
+    function createSession() {
 
       if (!vm.session.id) {
 
@@ -534,7 +632,7 @@
       }
     };
 
-    vm.setSessionUrl = function() {
+    function setSessionUrl() {
       seleniumJWP.setSessionUrl(vm.conf.baseUrl).success(function() {
         $log.debug('setSessionUrl');
         vm.getSessionUrl();
@@ -544,7 +642,7 @@
       });
     };
 
-    vm.getSessionUrl = function() {
+    function getSessionUrl() {
       seleniumJWP.getSessionUrl().success(function(response) {
         $log.debug('getSessionUrl');
         vm.session.url = response.value;
@@ -553,55 +651,7 @@
       });
     };
 
-    $scope.$watch('main.conf', function() {
-      $log.debug('watch conf');
-      localStorage.setItem('conf', angular.toJson(vm.conf));
-    }, true);
-
-    $scope.$watch('main.describe', function() {
-      $log.debug('watch describe');
-      localStorage.setItem('describes', angular.toJson(vm.describes));
-
-    }, true);
-
-    $scope.$watchCollection('main.describes', function() {
-      $log.debug('watch describes');
-      localStorage.setItem('describes', angular.toJson(vm.describes));
-    }, true);
-
-    $scope.$watch('main.spec', function() {
-      $log.debug('watch spec');
-
-      if ($routeParams.id) {
-        var id = parseInt($routeParams.id);
-        vm.describes[0].specs[id - 1] = vm.spec;
-        localStorage.setItem('describes', angular.toJson(vm.describes));
-
-
-
-      } else {
-        vm.conf.spec = vm.spec;
-        localStorage.setItem('conf', angular.toJson(vm.conf));
-      }
-
-      vm.selectedItems = $filter('filter')(vm.spec.actions, {
-        checked: true
-      }).length;
-
-      if (vm.selectedItems) {
-        vm.showSelectedOptions = true
-      } else {
-        vm.showSelectedOptions = false;
-      }
-    }, true);
-
-
-    $scope.$watch('main.session', function() {
-      $log.debug('watch session');
-      localStorage.setItem('session', angular.toJson(vm.session));
-    }, true);
-
-    vm.toggleAll = function() {
+    function toggleAll() {
 
       angular.forEach(vm.spec.actions, function(action) {
 
@@ -614,13 +664,13 @@
 
     };
 
-    vm.toggleAction = function(action) {
+    function toggleAction(action) {
       if (!action.checked) {
         //vm.showSelectedOptions = true;
       }
     };
 
-    vm.removeActions = function(index) {
+    function removeActions(index) {
 
       if (index != undefined) {
         vm.spec.actions.splice(index, 1);
@@ -635,7 +685,7 @@
       }
     };
 
-    vm.duplicateActions = function(index) {
+    function duplicateActions(index) {
 
       if (index != undefined) {
         var newAction = angular.copy(vm.spec.actions[index]);
@@ -643,14 +693,14 @@
       }
     };
 
-    vm.toggleBreakPoint = function(index) {
+    function toggleBreakPoint(index) {
       if (vm.spec.actions[index].breakpoint == undefined)
         vm.spec.actions[index].breakpoint = true;
       else
         vm.spec.actions[index].breakpoint = !vm.spec.actions[index].breakpoint;
     };
 
-    vm.addBrowserSleep = function(index) {
+    function addBrowserSleep(index) {
       var action = {
         action: 'browser',
         type: 'sleep',
@@ -659,7 +709,7 @@
       vm.spec.actions.splice(index, 0, action);
     };
 
-    vm.sessionExecute = function() {
+    function sessionExecute() {
 
       seleniumJWP.sessionExecute(protractorRecServer.snippet).success(function() {
         $log.debug('Session Executed');
@@ -685,7 +735,7 @@
 
     };
 
-    vm.clearSession = function() {
+    function clearSession() {
       vm.session = {};
       seleniumJWP.setSession();
       protractorRecServer.setSession();
@@ -693,7 +743,7 @@
       protractorRecServer.setRecording(false);
     };
 
-    vm.deleteSession = function() {
+    function deleteSession() {
       seleniumJWP.deleteSession().success(function() {
         $log.debug('Session Deleted');
         vm.clearSession();
@@ -703,7 +753,7 @@
       });
     };
 
-    vm.getSessionSource = function() {
+    function getSessionSource() {
 
       if (vm.session.id) {
 
@@ -729,7 +779,7 @@
     /**
      * Get all html from ng-includes and concatenate with main source
      */
-    vm.getNgIncludes = function() {
+    function getNgIncludes() {
 
       $log.debug('getNgIncludes');
 
@@ -759,7 +809,7 @@
       });
     };
 
-    vm.verifySnippet = function() {
+    function verifySnippet() {
 
       var countIframe = vm.session.source.match(/recorder-iframe/);
       countIframe != null ? countIframe.length : countIframe = 0;
@@ -791,7 +841,7 @@
       };
     };
 
-    vm.specDialog = function(ev) {
+    function specDialog(ev) {
 
       var spec = angular.copy(vm.spec);
       var describe = angular.copy(vm.describe);
@@ -825,7 +875,7 @@
       }, function() {});
     };
 
-    vm.getSessionElementId = function(element) {
+    function getSessionElementId(element) {
 
       $log.debug('getSessionElementId');
 
@@ -892,7 +942,7 @@
 
     };
 
-    vm.getElementAction = function(action) {
+    function getElementAction(action) {
 
       $log.debug('getElementAction');
 
@@ -961,11 +1011,11 @@
 
     };
 
-    vm.socketElementExecute = function(element) {
+    function socketElementExecute(element) {
       socket.emit('execute', element);
     };
 
-    vm.sessionElementExecute = function(elementId, element) {
+    function sessionElementExecute(elementId, element) {
 
       $log.debug('sessionElementExecute');
 
@@ -1020,7 +1070,7 @@
 
     };
 
-    vm.clearRunTestResult = function() {
+    function clearRunTestResult() {
       angular.forEach(vm.spec.actions, function(action) {
         action.executed = false;
         action.error = false;
@@ -1054,7 +1104,7 @@
       };
     };
 
-    vm.actionDialog = function(ev, index, action) {
+    function actionDialog(ev, index, action) {
 
       if (action)
         var actionCopy = angular.copy(action);
