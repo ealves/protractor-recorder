@@ -34,6 +34,44 @@
 
     vm.selectedItems = 0;
 
+    vm.joinRoom = joinRoom;
+    vm.leaveRoom = leaveRoom;
+    vm.openConf = openConf;
+    vm.verifySnippet = verifySnippet;
+    vm.getNgIncludes = getNgIncludes;
+    vm.getSessionSource = getSessionSource;
+    vm.setSessionUrl = setSessionUrl;
+    vm.getSessionUrl = getSessionUrl;
+    vm.runTest = runTest;
+    vm.addSessionCookie = addSessionCookie;
+    vm.createSession = createSession;
+    vm.pauseRecording = pauseRecording;
+    vm.getAllDataBind = getAllDataBind;
+    vm.sessionExecute = sessionExecute;
+    vm.getAttr = getAttr;
+    vm.clearSession = clearSession;
+    vm.deleteSession = deleteSession;
+    vm.getCapabilities = getCapabilities;
+    vm.setDescribe = setDescribe;
+    vm.setSpec = setSpec;
+    vm.setExample = setExample;
+    vm.exportProtractor = exportProtractor;
+    vm.setCapabilities = setCapabilities;
+    vm.startWebdriver = startWebdriver;
+    vm.isSeleniumRunning = isSeleniumRunning;
+
+    init();
+
+
+    function init() {
+      //vm.startWebdriver();
+
+      vm.isSeleniumRunning();
+      vm.setExample();
+      vm.getCapabilities();
+    }
+
+
     $scope.$on('navbar:title', function(events, args) {
       vm.title = args;
     });
@@ -87,27 +125,27 @@
       }
     });
 
-    vm.joinRoom = function(room) {
-      $log.debug('connectRoom');
-      socket.emit('joinroom', room);
-    };
-
-    vm.leaveRoom = function(room) {
-      $log.debug('disconnectRoom');
-      socket.emit('leaveroom', room);
-    };
-
-    vm.openConf = function() {
-      vm.title = 'Conf.js';
-      $location.url('/conf');
-    };
-
     $scope.$watch('navbar.conf', function() {
       $log.debug('watch conf');
       localStorage.setItem('conf', angular.toJson(vm.conf));
     }, true);
 
-    vm.verifySnippet = function() {
+    function joinRoom(room) {
+      $log.debug('connectRoom');
+      socket.emit('joinroom', room);
+    };
+
+    function leaveRoom(room) {
+      $log.debug('disconnectRoom');
+      socket.emit('leaveroom', room);
+    };
+
+    function openConf() {
+      vm.title = 'Conf.js';
+      $location.url('/conf');
+    };
+
+    function verifySnippet() {
 
       var countIframe = vm.session.source.match(/recorder-iframe/);
       countIframe != null ? countIframe.length : countIframe = 0;
@@ -122,7 +160,7 @@
     /**
      * Get all html from ng-includes and concatenate with main source
      */
-    vm.getNgIncludes = function() {
+    function getNgIncludes() {
 
       $log.debug('getNgIncludes');
 
@@ -149,7 +187,7 @@
       });
     };
 
-    vm.getSessionSource = function() {
+    function getSessionSource() {
       $log.debug('getSessionSource');
 
       if (vm.session.id) {
@@ -176,7 +214,7 @@
       }
     };
 
-    vm.setSessionUrl = function() {
+    function setSessionUrl() {
       seleniumJWP.setSessionUrl(vm.conf.baseUrl).success(function() {
         $log.debug('setSessionUrl');
 
@@ -185,7 +223,7 @@
         }).error(function(response){
           $log.debug(response);
         });
-        
+
         vm.getSessionUrl();
         vm.getSessionSource();
       }).error(function(response) {
@@ -193,7 +231,7 @@
       });
     };
 
-    vm.getSessionUrl = function() {
+    function getSessionUrl() {
       seleniumJWP.getSessionUrl().success(function(response) {
         $log.debug('getSessionUrl');
         vm.session.url = response.value;
@@ -202,7 +240,7 @@
       });
     };
 
-    vm.runTest = function() {
+    function runTest() {
 
       $log.debug('runTest');
 
@@ -225,7 +263,7 @@
       });
     };
 
-    vm.addSessionCookie = function() {
+    function addSessionCookie() {
       seleniumJWP.sessionAddCookie('socketRoom', vm.session.id).success(function(response) {
         $log.debug(response);
       }).error(function(response) {
@@ -233,7 +271,7 @@
       });
     };
 
-    vm.createSession = function() {
+    function createSession() {
 
       if (!vm.session.id) {
         protractorRecServer.setSnippet(false);
@@ -280,14 +318,14 @@
       }
     };
 
-    vm.pauseRecording = function() {
+    function pauseRecording() {
       protractorRecServer.setRecording(false);
     };
 
     /**
      * Get all data bind to suggest on assertions
      */
-    vm.getAllDataBind = function() {
+    function getAllDataBind() {
 
       $log.debug('getAllDataBind');
 
@@ -313,7 +351,7 @@
 
     };
 
-    vm.sessionExecute = function() {
+    function sessionExecute() {
 
       seleniumJWP.sessionAddLocalStorage('socketRoom', vm.session.id).success(function() {
         $log.debug('sessionAddLocalStorage');
@@ -341,19 +379,19 @@
 
     };
 
-    vm.getAttr = function(attr, elem) {
+    function getAttr(attr, elem) {
       if (elem.attr(attr))
         return elem.attr(attr);
       return false;
     };
 
-    vm.clearSession = function() {
+    function clearSession() {
       vm.session = {};
       seleniumJWP.setSession();
       protractorRecServer.setSession();
     };
 
-    vm.deleteSession = function() {
+    function deleteSession() {
       seleniumJWP.deleteSession().success(function() {
         $log.debug('Session Deleted');
         vm.clearSession();
@@ -363,7 +401,7 @@
       });
     };
 
-    vm.getCapabilities = function() {
+    function getCapabilities() {
       $log.debug('getCapabilities');
       protractorRecServer.getCapabilities().success(function(response) {
         vm.capabilities = response;
@@ -377,11 +415,11 @@
       });
     };
 
-    vm.setDescribe = function(describe) {
+    function setDescribe(describe) {
       vm.describe = describe;
     };
 
-    vm.setSpec = function(spec, index) {
+    function setSpec(spec, index) {
 
       $log.debug($routeParams);
 
@@ -402,7 +440,7 @@
       });
     };
 
-    vm.setExample = function() {
+    function setExample() {
 
       $log.debug('setExample');
 
@@ -424,7 +462,7 @@
       }
     };
 
-    vm.exportProtractor = function(run) {
+    function exportProtractor(run) {
 
       $log.debug('exportProtractor');
 
@@ -505,7 +543,7 @@
       });
     };
 
-    vm.setCapabilities = function(capability) {
+    function setCapabilities(capability) {
       if (capability.checked)
         vm.conf.capabilities.push(capability.driver);
       else
@@ -514,7 +552,7 @@
       protractorRecServer.setConf(vm.conf);
     };
 
-    vm.startWebdriver = function() {
+    function startWebdriver() {
       protractorRecServer.startWebdriver().success(function(response) {
         $log.debug(response);
       }).error(function(response) {
@@ -522,7 +560,7 @@
       });
     };
 
-    vm.isSeleniumRunning = function() {
+    function isSeleniumRunning() {
       seleniumJWP.isSeleniumRunning().success(function(response) {
         $log.debug(response);
       }).error(function(response) {
@@ -540,12 +578,5 @@
 
       });
     };
-
-    //vm.startWebdriver();
-
-    vm.isSeleniumRunning();
-    vm.setExample();
-    vm.getCapabilities();
-
   }
 })();
