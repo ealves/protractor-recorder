@@ -9,6 +9,7 @@
     "start": "node server.js"
   },
   "devDependencies": {
+    "pem": "~1.9.4",
     "body-parser": "~1.14.1",
     "connect-livereload": "~0.5.4",
     "express": "~4.13.3",
