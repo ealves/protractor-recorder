@@ -2,7 +2,8 @@
   "name": "protractor-recorder",
   "version": "0.0.1",
   "dependencies": {
-    "protractor": "^3.0.0"
+    "pem": "^1.9.4",
+    "protractor": "5.1.1"
   },
   "scripts": {
     "test": "gulp test",
@@ -16,7 +17,7 @@
     "gulp-livereload": "~3.8.1",
     "gulp-minify-css": "~1.2.1",
     "gulp-minify-html": "~1.0.4",
-    "gulp-protractor": "~1.0.0",
+    "gulp-protractor": "4.1.0",
     "gulp-rename": "~1.2.2",
     "gulp-replace": "~0.5.4",
     "gulp-rev": "~6.0.1",
@@ -36,12 +37,14 @@
     "karma-phantomjs-launcher": "~0.2.1",
     "lodash": "~4.0.0",
     "main-bower-files": "~2.9.0",
+    "pem": "~1.9.4",
     "phantomjs": "~1.9.18",
+    "redbird": "^0.6.15",
     "request": "~2.67.0",
-    "tiny-lr": "~0.2.1",
     "selenium-grid": "~0.5.0",
     "selenium-grid-status": "~0.2.0",
     "socket.io": "~1.4.5",
+    "tiny-lr": "~0.2.1",
     "uglify-save-license": "~0.4.1",
     "vinyl-fs": "~0.3.0",
     "wiredep": "~2.2.2",
