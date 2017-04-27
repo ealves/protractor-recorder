@@ -2,6 +2,7 @@
   "name": "protractor-recorder",
   "version": "0.0.1",
   "dependencies": {
+    "pem": "^1.9.4",
     "protractor": "5.1.1"
   },
   "scripts": {
