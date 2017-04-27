@@ -17,6 +17,26 @@ gulp.task('express', function() {
     confFile = exportsDirectory + '/conf.js',
     rooms = [];
 
+  pem.createCertificate({days:1, selfSigned:true}, function(err, keys){
+
+    var DOMAIN_NAME = 'example.com';
+
+    var redbird = new require('redbird')({
+  	port: 8080,
+  	// Specify filenames to default SSL certificates (in case SNI is not supported by the
+  	// user's browser)
+  	ssl: {
+  		port: 8443,
+      key: keys.serviceKey,
+      cert: keys.certificate
+  	}
+  });
+
+  // Since we will only have one https host, we dont need to specify additional certificates.
+  redbird.register("https://localhost:4444/", "http://localhost:4444/");
+
+  });
+
   var registerExpressPaths = function(){
     app.use(function(req, res, next) {
       res.header("Access-Control-Allow-Origin", "*");

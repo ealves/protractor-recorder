@@ -9,7 +9,6 @@
     "start": "node server.js"
   },
   "devDependencies": {
-    "pem": "~1.9.4",
     "body-parser": "~1.14.1",
     "connect-livereload": "~0.5.4",
     "express": "~4.13.3",
@@ -37,12 +36,14 @@
     "karma-phantomjs-launcher": "~0.2.1",
     "lodash": "~4.0.0",
     "main-bower-files": "~2.9.0",
+    "pem": "~1.9.4",
     "phantomjs": "~1.9.18",
+    "redbird": "^0.6.15",
     "request": "~2.67.0",
-    "tiny-lr": "~0.2.1",
     "selenium-grid": "~0.5.0",
     "selenium-grid-status": "~0.2.0",
     "socket.io": "~1.4.5",
+    "tiny-lr": "~0.2.1",
     "uglify-save-license": "~0.4.1",
     "vinyl-fs": "~0.3.0",
     "wiredep": "~2.2.2",
